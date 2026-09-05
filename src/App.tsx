@@ -27,7 +27,7 @@ import ScrollToTop from "./components/layout/ScrollToTop";
 const queryClient = new QueryClient();
 
 const App = () => (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <ErrorBoundary>
             <QueryClientProvider client={queryClient}>
                 <TooltipProvider>
