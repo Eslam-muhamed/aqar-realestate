@@ -1,0 +1,90 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, MapPin, Home, DollarSign, BedDouble } from "lucide-react";
+import { CITIES, PROPERTY_TYPES } from "@/constants/mockData";
+
+export default function HeroSearch() {
+    const navigate = useNavigate();
+    const [status, setStatus] = useState<"for-sale" | "for-rent">("for-sale");
+    const [location, setLocation] = useState("");
+    const [type, setType] = useState("");
+    const [beds, setBeds] = useState("");
+    const [priceMax, setPriceMax] = useState("");
+
+    const handleSearch = () => {
+        const params = new URLSearchParams();
+        if (status) params.set("status", status);
+        if (location) params.set("location", location);
+        if (type) params.set("type", type.toLowerCase());
+        if (beds) params.set("bedrooms", beds);
+        if (priceMax) params.set("priceMax", priceMax);
+        navigate(`/properties?${params.toString()}`);
+    };
+
+    return (
+        <div className="bg-[#1E1E1E]/90 backdrop-blur-md border border-[#2C2C2E] rounded-2xl p-2 w-full max-w-4xl">
+            {/* Toggle */}
+            <div className="flex gap-1 mb-3 px-1 pt-1">
+                {(["for-sale", "for-rent"] as const).map((s) => (
+                    <button key={s} onClick={() => setStatus(s)}
+                        className={`px-5 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${status === s ? "bg-[#00E5FF] text-[#121212]" : "text-[#98989D] hover:text-white"
+                            }`}>
+                        {s === "for-sale" ? "Buy" : "Rent"}
+                    </button>
+                ))}
+            </div>
+
+            {/* Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1">
+                <div className="relative">
+                    <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98989D]" />
+                    <select value={location} onChange={(e) => setLocation(e.target.value)}
+                        className="w-full pl-9 pr-3 py-3 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none appearance-none cursor-pointer">
+                        <option value="">Any Location</option>
+                        {CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                </div>
+
+                <div className="relative">
+                    <Home size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98989D]" />
+                    <select value={type} onChange={(e) => setType(e.target.value)}
+                        className="w-full pl-9 pr-3 py-3 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none appearance-none cursor-pointer">
+                        <option value="">Property Type</option>
+                        {PROPERTY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                </div>
+
+                <div className="relative">
+                    <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98989D]" />
+                    <select value={priceMax} onChange={(e) => setPriceMax(e.target.value)}
+                        className="w-full pl-9 pr-3 py-3 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none appearance-none cursor-pointer">
+                        <option value="">Max Price</option>
+                        <option value="1000000">SAR 1,000,000</option>
+                        <option value="2000000">SAR 2,000,000</option>
+                        <option value="3000000">SAR 3,000,000</option>
+                        <option value="5000000">SAR 5,000,000</option>
+                        <option value="10000000">SAR 10,000,000</option>
+                    </select>
+                </div>
+
+                <div className="relative">
+                    <BedDouble size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98989D]" />
+                    <select value={beds} onChange={(e) => setBeds(e.target.value)}
+                        className="w-full pl-9 pr-3 py-3 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none appearance-none cursor-pointer">
+                        <option value="">Bedrooms</option>
+                        <option value="0">Studio</option>
+                        {[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={String(n)}>{n}+ Beds</option>)}
+                    </select>
+                </div>
+            </div>
+
+            <div className="mt-2 px-1 pb-1">
+                <button onClick={handleSearch}
+                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#00E5FF] text-[#121212] font-semibold text-sm rounded-xl hover:bg-[#00E5FF]/90 transition-colors">
+                    <Search size={16} />
+                    Search Properties
+                </button>
+            </div>
+        </div>
+    );
+}

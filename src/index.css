@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 0 0% 7.1%;
+        --foreground: 0 0% 100%;
+
+        --card: 0 0% 11.8%;
+        --card-foreground: 0 0% 100%;
+
+        --popover: 0 0% 11.8%;
+        --popover-foreground: 0 0% 100%;
+
+        --primary: 189 100% 50%;
+        --primary-foreground: 0 0% 7.1%;
+
+        --secondary: 0 0% 17.3%;
+        --secondary-foreground: 0 0% 100%;
+
+        --muted: 0 0% 17.3%;
+        --muted-foreground: 240 2% 60%;
+
+        --accent: 189 100% 50%;
+        --accent-foreground: 0 0% 7.1%;
+
+        --destructive: 4 95% 61%;
+        --destructive-foreground: 0 0% 100%;
+
+        --border: 240 2% 17.3%;
+        --input: 240 2% 17.3%;
+        --ring: 189 100% 50%;
+
+        --radius: 0.75rem;
+
+        --success: 133 61% 51%;
+
+        --sidebar-background: 0 0% 7.1%;
+        --sidebar-foreground: 0 0% 100%;
+        --sidebar-primary: 189 100% 50%;
+        --sidebar-primary-foreground: 0 0% 7.1%;
+        --sidebar-accent: 0 0% 17.3%;
+        --sidebar-accent-foreground: 0 0% 100%;
+        --sidebar-border: 240 2% 17.3%;
+        --sidebar-ring: 189 100% 50%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+    }
+}
+
+@layer utilities {
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    .bg-grid {
+        background-image: linear-gradient(hsl(240 2% 17.3% / 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, hsl(240 2% 17.3% / 0.4) 1px, transparent 1px);
+        background-size: 32px 32px;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: hsl(0 0% 11.8%);
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(240 2% 30%);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(189 100% 50% / 0.6);
+}
+
+/* Property card image zoom */
+.property-img {
+    transition: transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.property-card:hover .property-img {
+    transform: scale(1.04);
+}
+
+/* Skeleton animation */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, hsl(0 0% 17.3%) 25%, hsl(0 0% 22%) 50%, hsl(0 0% 17.3%) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.8s infinite linear;
+}
+
+/* Focus ring */
+*:focus-visible {
+    outline: 2px solid hsl(189 100% 50%);
+    outline-offset: 2px;
+}
