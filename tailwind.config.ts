@@ -30,11 +30,11 @@ export default {
                     base: "hsl(var(--aqar-base))",
                     surface: "hsl(var(--aqar-surface))",
                     border: "hsl(var(--aqar-border))",
-                    cyan: "#00E5FF", /* Keep cyan hardcoded since it's an accent color */
+                    cyan: "hsl(var(--aqar-cyan))",
                     text: "hsl(var(--aqar-text))",
                     muted: "hsl(var(--aqar-muted))",
-                    success: "#32D74B", /* Keep success hardcoded */
-                    danger: "#FF453A", /* Keep danger hardcoded */
+                    success: "hsl(var(--aqar-success))",
+                    danger: "hsl(var(--aqar-danger))",
                 },
                 primary: {
                     DEFAULT: "hsl(var(--primary))",

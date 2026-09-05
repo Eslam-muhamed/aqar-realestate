@@ -51,7 +51,10 @@
         --aqar-surface: 0 0% 100%;
         --aqar-border: 0 0% 89.8%;
         --aqar-text: 0 0% 11%;
-        --aqar-muted: 0 0% 45.1%;
+        --aqar-muted: 0 0% 30%; /* Darker gray for readability */
+        --aqar-cyan: 189 100% 30%; /* Darker cyan for readable light mode */
+        --aqar-success: 133 61% 30%; /* Darker green for light mode */
+        --aqar-danger: 4 95% 45%; /* Darker red for light mode */
     }
 
     .dark {
@@ -103,6 +106,9 @@
         --aqar-border: 240 2% 17.3%;
         --aqar-text: 0 0% 100%;
         --aqar-muted: 240 2% 60%;
+        --aqar-cyan: 189 100% 50%; /* Vibrant cyan for dark mode */
+        --aqar-success: 133 61% 51%; /* Vibrant green for dark mode */
+        --aqar-danger: 4 95% 61%; /* Vibrant red for dark mode */
     }
 }
 
