@@ -73,7 +73,7 @@ export default function Compare() {
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
                     {properties.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-24 text-center">
-                            <div className="w-16 h-16 border border-aqar-border rounded-2xl flex items-center justify-center mb-6">
+                            <div className="w-16 h-16 bg-aqar-surface border border-aqar-border rounded-2xl flex items-center justify-center mb-6 shadow-sm dark:shadow-none">
                                 <ArrowLeftRight size={24} className="text-aqar-muted" />
                             </div>
                             <h3 className="text-aqar-text font-semibold text-lg mb-2">لا توجد عقارات للمقارنة</h3>
@@ -93,7 +93,7 @@ export default function Compare() {
                                         <th className="w-40 text-start" />
                                         {properties.map((p) => (
                                             <th key={p.id} className="px-4 pb-6 text-start align-top">
-                                                <div className="bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden">
+                                                <div className="bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
                                                     <div className="relative">
                                                         <img src={p.images[0]} alt={p.title} className="w-full h-32 object-cover" />
                                                         <button onClick={() => remove(p.id)}

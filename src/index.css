@@ -49,7 +49,7 @@
         /* Aqar specific */
         --aqar-base: 0 0% 98%;
         --aqar-surface: 0 0% 100%;
-        --aqar-border: 0 0% 89.8%;
+        --aqar-border: 0 0% 86%; /* Slightly darker border for better separation */
         --aqar-text: 0 0% 11%;
         --aqar-muted: 0 0% 30%; /* Darker gray for readability */
         --aqar-cyan: 189 100% 30%; /* Darker cyan for readable light mode */
@@ -127,6 +127,12 @@
     body[dir="rtl"],
     [lang="ar"] body {
         font-family: 'Cairo', sans-serif;
+    }
+
+    body[dir="rtl"] *,
+    html[dir="rtl"] *,
+    [lang="ar"] * {
+        letter-spacing: normal !important;
     }
 
     .font-mono {

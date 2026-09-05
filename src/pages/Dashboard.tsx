@@ -180,7 +180,7 @@ export default function Dashboard() {
             <div className="pt-20">
                 <div className="max-w-[1440px] mx-auto px-4 lg:px-10 py-8">
                     {/* Top Welcome Bar */}
-                    <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
                             <div className="w-14 h-14 bg-aqar-cyan/10 border border-aqar-cyan/30 rounded-2xl flex items-center justify-center text-aqar-cyan">
                                 {isAdmin ? <ShieldCheck size={28} /> : <User size={28} />}
@@ -219,7 +219,7 @@ export default function Dashboard() {
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Sidebar Navigation */}
                         <aside className="w-full lg:w-72 shrink-0">
-                            <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-4 sticky top-28 space-y-1.5">
+                            <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-4 sticky top-28 space-y-1.5">
                                 {currentTabs.map(({ id, label, icon: Icon, badge }) => (
                                     <button
                                         key={id}
@@ -260,7 +260,7 @@ export default function Dashboard() {
                                 <div className="space-y-8">
                                     {/* KPI Stats */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-5 relative overflow-hidden">
+                                        <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-5 relative overflow-hidden">
                                             <div className="flex items-center justify-between mb-3">
                                                 <span className="text-aqar-muted text-xs font-medium">إجمالي العملاء (Leads)</span>
                                                 <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
@@ -273,7 +273,7 @@ export default function Dashboard() {
                                             </p>
                                         </div>
 
-                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-5">
+                                        <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-5">
                                             <div className="flex items-center justify-between mb-3">
                                                 <span className="text-aqar-muted text-xs font-medium">العقارات المتاحة</span>
                                                 <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
@@ -284,7 +284,7 @@ export default function Dashboard() {
                                             <p className="text-xs text-aqar-muted mt-2">جاهزة للعرض في الموقع</p>
                                         </div>
 
-                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-5">
+                                        <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-5">
                                             <div className="flex items-center justify-between mb-3">
                                                 <span className="text-aqar-muted text-xs font-medium">
                                                     {isAdmin ? "المشرفين النشطين" : "العملاء المكلف بهم"}
@@ -301,7 +301,7 @@ export default function Dashboard() {
                                             </p>
                                         </div>
 
-                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-5">
+                                        <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-5">
                                             <div className="flex items-center justify-between mb-3">
                                                 <span className="text-aqar-muted text-xs font-medium">الصفقات الناجحة</span>
                                                 <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
@@ -340,7 +340,7 @@ export default function Dashboard() {
                                     )}
 
                                     {/* Latest Leads Preview */}
-                                    <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-6">
+                                    <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6">
                                         <div className="flex items-center justify-between mb-6">
                                             <h2 className="text-aqar-text text-lg font-bold">
                                                 {isAdmin ? "أحدث استفسارات العملاء" : "أحدث عملائك المكلف بهم"}
@@ -423,7 +423,7 @@ export default function Dashboard() {
                                         </div>
 
                                         {isAdmin && (
-                                            <div className="flex items-center gap-2 bg-[#1C1C1E] border border-aqar-border p-1 rounded-xl">
+                                            <div className="flex items-center gap-2 bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none p-1 rounded-xl">
                                                 <button
                                                     onClick={() => setLeadFilter("all")}
                                                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
@@ -595,7 +595,7 @@ export default function Dashboard() {
                                             })}
                                         </div>
                                     ) : (
-                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-12 text-center">
+                                        <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-12 text-center">
                                             <MessageSquare size={36} className="text-aqar-muted mx-auto mb-3" />
                                             <h3 className="text-aqar-text font-bold text-base mb-1">لا توجد طلبات مطابقة</h3>
                                             <p className="text-xs text-aqar-muted">
@@ -624,7 +624,7 @@ export default function Dashboard() {
                                             const wonCount = supLeads.filter((l) => l.status === "closed_won").length;
 
                                             return (
-                                                <div key={sup.id} className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-6">
+                                                <div key={sup.id} className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6">
                                                     <div className="flex items-start justify-between gap-4 mb-4">
                                                         <div className="flex items-center gap-3">
                                                             <div className="w-12 h-12 rounded-xl bg-aqar-cyan/10 border border-aqar-cyan/30 flex items-center justify-center text-aqar-cyan font-bold">
@@ -709,7 +709,7 @@ export default function Dashboard() {
 
                             {/* SETTINGS TAB */}
                             {tab === "settings" && (
-                                <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-6 max-w-xl">
+                                <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6 max-w-xl">
                                     <h2 className="text-aqar-text font-bold text-lg mb-4">إعدادات الحساب</h2>
                                     <div className="space-y-4 text-xs">
                                         <div>

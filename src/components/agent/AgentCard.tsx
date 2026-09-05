@@ -6,7 +6,7 @@ interface Props { agent: Agent; }
 
 export default function AgentCard({ agent }: Props) {
     return (
-        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 hover:border-[#3C3C3E] transition-all duration-300 hover:-translate-y-0.5 group">
+        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-aqar-muted hover:shadow-md dark:hover:border-[#3C3C3E] dark:hover:shadow-none shadow-sm dark:shadow-none group">
             <div className="flex items-start gap-4 mb-5">
                 <div className="relative shrink-0">
                     <img src={agent.avatar} alt={agent.name} loading="lazy" className="w-14 h-14 rounded-xl object-cover" />

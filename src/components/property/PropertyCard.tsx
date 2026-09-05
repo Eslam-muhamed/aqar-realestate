@@ -36,7 +36,7 @@ export default function PropertyCard({ property, className }: Props) {
 
     return (
         <Link to={`/property/${property.slug}`} className={cn("property-card group block", className)}>
-            <div className="bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-[#3C3C3E] hover:shadow-xl hover:shadow-black/40">
+            <div className="bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-aqar-muted hover:shadow-lg dark:hover:border-[#3C3C3E] dark:hover:shadow-black/40 shadow-sm dark:shadow-none">
                 {/* Image */}
                 <div className="relative aspect-[4/3] overflow-hidden">
                     <img

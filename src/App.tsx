@@ -22,6 +22,7 @@ import ListProperty from "./pages/ListProperty";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 
 import ErrorBoundary from "./components/layout/ErrorBoundary";
+import ScrollToTop from "./components/layout/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
                     <Toaster />
                     <Sonner position="bottom-right" theme="dark" />
                     <BrowserRouter>
+                        <ScrollToTop />
                         <Routes>
                             <Route path="/" element={<Index />} />
                             <Route path="/properties" element={<Properties />} />
