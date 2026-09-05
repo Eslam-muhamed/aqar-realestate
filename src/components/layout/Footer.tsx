@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Twitter, Linkedin, Instagram } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Footer() {
     const { t } = useTranslation();
+    const { user } = useAuth();
 
     const FOOTER_LINKS = {
         [t("footer.properties")]: [
@@ -18,7 +20,9 @@ export default function Footer() {
             { label: t("footer.ourAgents"), href: "/agents" },
             { label: t("footer.locations"), href: "/locations" },
             { label: t("footer.contactUs"), href: "/contact" },
-            { label: t("footer.addProperty"), href: "/list-property" },
+            ...(user && (user.role === "admin" || user.role === "supervisor") 
+                ? [{ label: t("footer.addProperty"), href: "/list-property" }] 
+                : []),
         ],
         [t("footer.legal")]: [
             { label: t("footer.privacyPolicy"), href: "#" },
