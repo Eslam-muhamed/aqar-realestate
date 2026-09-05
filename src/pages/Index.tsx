@@ -78,7 +78,7 @@ export default function Index() {
             </section>
 
             {/* Featured Properties */}
-            <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-24">
+            <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
                 <div className="flex items-end justify-between mb-12">
                     <div>
                         <p className="text-aqar-cyan text-xs font-medium uppercase tracking-widest mb-3">{t("home.featured")}</p>
@@ -114,7 +114,7 @@ export default function Index() {
 
             {/* Why Aqar */}
             <section className="border-y border-aqar-border bg-aqar-surface/50">
-                <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-20">
+                <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12 lg:py-20">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-aqar-border">
                         {FEATURES.map(({ icon: Icon, title, desc }) => (
                             <div key={title} className="bg-aqar-base p-10 lg:p-12">
@@ -130,7 +130,7 @@ export default function Index() {
             </section>
 
             {/* Locations */}
-            <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-24">
+            <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
                 <div className="flex items-end justify-between mb-12">
                     <div>
                         <p className="text-aqar-cyan text-xs font-medium uppercase tracking-widest mb-3">{t("home.whereWeWork")}</p>
@@ -162,7 +162,7 @@ export default function Index() {
 
             {/* Agents */}
             <section className="bg-aqar-surface/30 border-y border-aqar-border">
-                <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-24">
+                <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
                     <div className="flex items-end justify-between mb-12">
                         <div>
                             <p className="text-aqar-cyan text-xs font-medium uppercase tracking-widest mb-3">{t("home.ourTeam")}</p>
@@ -190,7 +190,7 @@ export default function Index() {
             </section>
 
             {/* CTA Banner */}
-            <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-24">
+            <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
                 <div className="bg-aqar-surface border border-aqar-border rounded-3xl p-12 lg:p-16 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12">
                     <div className="absolute top-0 end-0 w-96 h-96 bg-aqar-cyan/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                     <div className="absolute bottom-0 start-0 w-96 h-96 bg-aqar-cyan/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
