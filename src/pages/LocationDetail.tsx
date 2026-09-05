@@ -3,13 +3,15 @@ import { MapPin, ArrowRight } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PropertyCard from "@/components/property/PropertyCard";
-import { MOCK_LOCATIONS, MOCK_PROPERTIES } from "@/constants/mockData";
+import { MOCK_LOCATIONS } from "@/constants/mockData";
+import { useProperties } from "@/hooks/useRealData";
 import { formatPrice } from "@/lib/utils";
 
 export default function LocationDetail() {
     const { slug } = useParams();
     const location = MOCK_LOCATIONS.find((l) => l.slug === slug);
-    const properties = MOCK_PROPERTIES.filter((p) => location && p.location.city === location.name);
+    const { data: allProperties = [] } = useProperties();
+    const properties = allProperties.filter((p) => location && p.location.city === location.name);
 
     if (!location) {
         return (

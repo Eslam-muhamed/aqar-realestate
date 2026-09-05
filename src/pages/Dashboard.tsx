@@ -30,7 +30,6 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { leadService } from "@/services/leadService";
 import { teamService } from "@/services/teamService";
 import { propertyService } from "@/services/propertyService";
-import { MOCK_PROPERTIES } from "@/constants/mockData";
 import { toast } from "sonner";
 import type { Lead, LeadStatus, Profile, Property } from "@/types";
 

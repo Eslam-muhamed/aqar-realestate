@@ -26,7 +26,7 @@ export interface CreatePropertyInput {
 
 export const propertyService = {
     /**
-     * Get all properties (public, merges Supabase dynamic properties with mock seed data)
+     * Get all properties (public, only Supabase dynamic properties)
      */
     async getAll(): Promise<Property[]> {
         try {
@@ -37,7 +37,7 @@ export const propertyService = {
                 .order("created_at", { ascending: false });
 
             if (error || !data || data.length === 0) {
-                return MOCK_PROPERTIES;
+                return [];
             }
 
             // Map Supabase DB columns to frontend Property interface
@@ -78,11 +78,10 @@ export const propertyService = {
                 propertyId: item.property_id || `AQR-${Math.floor(1000 + Math.random() * 9000)}`,
             }));
 
-            // Merge dynamic properties on top of mock properties
-            return [...mappedDbProperties, ...MOCK_PROPERTIES];
+            return mappedDbProperties;
         } catch (err) {
             console.error("Failed to load properties from Supabase:", err);
-            return MOCK_PROPERTIES;
+            return [];
         }
     },
 
@@ -137,4 +136,115 @@ export const propertyService = {
             return { success: false, error: err.message };
         }
     },
+
+    /**
+     * Get property by slug
+     */
+    async getBySlug(slug: string): Promise<Property | null> {
+        try {
+            const { data, error } = await supabase
+                .from("properties")
+                .select("*")
+                .eq("slug", slug)
+                .single();
+
+            if (error || !data) return null;
+
+            return {
+                id: data.id,
+                slug: data.slug || data.id,
+                title: data.title,
+                description: data.description || "",
+                type: data.type,
+                status: data.status,
+                price: Number(data.price),
+                currency: data.currency || "SAR",
+                location: {
+                    city: data.city || "",
+                    district: data.district || "",
+                    address: data.address || "",
+                    coordinates: {
+                        lat: Number(data.lat || 24.7136),
+                        lng: Number(data.lng || 46.6753),
+                    },
+                },
+                stats: {
+                    bedrooms: data.bedrooms || 0,
+                    bathrooms: data.bathrooms || 0,
+                    area: Number(data.area || 0),
+                    parking: data.parking || 0,
+                    yearBuilt: data.year_built || new Date().getFullYear(),
+                    floors: data.floors || 1,
+                },
+                images: data.images && data.images.length > 0 ? data.images : ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"],
+                features: data.features || [],
+                amenities: data.amenities || [],
+                agent: data.created_by || "1",
+                featured: !!data.featured,
+                verified: !!data.verified,
+                createdAt: data.created_at || new Date().toISOString(),
+                views: data.views || 0,
+                propertyId: data.property_id || `AQR-${Math.floor(1000 + Math.random() * 9000)}`,
+            };
+        } catch (err) {
+            console.error("Error getting property by slug:", err);
+            return null;
+        }
+    },
+
+    /**
+     * Get similar properties by city
+     */
+    async getSimilar(city: string, limit: number = 3): Promise<Property[]> {
+        try {
+            const { data, error } = await supabase
+                .from("properties")
+                .select("*")
+                .eq("city", city)
+                .eq("is_published", true)
+                .limit(limit);
+                
+            if (error || !data) return [];
+            
+            return data.map((item: any) => ({
+                id: item.id,
+                slug: item.slug || item.id,
+                title: item.title,
+                description: item.description || "",
+                type: item.type,
+                status: item.status,
+                price: Number(item.price),
+                currency: item.currency || "SAR",
+                location: {
+                    city: item.city || "",
+                    district: item.district || "",
+                    address: item.address || "",
+                    coordinates: {
+                        lat: Number(item.lat || 24.7136),
+                        lng: Number(item.lng || 46.6753),
+                    },
+                },
+                stats: {
+                    bedrooms: item.bedrooms || 0,
+                    bathrooms: item.bathrooms || 0,
+                    area: Number(item.area || 0),
+                    parking: item.parking || 0,
+                    yearBuilt: item.year_built || new Date().getFullYear(),
+                    floors: item.floors || 1,
+                },
+                images: item.images && item.images.length > 0 ? item.images : ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"],
+                features: item.features || [],
+                amenities: item.amenities || [],
+                agent: item.created_by || "1",
+                featured: !!item.featured,
+                verified: !!item.verified,
+                createdAt: item.created_at || new Date().toISOString(),
+                views: item.views || 0,
+                propertyId: item.property_id || `AQR-${Math.floor(1000 + Math.random() * 9000)}`,
+            }));
+        } catch (err) {
+            console.error("Error getting similar properties:", err);
+            return [];
+        }
+    }
 };

@@ -3,20 +3,31 @@ import { Star, MapPin, Phone, Mail, BadgeCheck, Building2, ArrowLeft } from "luc
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PropertyCard from "@/components/property/PropertyCard";
-import { MOCK_AGENTS, MOCK_PROPERTIES } from "@/constants/mockData";
+import { useAgent, useProperties } from "@/hooks/useRealData";
 
 export default function AgentDetail() {
     const { id } = useParams();
-    const agent = MOCK_AGENTS.find((a) => a.id === id);
-    const properties = MOCK_PROPERTIES.filter((p) => p.agent === id);
+    const { data: agent, isLoading: loadingAgent } = useAgent(id || "");
+    const { data: allProperties = [] } = useProperties();
+    
+    const properties = allProperties.filter((p) => p.agent === id);
+
+    if (loadingAgent) {
+        return (
+            <div className="min-h-screen bg-aqar-base flex flex-col items-center justify-center">
+                <Header />
+                <div className="mt-24 w-8 h-8 border-4 border-aqar-cyan border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     if (!agent) return (
         <div className="min-h-screen bg-aqar-base">
             <Header />
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <p className="text-aqar-text text-lg">Agent not found.</p>
-                    <Link to="/agents" className="text-aqar-cyan text-sm mt-4 block">← Back to Agents</Link>
+                    <p className="text-aqar-text text-lg">لم يتم العثور على الوكيل.</p>
+                    <Link to="/agents" className="text-aqar-cyan text-sm mt-4 block">← العودة للوكلاء</Link>
                 </div>
             </div>
         </div>

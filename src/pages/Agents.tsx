@@ -3,15 +3,17 @@ import { Search } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import AgentCard from "@/components/agent/AgentCard";
-import { MOCK_AGENTS } from "@/constants/mockData";
+import { useAgents } from "@/hooks/useRealData";
 
 export default function Agents() {
     const [search, setSearch] = useState("");
     const [locationFilter, setLocationFilter] = useState("");
 
-    const cities = [...new Set(MOCK_AGENTS.map((a) => a.location))];
+    const { data: agents = [], isLoading } = useAgents();
 
-    const filtered = MOCK_AGENTS.filter((a) => {
+    const cities = [...new Set(agents.map((a) => a.location))];
+
+    const filtered = agents.filter((a) => {
         const matchSearch = !search || a.name.toLowerCase().includes(search.toLowerCase()) ||
             a.company.toLowerCase().includes(search.toLowerCase());
         const matchLocation = !locationFilter || a.location === locationFilter;
@@ -51,7 +53,13 @@ export default function Agents() {
 
                     <p className="text-aqar-muted text-xs mb-6">تم العثور على {filtered.length} من المستشارين</p>
 
-                    {filtered.length > 0 ? (
+                    {isLoading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {Array.from({ length: 3 }).map((_, i) => (
+                                <div key={i} className="h-64 rounded-2xl bg-aqar-border animate-pulse" />
+                            ))}
+                        </div>
+                    ) : filtered.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filtered.map((a) => <AgentCard key={a.id} agent={a} />)}
                         </div>

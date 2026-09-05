@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { X, ArrowLeftRight, Plus, BedDouble, Bath, Square, Car, Calendar, MapPin } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { MOCK_PROPERTIES } from "@/constants/mockData";
+import { useProperties } from "@/hooks/useRealData";
 import { compareStorage } from "@/lib/storage";
 import { formatPrice } from "@/lib/utils";
 
@@ -21,7 +21,8 @@ const COMPARE_ROWS = [
 
 export default function Compare() {
     const [compareIds, setCompareIds] = useState<string[]>(() => compareStorage.get());
-    const properties = MOCK_PROPERTIES.filter((p) => compareIds.includes(p.id));
+    const { data: allProperties = [] } = useProperties();
+    const properties = allProperties.filter((p) => compareIds.includes(p.id));
 
     const remove = (id: string) => {
         compareStorage.remove(id);

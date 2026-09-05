@@ -3,12 +3,13 @@ import { Heart, ArrowRight } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PropertyCard from "@/components/property/PropertyCard";
-import { MOCK_PROPERTIES } from "@/constants/mockData";
+import { useProperties } from "@/hooks/useRealData";
 import { useFavorites } from "@/hooks/useFavorites";
 
 export default function Favorites() {
     const { favorites } = useFavorites();
-    const saved = MOCK_PROPERTIES.filter((p) => favorites.includes(p.id));
+    const { data: allProperties = [] } = useProperties();
+    const saved = allProperties.filter((p) => favorites.includes(p.id));
 
     return (
         <div className="min-h-screen bg-aqar-base text-right" dir="rtl">

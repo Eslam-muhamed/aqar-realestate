@@ -4,7 +4,7 @@ import { Heart, ArrowLeftRight, Share2, BedDouble, Bath, Square, Car, Calendar, 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PropertyCard from "@/components/property/PropertyCard";
-import { MOCK_PROPERTIES, MOCK_AGENTS } from "@/constants/mockData";
+import { useProperty, useSimilarProperties, useAgent } from "@/hooks/useRealData";
 import { formatPrice } from "@/lib/utils";
 import { useFavorites } from "@/hooks/useFavorites";
 import { compareStorage, inquiriesStorage } from "@/lib/storage";
@@ -14,13 +14,24 @@ import { toast } from "sonner";
 export default function PropertyDetail() {
     const { slug } = useParams();
     const navigate = useNavigate();
-    const property = MOCK_PROPERTIES.find((p) => p.slug === slug);
+    const { data: property, isLoading: loadingProperty } = useProperty(slug || "");
+    const { data: agent } = useAgent(property?.agent || "");
+    const { data: similar = [] } = useSimilarProperties(property?.location.city || "", slug || "");
     const { toggle, isFavorite } = useFavorites();
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [galleryIndex, setGalleryIndex] = useState(0);
     const [activeImg, setActiveImg] = useState(0);
     const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
     const [submitted, setSubmitted] = useState(false);
+
+    if (loadingProperty) {
+        return (
+            <div className="min-h-screen bg-aqar-base flex flex-col items-center justify-center">
+                <Header />
+                <div className="mt-24 w-8 h-8 border-4 border-aqar-cyan border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     if (!property) {
         return (
@@ -32,8 +43,6 @@ export default function PropertyDetail() {
         );
     }
 
-    const agent = MOCK_AGENTS.find((a) => a.id === property.agent);
-    const similar = MOCK_PROPERTIES.filter((p) => p.id !== property.id && p.location.city === property.location.city).slice(0, 3);
     const fav = isFavorite(property.id);
 
     const handleFavorite = () => {

@@ -5,7 +5,8 @@ import Footer from "@/components/layout/Footer";
 import HeroSearch from "@/components/search/HeroSearch";
 import PropertyCard from "@/components/property/PropertyCard";
 import AgentCard from "@/components/agent/AgentCard";
-import { MOCK_PROPERTIES, MOCK_AGENTS, MOCK_LOCATIONS } from "@/constants/mockData";
+import { MOCK_LOCATIONS } from "@/constants/mockData";
+import { useProperties, useAgents } from "@/hooks/useRealData";
 import heroImg from "@/assets/hero-property.jpg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
@@ -14,8 +15,11 @@ import { useAuth } from "@/hooks/useAuth";
 export default function Index() {
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
-    const featured = MOCK_PROPERTIES.filter((p) => p.featured).slice(0, 6);
-    const topAgents = MOCK_AGENTS.slice(0, 3);
+    const { data: properties = [], isLoading: isLoadingProperties } = useProperties();
+    const { data: agents = [], isLoading: isLoadingAgents } = useAgents();
+
+    const featured = properties.filter((p) => p.featured).slice(0, 6);
+    const topAgents = agents.slice(0, 3);
     const isRTL = i18n.language === 'ar';
     const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
 
@@ -50,7 +54,7 @@ export default function Index() {
                             <div className="w-1.5 h-1.5 rounded-full bg-aqar-cyan animate-pulse" />
                             <span className="text-aqar-muted text-xs font-medium uppercase tracking-widest">{t("home.searchTitle")}</span>
                         </div>
-                        <h1 className="text-5xl lg:text-7xl font-bold text-aqar-text leading-[1.05] tracking-tight mb-6">
+                        <h1 className="text-5xl lg:text-7xl font-bold text-aqar-text leading-tight mb-6">
                             {t("home.heroTitle1")}<br />
                             <span className="text-aqar-cyan">{t("home.heroTitle2")}</span>
                         </h1>
@@ -88,7 +92,17 @@ export default function Index() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {featured.map((p) => <PropertyCard key={p.id} property={p} />)}
+                    {isLoadingProperties ? (
+                        Array.from({ length: 3 }).map((_, i) => (
+                            <div key={i} className="aspect-[4/3] rounded-2xl bg-aqar-border animate-pulse" />
+                        ))
+                    ) : featured.length > 0 ? (
+                        featured.map((p) => <PropertyCard key={p.id} property={p} />)
+                    ) : (
+                        <div className="col-span-full py-12 text-center text-aqar-muted border border-dashed border-aqar-border rounded-2xl">
+                            لا توجد عقارات مميزة حالياً
+                        </div>
+                    )}
                 </div>
 
                 <div className="mt-8 text-center sm:hidden">
@@ -160,7 +174,17 @@ export default function Index() {
                         </Link>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {topAgents.map((a) => <AgentCard key={a.id} agent={a} />)}
+                        {isLoadingAgents ? (
+                            Array.from({ length: 3 }).map((_, i) => (
+                                <div key={i} className="h-64 rounded-2xl bg-aqar-border animate-pulse" />
+                            ))
+                        ) : topAgents.length > 0 ? (
+                            topAgents.map((a) => <AgentCard key={a.id} agent={a} />)
+                        ) : (
+                            <div className="col-span-full py-12 text-center text-aqar-muted border border-dashed border-aqar-border rounded-2xl">
+                                لا يوجد وكلاء متاحين حالياً
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>

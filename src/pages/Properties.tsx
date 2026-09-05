@@ -6,7 +6,7 @@ import Footer from "@/components/layout/Footer";
 import PropertyCard from "@/components/property/PropertyCard";
 import FilterSidebar from "@/components/search/FilterSidebar";
 import PropertySkeleton from "@/components/ui/PropertySkeleton";
-import { MOCK_PROPERTIES } from "@/constants/mockData";
+import { useProperties } from "@/hooks/useRealData";
 import type { FilterState, ViewMode } from "@/types";
 
 const DEFAULT_FILTERS: FilterState = {
@@ -32,13 +32,8 @@ export default function Properties() {
     }));
     const [sort, setSort] = useState("newest");
     const [view, setView] = useState<ViewMode>("grid");
-    const [loading, setLoading] = useState(true);
+    const { data: properties = [], isLoading: loading } = useProperties();
     const [mobileFilters, setMobileFilters] = useState(false);
-
-    useEffect(() => {
-        const t = setTimeout(() => setLoading(false), 600);
-        return () => clearTimeout(t);
-    }, []);
 
     // Sync URL search params to local filters state
     useEffect(() => {
@@ -49,7 +44,7 @@ export default function Properties() {
     }, [searchParams]);
 
     const filtered = useMemo(() => {
-        let results = [...MOCK_PROPERTIES];
+        let results = [...properties];
         if (filters.status !== "all") results = results.filter((p) => p.status === filters.status);
         if (filters.location) results = results.filter((p) => p.location.city === filters.location);
         if (filters.type) results = results.filter((p) => p.type === filters.type);
@@ -69,7 +64,7 @@ export default function Properties() {
         else if (sort === "area-desc") results.sort((a, b) => b.stats.area - a.stats.area);
         else results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         return results;
-    }, [filters, sort]);
+    }, [filters, sort, properties]);
 
     return (
         <div className="min-h-screen bg-aqar-base">
