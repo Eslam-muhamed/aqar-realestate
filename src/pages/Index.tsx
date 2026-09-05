@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, TrendingUp, Shield, Clock, MapPin } from "lucide-react";
+import { ArrowLeft, ArrowRight, TrendingUp, Shield, Clock, MapPin, Building } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSearch from "@/components/search/HeroSearch";
@@ -191,28 +191,42 @@ export default function Index() {
 
             {/* CTA Banner */}
             <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-24">
-                <div className="bg-aqar-surface border border-aqar-border rounded-3xl p-12 lg:p-16 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-aqar-cyan/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                    <div className="relative max-w-2xl">
-                        <p className="text-aqar-cyan text-xs font-medium uppercase tracking-widest mb-4">{t("home.forOwners")}</p>
-                        <h2 className="text-aqar-text text-3xl lg:text-4xl font-bold tracking-tight mb-4">
+                <div className="bg-aqar-surface border border-aqar-border rounded-3xl p-12 lg:p-16 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12">
+                    <div className="absolute top-0 end-0 w-96 h-96 bg-aqar-cyan/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 start-0 w-96 h-96 bg-aqar-cyan/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+                    
+                    <div className="relative max-w-2xl z-10">
+                        <p className="text-aqar-cyan text-xs font-bold uppercase tracking-widest mb-4">{t("home.forOwners")}</p>
+                        <h2 className="text-aqar-text text-3xl lg:text-5xl font-bold tracking-tight mb-6">
                             {t("home.listWithUs")}
                         </h2>
-                        <p className="text-aqar-muted text-base leading-relaxed mb-8">
+                        <p className="text-aqar-muted text-lg leading-relaxed mb-8 max-w-xl">
                             {t("home.listDesc")}
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            {user && (user.role === "admin" || user.role === "supervisor") && (
-                                <Link to="/list-property"
-                                    className="px-8 py-3.5 bg-aqar-cyan text-black font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
-                                    {t("home.addPropertyBtn")}
+                            {user && (user.role === "admin" || user.role === "supervisor") ? (
+                                <>
+                                    <Link to="/list-property"
+                                        className="px-8 py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors shadow-[0_0_20px_rgba(0,139,153,0.3)] dark:shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+                                        {t("home.addPropertyBtn")}
+                                    </Link>
+                                    <Link to="/agents"
+                                        className="px-8 py-3.5 border border-aqar-border bg-aqar-base/50 text-aqar-text text-sm rounded-xl hover:border-aqar-cyan/50 hover:bg-aqar-cyan/5 transition-all">
+                                        {t("home.contactAgentBtn")}
+                                    </Link>
+                                </>
+                            ) : (
+                                <Link to="/agents"
+                                    className="px-8 py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors shadow-[0_0_20px_rgba(0,139,153,0.3)] dark:shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+                                    {t("home.contactAgentBtn")}
                                 </Link>
                             )}
-                            <Link to="/agents"
-                                className="px-8 py-3.5 border border-aqar-border text-aqar-text text-sm rounded-xl hover:border-aqar-muted transition-colors">
-                                {t("home.contactAgentBtn")}
-                            </Link>
                         </div>
+                    </div>
+
+                    <div className="relative hidden lg:flex items-center justify-center w-72 h-72 z-10">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-aqar-cyan/20 to-transparent rounded-full blur-2xl animate-pulse" />
+                        <Building size={120} className="text-aqar-cyan drop-shadow-[0_0_15px_rgba(0,139,153,0.5)] dark:drop-shadow-[0_0_15px_rgba(0,229,255,0.5)]" />
                     </div>
                 </div>
             </section>
