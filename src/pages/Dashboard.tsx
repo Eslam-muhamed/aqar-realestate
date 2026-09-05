@@ -142,6 +142,22 @@ export default function Dashboard() {
         }
     };
 
+    const handleDeleteProperty = async (id: string) => {
+        if (!confirm("هل أنت متأكد من حذف هذا العقار نهائياً؟")) return;
+        
+        try {
+            const res = await propertyService.deleteProperty(id);
+            if (res.success) {
+                toast.success("تم حذف العقار بنجاح");
+                setProperties(prev => prev.filter(p => p.id !== id));
+            } else {
+                toast.error("فشل حذف العقار: " + res.error);
+            }
+        } catch (error) {
+            toast.error("حدث خطأ أثناء الحذف");
+        }
+    };
+
     // Filter leads
     const filteredLeads = leads.filter((lead) => {
         if (isSupervisor) {
@@ -701,7 +717,12 @@ export default function Dashboard() {
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                                         {properties.map((p) => (
-                                            <PropertyCard key={p.id} property={p} />
+                                            <PropertyCard 
+                                                key={p.id} 
+                                                property={p} 
+                                                isDashboard={true} 
+                                                onDelete={handleDeleteProperty}
+                                            />
                                         ))}
                                     </div>
                                 </div>

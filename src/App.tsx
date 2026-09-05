@@ -58,6 +58,11 @@ const App = () => (
                                     <ListProperty />
                                 </ProtectedRoute>
                             } />
+                            <Route path="/edit-property/:id" element={
+                                <ProtectedRoute roles={["admin", "supervisor"]}>
+                                    <ListProperty />
+                                </ProtectedRoute>
+                            } />
                             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                             <Route path="*" element={<NotFound />} />
                         </Routes>

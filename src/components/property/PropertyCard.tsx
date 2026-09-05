@@ -1,4 +1,4 @@
-import { Heart, BedDouble, Bath, Square, MapPin, BadgeCheck, ArrowLeftRight } from "lucide-react";
+import { Heart, BedDouble, Bath, Square, MapPin, BadgeCheck, ArrowLeftRight, Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn, formatPrice } from "@/lib/utils";
 import type { Property } from "@/types";
@@ -9,9 +9,11 @@ import { toast } from "sonner";
 interface Props {
     property: Property;
     className?: string;
+    isDashboard?: boolean;
+    onDelete?: (id: string) => void;
 }
 
-export default function PropertyCard({ property, className }: Props) {
+export default function PropertyCard({ property, className, isDashboard, onDelete }: Props) {
     const { toggle, isFavorite } = useFavorites();
     const fav = isFavorite(property.id);
 
@@ -63,16 +65,32 @@ export default function PropertyCard({ property, className }: Props) {
 
                     {/* Actions */}
                     <div className="absolute top-3 end-3 flex flex-col gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
-                        <button onClick={handleFavorite} aria-label="حفظ في المفضلة"
-                            className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
-                                fav ? "bg-[#FF453A] text-aqar-text" : "bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-[#FF453A]"
-                            )}>
-                            <Heart size={14} fill={fav ? "currentColor" : "none"} />
-                        </button>
-                        <button onClick={handleCompare} aria-label="مقارنة العقار"
-                            className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-[#121212] flex items-center justify-center transition-colors">
-                            <ArrowLeftRight size={14} />
-                        </button>
+                        {!isDashboard && (
+                            <>
+                                <button onClick={handleFavorite} aria-label="حفظ في المفضلة"
+                                    className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
+                                        fav ? "bg-[#FF453A] text-aqar-text" : "bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-[#FF453A]"
+                                    )}>
+                                    <Heart size={14} fill={fav ? "currentColor" : "none"} />
+                                </button>
+                                <button onClick={handleCompare} aria-label="مقارنة العقار"
+                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-[#121212] flex items-center justify-center transition-colors">
+                                    <ArrowLeftRight size={14} />
+                                </button>
+                            </>
+                        )}
+                        {isDashboard && (
+                            <>
+                                <Link to={`/edit-property/${property.id}`} aria-label="تعديل العقار"
+                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-[#121212] flex items-center justify-center transition-colors">
+                                    <Pencil size={14} />
+                                </Link>
+                                <button onClick={(e) => { e.preventDefault(); onDelete?.(property.id); }} aria-label="حذف العقار"
+                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-[#FF453A] hover:text-white flex items-center justify-center transition-colors">
+                                    <Trash2 size={14} />
+                                </button>
+                            </>
+                        )}
                     </div>
 
                     {/* Type */}

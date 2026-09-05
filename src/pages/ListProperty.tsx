@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { CheckCircle, ChevronRight, Loader2, Sparkles } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -33,9 +33,11 @@ const CITY_LABELS: Record<string, string> = {
 };
 
 export default function ListProperty() {
+    const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
     const [submitting, setSubmitting] = useState(false);
+    const [loadingEdit, setLoadingEdit] = useState(!!id);
     const [step, setStep] = useState(1);
     const [form, setForm] = useState({
         type: "apartment",
@@ -56,6 +58,40 @@ export default function ListProperty() {
         images: [] as string[],
     });
 
+    useEffect(() => {
+        if (!id) return;
+        const fetchProperty = async () => {
+            try {
+                const prop = await propertyService.getBySlug(id);
+                if (prop) {
+                    setForm({
+                        type: prop.type,
+                        status: prop.status,
+                        city: prop.location.city,
+                        district: prop.location.district,
+                        address: prop.location.address,
+                        title: prop.title,
+                        description: prop.description,
+                        bedrooms: prop.stats?.bedrooms?.toString() || "3",
+                        bathrooms: prop.stats?.bathrooms?.toString() || "2",
+                        area: prop.stats?.area?.toString() || "180",
+                        parking: prop.stats?.parking?.toString() || "1",
+                        yearBuilt: prop.stats?.yearBuilt?.toString() || new Date().getFullYear().toString(),
+                        price: prop.price.toString(),
+                        currency: prop.currency,
+                        amenities: prop.amenities,
+                        images: prop.images,
+                    });
+                }
+            } catch (error) {
+                toast.error("فشل في تحميل بيانات العقار");
+            } finally {
+                setLoadingEdit(false);
+            }
+        };
+        fetchProperty();
+    }, [id]);
+
     const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
     const toggleAmenity = (a: string) =>
         setForm((f) => ({
@@ -70,43 +106,56 @@ export default function ListProperty() {
             "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
         ];
 
-        const res = await propertyService.create(
-            {
-                title: form.title || "عقار فاخر متميز",
-                description: form.description || "",
-                type: (form.type as any) || "apartment",
-                status: (form.status as any) || "for-sale",
-                price: Number(form.price) || 1000000,
-                currency: form.currency || "SAR",
-                city: form.city || "Riyadh",
-                district: form.district || "",
-                address: form.address || "",
-                bedrooms: Number(form.bedrooms) || 3,
-                bathrooms: Number(form.bathrooms) || 2,
-                area: Number(form.area) || 180,
-                parking: Number(form.parking) || 1,
-                yearBuilt: Number(form.yearBuilt) || new Date().getFullYear(),
-                images: form.images.length > 0 ? form.images : defaultImages,
-                features: [],
-                amenities: form.amenities,
-                featured: false,
-            },
-            user?.id
-        );
+        const propertyData = {
+            title: form.title || "عقار فاخر متميز",
+            description: form.description || "",
+            type: (form.type as any) || "apartment",
+            status: (form.status as any) || "for-sale",
+            price: Number(form.price) || 1000000,
+            currency: form.currency || "SAR",
+            city: form.city || "Riyadh",
+            district: form.district || "",
+            address: form.address || "",
+            bedrooms: Number(form.bedrooms) || 3,
+            bathrooms: Number(form.bathrooms) || 2,
+            area: Number(form.area) || 180,
+            parking: Number(form.parking) || 1,
+            yearBuilt: Number(form.yearBuilt) || new Date().getFullYear(),
+            images: form.images.length > 0 ? form.images : defaultImages,
+            features: [],
+            amenities: form.amenities,
+            featured: false,
+        };
+
+        const res = id 
+            ? await propertyService.updateProperty(id, propertyData)
+            : await propertyService.create(propertyData, user?.id);
 
         setSubmitting(false);
         if (res.success) {
-            toast.success("تم نشر العقار بنجاح في قاعدة البيانات والتخزين (Supabase)!", {
-                description: "العقار الآن معروض ومتاح لتصفح الزوار والعملاء.",
+            toast.success(id ? "تم تعديل العقار بنجاح!" : "تم نشر العقار بنجاح في قاعدة البيانات والتخزين (Supabase)!", {
+                description: id ? "التعديلات متاحة الآن للزوار." : "العقار الآن معروض ومتاح لتصفح الزوار والعملاء.",
             });
             navigate("/dashboard");
         } else {
-            toast.error("حدث خطأ أثناء حفظ العقار: " + res.error);
+            toast.error("حدث خطأ أثناء الحفظ: " + res.error);
         }
     };
 
+    if (loadingEdit) {
+        return (
+            <div className="min-h-screen bg-aqar-base flex flex-col">
+                <Header />
+                <div className="flex-1 flex items-center justify-center">
+                    <Loader2 size={32} className="animate-spin text-aqar-cyan" />
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-aqar-base text-start">
+        <div className="min-h-screen bg-aqar-base flex flex-col">
             <Header />
             <div className="pt-16">
                 <div className="border-b border-aqar-border bg-aqar-surface/30">

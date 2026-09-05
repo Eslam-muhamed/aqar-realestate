@@ -138,14 +138,59 @@ export const propertyService = {
     },
 
     /**
-     * Get property by slug
+     * Update an existing property
+     */
+    async updateProperty(id: string, input: Partial<CreatePropertyInput>) {
+        try {
+            const updateData: any = { ...input };
+            
+            // Clean up structured data to match DB columns if present
+            if (input.city) updateData.city = input.city;
+            if (input.district) updateData.district = input.district;
+            if (input.address) updateData.address = input.address;
+
+            const { data, error } = await supabase
+                .from("properties")
+                .update(updateData)
+                .eq("id", id)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { success: true, data };
+        } catch (err: any) {
+            console.error("Error updating property in Supabase:", err);
+            return { success: false, error: err.message };
+        }
+    },
+
+    /**
+     * Delete a property
+     */
+    async deleteProperty(id: string) {
+        try {
+            const { error } = await supabase
+                .from("properties")
+                .delete()
+                .eq("id", id);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (err: any) {
+            console.error("Error deleting property in Supabase:", err);
+            return { success: false, error: err.message };
+        }
+    },
+
+    /**
+     * Get property by slug or ID
      */
     async getBySlug(slug: string): Promise<Property | null> {
         try {
             const { data, error } = await supabase
                 .from("properties")
                 .select("*")
-                .eq("slug", slug)
+                .or(`slug.eq.${slug},id.eq.${slug}`)
                 .single();
 
             if (error || !data) return null;
