@@ -40,6 +40,14 @@ export default function Properties() {
         return () => clearTimeout(t);
     }, []);
 
+    // Sync URL search params to local filters state
+    useEffect(() => {
+        const newStatus = searchParams.get("status") as FilterState["status"];
+        if (newStatus) {
+            setFilters(prev => ({ ...prev, status: newStatus }));
+        }
+    }, [searchParams]);
+
     const filtered = useMemo(() => {
         let results = [...MOCK_PROPERTIES];
         if (filters.status !== "all") results = results.filter((p) => p.status === filters.status);
