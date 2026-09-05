@@ -20,6 +20,10 @@ i18n
     }
   });
 
+// Set initial direction and language
+document.documentElement.dir = i18n.dir(i18n.language);
+document.documentElement.lang = i18n.language;
+
 // Automatically switch layout direction based on language
 i18n.on('languageChanged', (lng) => {
   document.documentElement.dir = i18n.dir(lng);
