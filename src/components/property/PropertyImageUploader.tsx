@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Upload, X, RefreshCw, Loader2, Image as ImageIcon, Star } from "lucide-react";
-import { cloudinaryService } from "@/services/cloudinaryService";
+import { storageService } from "@/services/storageService";
 import { toast } from "sonner";
 
 interface PropertyImageUploaderProps {
@@ -24,13 +24,22 @@ export default function PropertyImageUploader({
 
     // Handle new images upload
     const handleFiles = async (files: FileList | File[]) => {
-        const fileArray = Array.from(files).filter((f) => f.type.startsWith("image/"));
+        const fileArray = Array.from(files).filter((f) => f.type.startsWith("image/") || f.type.startsWith("video/"));
         if (fileArray.length === 0) {
-            toast.error("يرجى اختيار ملفات صور صالحة (JPG, PNG, WebP)");
+            toast.error("يرجى اختيار ملفات صور أو فيديو صالحة (JPG, PNG, WebP, MP4)");
             return;
         }
 
-        if (images.length + fileArray.length > maxImages) {
+        const MAX_SIZE_MB = 10;
+        const validFiles = fileArray.filter(f => f.size <= MAX_SIZE_MB * 1024 * 1024);
+        
+        if (validFiles.length < fileArray.length) {
+            toast.error(`تم استبعاد بعض الملفات لأن حجمها يتجاوز ${MAX_SIZE_MB} ميجابايت.`);
+        }
+
+        if (validFiles.length === 0) return;
+
+        if (images.length + validFiles.length > maxImages) {
             toast.error(`الحد الأقصى لعدد الصور هو ${maxImages} صور.`);
             return;
         }
@@ -39,10 +48,10 @@ export default function PropertyImageUploader({
         const newUploadedUrls: string[] = [];
         let failedCount = 0;
 
-        for (let i = 0; i < fileArray.length; i++) {
-            const file = fileArray[i];
-            const toastId = toast.loading(`جارٍ رفع الصورة (${i + 1}/${fileArray.length}) إلى Cloudinary...`);
-            const res = await cloudinaryService.uploadImage(file);
+        for (let i = 0; i < validFiles.length; i++) {
+            const file = validFiles[i];
+            const toastId = toast.loading(`جارٍ رفع الملف (${i + 1}/${validFiles.length}) إلى Supabase...`);
+            const res = await storageService.uploadImage(file);
             toast.dismiss(toastId);
 
             if (res.success && res.url) {
@@ -56,11 +65,11 @@ export default function PropertyImageUploader({
 
         if (newUploadedUrls.length > 0) {
             onChange([...images, ...newUploadedUrls]);
-            toast.success(`تم رفع ${newUploadedUrls.length} صورة بنجاح إلى Cloudinary!`);
+            toast.success(`تم رفع ${newUploadedUrls.length} ملف بنجاح إلى Supabase!`);
         }
 
         if (failedCount > 0) {
-            toast.error(`فشل رفع ${failedCount} صورة. يرجى المحاولة مرة أخرى.`);
+            toast.error(`فشل رفع ${failedCount} ملف. يرجى المحاولة مرة أخرى.`);
         }
     };
 
@@ -73,17 +82,23 @@ export default function PropertyImageUploader({
         }
     };
 
-    // Execute Smart Replacement: delete old from Cloudinary and store new
+    // Execute Smart Replacement: delete old from Supabase and store new
     const handleReplaceFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         const index = targetReplaceIndexRef.current;
         if (!file || index === null || index === undefined) return;
 
+        const MAX_SIZE_MB = 10;
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+            toast.error(`حجم الملف يتجاوز الحد الأقصى (${MAX_SIZE_MB} ميجابايت).`);
+            return;
+        }
+
         const oldUrl = images[index];
         setReplacingIndex(index);
 
-        const toastId = toast.loading("جارٍ حذف الصورة القديمة من Cloudinary ورفع الصورة الجديدة...");
-        const res = await cloudinaryService.replaceImage(oldUrl, file);
+        const toastId = toast.loading("جارٍ استبدال الملف في Supabase...");
+        const res = await storageService.replaceImage(oldUrl, file);
         toast.dismiss(toastId);
 
         setReplacingIndex(null);
@@ -93,23 +108,23 @@ export default function PropertyImageUploader({
             const updated = [...images];
             updated[index] = res.url;
             onChange(updated);
-            toast.success("تم استبدال الصورة بنجاح وحذف القديمة من Cloudinary!");
+            toast.success("تم استبدال الصورة بنجاح وحذف القديمة من Supabase!");
         } else {
             toast.error("فشل استبدال الصورة: " + (res.error || "خطأ غير معروف"));
         }
     };
 
-    // Delete single image from Cloudinary & state
+    // Delete single image from Supabase & state
     const handleDelete = async (index: number) => {
         const urlToDelete = images[index];
-        const toastId = toast.loading("جارٍ حذف الصورة من Cloudinary...");
+        const toastId = toast.loading("جارٍ حذف الصورة من Supabase...");
 
-        await cloudinaryService.deleteImage(urlToDelete);
+        await storageService.deleteImage(urlToDelete);
         toast.dismiss(toastId);
 
         const updated = images.filter((_, i) => i !== index);
         onChange(updated);
-        toast.success("تم حذف الصورة من Cloudinary");
+        toast.success("تم حذف الصورة من Supabase");
     };
 
     // Make image cover (index 0)
@@ -127,7 +142,7 @@ export default function PropertyImageUploader({
             <input
                 ref={replaceInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/*,video/*"
                 className="hidden"
                 onChange={handleReplaceFileChange}
             />
@@ -137,7 +152,7 @@ export default function PropertyImageUploader({
                 ref={fileInputRef}
                 type="file"
                 multiple
-                accept="image/*"
+                accept="image/*,video/*"
                 className="hidden"
                 onChange={(e) => e.target.files && handleFiles(e.target.files)}
             />
@@ -164,7 +179,7 @@ export default function PropertyImageUploader({
                 {uploading ? (
                     <div className="flex flex-col items-center justify-center py-4">
                         <Loader2 size={36} className="text-aqar-cyan animate-spin mb-3" />
-                        <p className="text-aqar-text text-sm font-bold">جارٍ رفع الصور إلى Cloudinary...</p>
+                        <p className="text-aqar-text text-sm font-bold">جارٍ رفع الصور إلى Supabase Storage...</p>
                         <p className="text-aqar-muted text-xs mt-1">يتم معالجة وتأمين الصور سحابياً</p>
                     </div>
                 ) : (
@@ -172,9 +187,9 @@ export default function PropertyImageUploader({
                         <div className="w-14 h-14 rounded-2xl bg-aqar-cyan/10 border border-aqar-cyan/30 flex items-center justify-center text-aqar-cyan mb-3">
                             <Upload size={24} />
                         </div>
-                        <p className="text-aqar-text text-sm font-bold">اسحب وأفلت صور العقار هنا، أو اضغط للاختيار</p>
+                        <p className="text-aqar-text text-sm font-bold">اسحب وأفلت صور أو فيديوهات العقار هنا، أو اضغط للاختيار</p>
                         <p className="text-aqar-muted text-xs mt-1.5">
-                            يتم رفعها مباشرة إلى Cloudinary (JPG, PNG, WebP) — متاح حتى {maxImages} صور
+                            يتم رفعها مباشرة إلى Supabase Storage (JPG, PNG, WebP, MP4) — متاح حتى {maxImages} ملفات
                         </p>
                     </div>
                 )}
@@ -197,11 +212,22 @@ export default function PropertyImageUploader({
                                     key={`${url}-${index}`}
                                     className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-aqar-border bg-aqar-base"
                                 >
-                                    <img
-                                        src={url}
-                                        alt={`عقار ${index + 1}`}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                    />
+                                    {url.match(/\.(mp4|webm|mov|ogg)$/i) ? (
+                                        <video
+                                            src={url}
+                                            className="w-full h-full object-cover"
+                                            controls={false}
+                                            autoPlay
+                                            muted
+                                            loop
+                                        />
+                                    ) : (
+                                        <img
+                                            src={url}
+                                            alt={`عقار ${index + 1}`}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                    )}
 
                                     {/* Primary Badge */}
                                     {index === 0 && (
@@ -243,7 +269,7 @@ export default function PropertyImageUploader({
                                                         e.stopPropagation();
                                                         handleDelete(index);
                                                     }}
-                                                    title="حذف نهائي من Cloudinary"
+                                                    title="حذف نهائي من Supabase"
                                                     className="p-1.5 bg-[#FF453A]/80 hover:bg-[#FF453A] text-aqar-text rounded-lg transition-colors"
                                                 >
                                                     <X size={12} />

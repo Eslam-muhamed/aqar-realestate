@@ -15,7 +15,7 @@ const STEPS = [
     { num: 3, label: "المواصفات" },
     { num: 4, label: "السعر" },
     { num: 5, label: "المميزات" },
-    { num: 6, label: "الصور (Cloudinary)" },
+    { num: 6, label: "الصور (Supabase)" },
     { num: 7, label: "المراجعة والنشر" },
 ];
 
@@ -96,7 +96,7 @@ export default function ListProperty() {
 
         setSubmitting(false);
         if (res.success) {
-            toast.success("تم نشر العقار بنجاح في Supabase و Cloudinary!", {
+            toast.success("تم نشر العقار بنجاح في قاعدة البيانات والتخزين (Supabase)!", {
                 description: "العقار الآن معروض ومتاح لتصفح الزوار والعملاء.",
             });
             navigate("/dashboard");
@@ -116,7 +116,7 @@ export default function ListProperty() {
                             <h1 className="text-aqar-text text-3xl font-bold">إضافة عقار جديد</h1>
                         </div>
                         <p className="text-aqar-muted text-sm">
-                            قم بإدخال بيانات العقار ورفع الصور مباشرة إلى Cloudinary مع إمكانية استبدال الصور لاحقاً.
+                            قم بإدخال بيانات العقار ورفع الصور مباشرة إلى مساحة التخزين الخاصة بك مع إمكانية استبدال الصور لاحقاً.
                         </p>
                     </div>
                 </div>
@@ -363,12 +363,12 @@ export default function ListProperty() {
                             </div>
                         )}
 
-                        {/* Step 6: Images (Cloudinary Uploader & Smart Replacement) */}
+                        {/* Step 6: Images (Supabase Storage) */}
                         {step === 6 && (
                             <div>
-                                <h2 className="text-aqar-text font-bold text-xl mb-2">صور العقار (سحابة Cloudinary)</h2>
+                                <h2 className="text-aqar-text font-bold text-xl mb-2">صور العقار (سحابة Supabase)</h2>
                                 <p className="text-aqar-muted text-sm mb-6">
-                                    ارفع صور العقار هنا. عند استبدال أي صورة، يتم حذف القديمة نهائياً من Cloudinary لتوفير المساحة وتجنب التكرار.
+                                    ارفع صور العقار هنا. عند استبدال أي صورة، يتم حذف القديمة نهائياً من التخزين لتوفير المساحة وتجنب التكرار.
                                 </p>
                                 <PropertyImageUploader
                                     images={form.images}
@@ -391,7 +391,7 @@ export default function ListProperty() {
                                         { label: "السعر", value: `${Number(form.price || 0).toLocaleString()} ${form.currency}` },
                                         { label: "الغرف والدورات", value: `${form.bedrooms} غرف · ${form.bathrooms} دورات مياه` },
                                         { label: "المساحة", value: `${form.area} م²` },
-                                        { label: "عدد الصور المرفوعة على Cloudinary", value: `${form.images.length} صورة` },
+                                        { label: "عدد الصور المرفوعة", value: `${form.images.length} صورة` },
                                         { label: "المميزات", value: form.amenities.join("، ") || "لا توجد" },
                                     ].map(({ label, value }) => (
                                         <div key={label} className="flex items-start justify-between gap-4 px-5 py-4 text-xs">
