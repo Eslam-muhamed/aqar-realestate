@@ -246,7 +246,8 @@ export default function PropertyImageUploader({
 
                                     {/* Action buttons overlay */}
                                     {!isReplacing && (
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
+                                        /* Actions overlay - always visible on mobile, hover only on desktop */
+                                        <div className="absolute inset-0 bg-black/40 lg:bg-black/60 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
                                             {/* Top actions */}
                                             <div className="flex items-center justify-between">
                                                 {index !== 0 ? (

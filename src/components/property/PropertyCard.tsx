@@ -62,7 +62,7 @@ export default function PropertyCard({ property, className }: Props) {
                     </div>
 
                     {/* Actions */}
-                    <div className="absolute top-3 end-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="absolute top-3 end-3 flex flex-col gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
                         <button onClick={handleFavorite} aria-label="حفظ في المفضلة"
                             className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
                                 fav ? "bg-[#FF453A] text-aqar-text" : "bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-[#FF453A]"
