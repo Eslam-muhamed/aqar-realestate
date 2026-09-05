@@ -13,40 +13,43 @@ export default function LocationDetail() {
 
     if (!location) {
         return (
-            <div className="min-h-screen bg-[#121212]">
+            <div className="min-h-screen bg-[#121212]" dir="rtl">
                 <Header />
                 <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
-                        <p className="text-white text-lg">Location not found.</p>
-                        <Link to="/locations" className="text-[#00E5FF] text-sm mt-4 block">← Back to Locations</Link>
+                        <p className="text-white text-lg">لم يتم العثور على الموقع.</p>
+                        <Link to="/locations" className="text-[#00E5FF] text-sm mt-4 block">العودة للمناطق →</Link>
                     </div>
                 </div>
             </div>
         );
     }
 
+    const countryMap: Record<string, string> = { "Saudi Arabia": "السعودية", "UAE": "الإمارات", "Egypt": "مصر", "Oman": "عُمان", "Kuwait": "الكويت" };
+    const nameMap: Record<string, string> = { Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت" };
+
     return (
-        <div className="min-h-screen bg-[#121212]">
+        <div className="min-h-screen bg-[#121212] text-right" dir="rtl">
             <Header />
             <div className="pt-16">
                 {/* Hero */}
                 <div className="relative h-80 overflow-hidden">
                     <img src={location.image} alt={location.name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/50 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 max-w-[1440px] mx-auto px-6 lg:px-12 pb-10">
+                    <div className="absolute bottom-0 start-0 end-0 max-w-[1440px] mx-auto px-6 lg:px-12 pb-10">
                         <div className="flex items-center gap-2 mb-3">
-                            <Link to="/locations" className="text-[#98989D] text-sm hover:text-white transition-colors">Locations</Link>
+                            <Link to="/locations" className="text-[#98989D] text-sm hover:text-white transition-colors">المناطق</Link>
                             <span className="text-[#98989D]">/</span>
-                            <span className="text-white text-sm">{location.name}</span>
+                            <span className="text-white text-sm">{nameMap[location.name] || location.name}</span>
                         </div>
-                        <h1 className="text-white text-4xl font-bold mb-2">{location.name}</h1>
+                        <h1 className="text-white text-4xl font-bold mb-2">{nameMap[location.name] || location.name}</h1>
                         <div className="flex items-center gap-2 text-[#98989D] text-sm">
                             <MapPin size={13} className="text-[#00E5FF]" />
-                            <span>{location.country}</span>
+                            <span>{countryMap[location.country] || location.country}</span>
                             <span>·</span>
-                            <span className="font-mono">{location.properties} listings</span>
+                            <span className="font-mono">{location.properties} عقارات</span>
                             <span>·</span>
-                            <span>Avg {formatPrice(location.avgPrice, "SAR")}</span>
+                            <span dir="ltr">متوسط {formatPrice(location.avgPrice, "SAR")}</span>
                         </div>
                     </div>
                 </div>
@@ -54,9 +57,9 @@ export default function LocationDetail() {
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
                     <div className="mb-8">
                         <h2 className="text-white font-semibold text-xl mb-2">
-                            Properties in {location.name}
+                            العقارات في {nameMap[location.name] || location.name}
                         </h2>
-                        <p className="text-[#98989D] text-sm">{properties.length} properties available</p>
+                        <p className="text-[#98989D] text-sm">يوجد {properties.length} عقار متاح</p>
                     </div>
 
                     {properties.length > 0 ? (
@@ -65,9 +68,9 @@ export default function LocationDetail() {
                         </div>
                     ) : (
                         <div className="py-20 text-center">
-                            <p className="text-[#98989D] text-sm mb-4">No properties listed for this location yet.</p>
-                            <Link to="/properties" className="inline-flex items-center gap-2 text-[#00E5FF] text-sm">
-                                View all properties <ArrowRight size={14} />
+                            <p className="text-[#98989D] text-sm mb-4">لا توجد عقارات مدرجة في هذا الموقع حتى الآن.</p>
+                            <Link to="/properties" className="inline-flex items-center gap-2 text-[#00E5FF] text-sm group">
+                                عرض جميع العقارات <ArrowRight size={14} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
                             </Link>
                         </div>
                     )}

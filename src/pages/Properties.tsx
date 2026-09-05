@@ -15,10 +15,10 @@ const DEFAULT_FILTERS: FilterState = {
 };
 
 const SORT_OPTIONS = [
-    { value: "newest", label: "Newest First" },
-    { value: "price-asc", label: "Price: Low to High" },
-    { value: "price-desc", label: "Price: High to Low" },
-    { value: "area-desc", label: "Largest Area" },
+    { value: "newest", label: "الأحدث أولاً" },
+    { value: "price-asc", label: "السعر: من الأقل للأعلى" },
+    { value: "price-desc", label: "السعر: من الأعلى للأقل" },
+    { value: "area-desc", label: "المساحة الأكبر" },
 ];
 
 export default function Properties() {
@@ -71,15 +71,15 @@ export default function Properties() {
                 <div className="border-b border-[#2C2C2E] bg-[#1E1E1E]/50">
                     <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-5 flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-white font-semibold text-lg">Properties</h1>
+                            <h1 className="text-white font-semibold text-lg">العقارات</h1>
                             <p className="text-[#98989D] text-xs mt-0.5">
-                                {loading ? "Loading..." : `${filtered.length} properties found`}
+                                {loading ? "جاري التحميل..." : `تم العثور على ${filtered.length} عقار`}
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
                             <button onClick={() => setMobileFilters(true)}
                                 className="lg:hidden flex items-center gap-2 px-4 py-2 border border-[#2C2C2E] rounded-xl text-sm text-[#98989D] hover:text-white">
-                                <SlidersHorizontal size={14} /> Filters
+                                <SlidersHorizontal size={14} /> فلاتر
                             </button>
                             <select value={sort} onChange={(e) => setSort(e.target.value)}
                                 className="px-3 py-2 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-white focus:outline-none">
@@ -117,13 +117,13 @@ export default function Properties() {
                                     <div className="w-16 h-16 border border-[#2C2C2E] rounded-2xl flex items-center justify-center mb-6">
                                         <SlidersHorizontal size={24} className="text-[#98989D]" />
                                     </div>
-                                    <h3 className="text-white font-semibold text-lg mb-2">No properties found</h3>
+                                    <h3 className="text-white font-semibold text-lg mb-2">لم يتم العثور على عقارات</h3>
                                     <p className="text-[#98989D] text-sm max-w-sm">
-                                        Try adjusting your search filters to see more results.
+                                        حاول تعديل فلاتر البحث لرؤية المزيد من النتائج.
                                     </p>
                                     <button onClick={() => setFilters(DEFAULT_FILTERS)}
                                         className="mt-6 px-5 py-2.5 border border-[#2C2C2E] text-sm text-white rounded-xl hover:border-[#00E5FF]/40">
-                                        Clear filters
+                                        مسح الفلاتر
                                     </button>
                                 </div>
                             ) : (
@@ -140,9 +140,9 @@ export default function Properties() {
             {mobileFilters && (
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black/60" onClick={() => setMobileFilters(false)} />
-                    <div className="absolute bottom-0 left-0 right-0 bg-[#121212] rounded-t-2xl max-h-[85vh] overflow-y-auto p-6">
+                    <div className="absolute bottom-0 inset-x-0 bg-[#121212] rounded-t-2xl max-h-[85vh] overflow-y-auto p-6">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-white font-semibold">Filters</h3>
+                            <h3 className="text-white font-semibold">فلاتر</h3>
                             <button onClick={() => setMobileFilters(false)}>
                                 <X size={20} className="text-[#98989D]" />
                             </button>

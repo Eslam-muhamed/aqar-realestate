@@ -159,10 +159,10 @@ export default function Dashboard() {
 
     // Navigation Tabs definition based on role
     const adminNavTabs = [
-        { id: "overview", label: "نظرة عامة (Overview)", icon: LayoutDashboard },
-        { id: "leads", label: "مركز العملاء (Leads Hub)", icon: MessageSquare, badge: unassignedCount > 0 ? unassignedCount : undefined },
-        { id: "supervisors", label: "فريق المشرفين (Supervisors)", icon: Users },
-        { id: "properties", label: "العقارات (Listings)", icon: Home },
+        { id: "overview", label: "نظرة عامة", icon: LayoutDashboard },
+        { id: "leads", label: "مركز العملاء", icon: MessageSquare, badge: unassignedCount > 0 ? unassignedCount : undefined },
+        { id: "supervisors", label: "فريق المشرفين", icon: Users },
+        { id: "properties", label: "العقارات", icon: Home },
         { id: "settings", label: "الإعدادات", icon: Settings },
     ];
 
@@ -196,7 +196,7 @@ export default function Dashboard() {
                                                 : "bg-[#00E5FF]/10 text-[#00E5FF] border-[#00E5FF]/30"
                                         }`}
                                     >
-                                        {isAdmin ? "مدير المكتب (Admin)" : "مشرف عقارات (Supervisor)"}
+                                        {isAdmin ? "مدير المكتب" : "مشرف عقارات"}
                                     </span>
                                 </div>
                                 <p className="text-[#98989D] text-sm mt-1">
@@ -414,7 +414,7 @@ export default function Dashboard() {
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div>
                                             <h2 className="text-white text-xl font-bold">
-                                                {isAdmin ? "مركز إدارة وتوزيع الـ Leads" : "العملاء المكلف بهم (My Leads)"}
+                                                {isAdmin ? "مركز إدارة وتوزيع العملاء" : "العملاء المكلف بهم"}
                                             </h2>
                                             <p className="text-[#98989D] text-xs mt-1">
                                                 {isAdmin

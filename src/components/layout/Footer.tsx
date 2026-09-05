@@ -2,24 +2,24 @@ import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Twitter, Linkedin, Instagram } from "lucide-react";
 
 const FOOTER_LINKS = {
-    Properties: [
-        { label: "Villas for Sale", href: "/properties?type=villa" },
-        { label: "Apartments", href: "/properties?type=apartment" },
-        { label: "Penthouses", href: "/properties?type=penthouse" },
-        { label: "For Rent", href: "/properties?status=for-rent" },
-        { label: "New Listings", href: "/properties" },
+    "العقارات": [
+        { label: "فلل للبيع", href: "/properties?type=villa" },
+        { label: "شقق", href: "/properties?type=apartment" },
+        { label: "بنتهاوس", href: "/properties?type=penthouse" },
+        { label: "للإيجار", href: "/properties?status=for-rent" },
+        { label: "أحدث العقارات", href: "/properties" },
     ],
-    Company: [
-        { label: "About Aqar", href: "/about" },
-        { label: "Our Agents", href: "/agents" },
-        { label: "Locations", href: "/locations" },
-        { label: "Contact", href: "/contact" },
-        { label: "List Property", href: "/list-property" },
+    "الشركة": [
+        { label: "عن عقار", href: "/about" },
+        { label: "وكلاؤنا", href: "/agents" },
+        { label: "المناطق", href: "/locations" },
+        { label: "اتصل بنا", href: "/contact" },
+        { label: "أضف عقارك", href: "/list-property" },
     ],
-    Legal: [
-        { label: "Privacy Policy", href: "#" },
-        { label: "Terms of Service", href: "#" },
-        { label: "Cookie Policy", href: "#" },
+    "قانوني": [
+        { label: "سياسة الخصوصية", href: "#" },
+        { label: "شروط الخدمة", href: "#" },
+        { label: "سياسة ملفات تعريف الارتباط", href: "#" },
     ],
 };
 
@@ -32,21 +32,21 @@ export default function Footer() {
                     <div className="lg:col-span-2">
                         <div className="flex items-center gap-2 mb-5">
                             <div className="w-7 h-7 bg-[#00E5FF] rounded-sm flex items-center justify-center">
-                                <span className="text-[#121212] font-bold text-xs font-mono">AQ</span>
+                                <span className="text-[#121212] font-bold text-xs font-mono">ع</span>
                             </div>
-                            <span className="text-white font-semibold text-lg">Aqar</span>
+                            <span className="text-white font-semibold text-lg">عقار</span>
                         </div>
                         <p className="text-[#98989D] text-sm leading-relaxed max-w-sm">
-                            A curated marketplace for premium residential properties across Saudi Arabia and the MENA region.
+                            منصة منتقاة للعقارات السكنية الفاخرة في جميع أنحاء المملكة العربية السعودية والشرق الأوسط.
                         </p>
                         <div className="mt-6 space-y-3">
                             <div className="flex items-center gap-3 text-sm text-[#98989D]">
                                 <MapPin size={14} className="text-[#00E5FF] shrink-0" />
-                                <span>King Fahd Road, Riyadh 12211, Saudi Arabia</span>
+                                <span>طريق الملك فهد، الرياض 12211، المملكة العربية السعودية</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm text-[#98989D]">
                                 <Phone size={14} className="text-[#00E5FF] shrink-0" />
-                                <span>+966 11 000 0000</span>
+                                <span dir="ltr">+966 11 000 0000</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm text-[#98989D]">
                                 <Mail size={14} className="text-[#00E5FF] shrink-0" />
@@ -80,10 +80,10 @@ export default function Footer() {
                 </div>
 
                 <div className="mt-12 pt-6 border-t border-[#2C2C2E] flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-[#98989D] text-xs">© 2026 Aqar. All rights reserved.</p>
+                    <p className="text-[#98989D] text-xs">© 2026 عقار. جميع الحقوق محفوظة.</p>
                     <p className="text-[#98989D] text-xs">
-                        Licensed by the Real Estate General Authority · License No.{" "}
-                        <span className="font-mono text-[#98989D]">REGA-2024-1054</span>
+                        مرخص من الهيئة العامة للعقار · ترخيص رقم{" "}
+                        <span className="font-mono text-[#98989D]" dir="ltr">REGA-2024-1054</span>
                     </p>
                 </div>
             </div>

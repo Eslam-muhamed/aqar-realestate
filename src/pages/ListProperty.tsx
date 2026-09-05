@@ -20,9 +20,17 @@ const STEPS = [
 ];
 
 const AMENITIES_LIST = [
-    "Swimming Pool", "Gym", "Garden", "Parking", "Maid Room", "Driver Room",
-    "Home Cinema", "Smart Home", "Solar Panels", "EV Charging", "Security System", "Backup Generator",
+    "مسبح", "نادي رياضي", "حديقة", "مواقف سيارات", "غرفة خادمة", "غرفة سائق",
+    "سينما منزلية", "منزل ذكي", "ألواح طاقة شمسية", "شحن سيارات كهربائية", "نظام أمني", "مولد احتياطي",
 ];
+
+const TYPE_LABELS: Record<string, string> = {
+    Villa: "فيلا", Apartment: "شقة", Penthouse: "بنتهاوس", Townhouse: "تاون هاوس", Duplex: "دوبلكس", Commercial: "تجاري"
+};
+
+const CITY_LABELS: Record<string, string> = {
+    Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت"
+};
 
 export default function ListProperty() {
     const navigate = useNavigate();
@@ -153,7 +161,7 @@ export default function ListProperty() {
                                                     : "border-[#2C2C2E] text-[#98989D] hover:text-white"
                                             }`}
                                         >
-                                            {t}
+                                            {TYPE_LABELS[t] || t}
                                         </button>
                                     ))}
                                 </div>
@@ -190,7 +198,7 @@ export default function ListProperty() {
                                         >
                                             {CITIES.map((c) => (
                                                 <option key={c} value={c}>
-                                                    {c}
+                                                    {CITY_LABELS[c] || c}
                                                 </option>
                                             ))}
                                         </select>
@@ -377,8 +385,8 @@ export default function ListProperty() {
                                 <p className="text-[#98989D] text-sm mb-6">تأكد من صحة البيانات قبل حفظها ونشرها في الموقع.</p>
                                 <div className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl divide-y divide-[#2C2C2E] overflow-hidden mb-6">
                                     {[
-                                        { label: "نوع العقار", value: `${form.type} · ${form.status === "for-sale" ? "للبيع" : "للإيجار"}` },
-                                        { label: "الموقع", value: `${form.district || "—"}، ${form.city}` },
+                                        { label: "نوع العقار", value: `${TYPE_LABELS[form.type.charAt(0).toUpperCase() + form.type.slice(1)] || form.type} · ${form.status === "for-sale" ? "للبيع" : "للإيجار"}` },
+                                        { label: "الموقع", value: `${form.district || "—"}، ${CITY_LABELS[form.city] || form.city}` },
                                         { label: "عنوان الإعلان", value: form.title || "—" },
                                         { label: "السعر", value: `${Number(form.price || 0).toLocaleString()} ${form.currency}` },
                                         { label: "الغرف والدورات", value: `${form.bedrooms} غرف · ${form.bathrooms} دورات مياه` },

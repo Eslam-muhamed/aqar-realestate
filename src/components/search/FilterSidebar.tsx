@@ -25,14 +25,17 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
         bedrooms: "", bathrooms: "", areaMin: "", furnished: false, parking: false, pool: false, garden: false,
     });
 
+    const typeMap: Record<string, string> = { Villa: "فيلا", Apartment: "شقة", Penthouse: "بنتهاوس", Townhouse: "تاون هاوس", Duplex: "دوبلكس", Commercial: "تجاري" };
+    const cityMap: Record<string, string> = { Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت" };
+
     return (
-        <aside className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl p-6">
+        <aside className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl p-6 text-right" dir="rtl">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-sm">Filters</h3>
+                <h3 className="text-white font-semibold text-sm">الفلاتر</h3>
                 <div className="flex items-center gap-2">
                     {hasActive && (
                         <button onClick={clear} className="text-xs text-[#00E5FF] hover:text-[#00E5FF]/80 transition-colors">
-                            Clear all
+                            مسح الكل
                         </button>
                     )}
                     {onClose && (
@@ -46,7 +49,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
             <div className="space-y-6">
                 {/* Status */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3">Listing Type</p>
+                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">نوع العرض</p>
                     <div className="flex gap-2">
                         {(["all", "for-sale", "for-rent"] as const).map((s) => (
                             <button key={s} onClick={() => set("status", s)}
@@ -54,7 +57,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                                         ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]"
                                         : "border-[#2C2C2E] text-[#98989D] hover:text-white"
                                     }`}>
-                                {s === "all" ? "All" : s === "for-sale" ? "Sale" : "Rent"}
+                                {s === "all" ? "الكل" : s === "for-sale" ? "للبيع" : "للإيجار"}
                             </button>
                         ))}
                     </div>
@@ -62,17 +65,17 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Location */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3">Location</p>
+                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">الموقع</p>
                     <select value={filters.location} onChange={(e) => set("location", e.target.value)}
                         className="w-full px-3 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-lg text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none">
-                        <option value="">Any City</option>
-                        {CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                        <option value="">أي مدينة</option>
+                        {CITIES.map((c) => <option key={c} value={c}>{cityMap[c] || c}</option>)}
                     </select>
                 </div>
 
                 {/* Type */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3">Property Type</p>
+                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">نوع العقار</p>
                     <div className="grid grid-cols-2 gap-2">
                         {PROPERTY_TYPES.map((t) => (
                             <button key={t} onClick={() => set("type", filters.type === t.toLowerCase() ? "" : t.toLowerCase())}
@@ -80,7 +83,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                                         ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]"
                                         : "border-[#2C2C2E] text-[#98989D] hover:text-white"
                                     }`}>
-                                {t}
+                                {typeMap[t] || t}
                             </button>
                         ))}
                     </div>
@@ -88,25 +91,25 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Price */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3">Max Price (SAR)</p>
+                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">الحد الأقصى للسعر (ر.س)</p>
                     <select value={filters.priceMax} onChange={(e) => set("priceMax", e.target.value)}
-                        className="w-full px-3 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-lg text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none">
-                        <option value="">No limit</option>
+                        className="w-full px-3 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-lg text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none" dir="ltr">
+                        <option value="">بدون حد</option>
                         {PRICE_OPTIONS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
                     </select>
                 </div>
 
                 {/* Bedrooms */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3">Min Bedrooms</p>
+                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">الحد الأدنى لغرف النوم</p>
                     <div className="flex gap-1.5 flex-wrap">
                         {["Studio", "1", "2", "3", "4", "5+"].map((b) => (
                             <button key={b} onClick={() => set("bedrooms", filters.bedrooms === b ? "" : b)}
                                 className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${filters.bedrooms === b
                                         ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]"
                                         : "border-[#2C2C2E] text-[#98989D] hover:text-white"
-                                    }`}>
-                                {b}
+                                    }`} dir="ltr">
+                                {b === "Studio" ? "استوديو" : b}
                             </button>
                         ))}
                     </div>
@@ -114,19 +117,19 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Amenities */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3">Amenities</p>
+                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">المميزات</p>
                     <div className="space-y-2.5">
                         {[
-                            { key: "furnished" as const, label: "Furnished" },
-                            { key: "parking" as const, label: "Parking" },
-                            { key: "pool" as const, label: "Swimming Pool" },
-                            { key: "garden" as const, label: "Garden" },
+                            { key: "furnished" as const, label: "مفروشة" },
+                            { key: "parking" as const, label: "موقف سيارات" },
+                            { key: "pool" as const, label: "مسبح" },
+                            { key: "garden" as const, label: "حديقة" },
                         ].map(({ key, label }) => (
                             <label key={key} className="flex items-center justify-between cursor-pointer group">
                                 <span className={`text-sm transition-colors ${filters[key] ? "text-white" : "text-[#98989D] group-hover:text-white"}`}>{label}</span>
                                 <div onClick={() => set(key, !filters[key])}
                                     className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer ${filters[key] ? "bg-[#00E5FF]" : "bg-[#2C2C2E]"}`}>
-                                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${filters[key] ? "translate-x-4" : "translate-x-0.5"}`} />
+                                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${filters[key] ? "-translate-x-4" : "-translate-x-0.5"}`} />
                                 </div>
                             </label>
                         ))}

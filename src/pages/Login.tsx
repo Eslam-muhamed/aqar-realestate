@@ -110,12 +110,12 @@ export default function Login() {
                                     value={form.password}
                                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                                     placeholder="••••••••"
-                                    className="w-full px-4 py-3 pl-10 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/40 focus:border-[#00E5FF]/50 focus:outline-none"
+                                    className="w-full px-4 py-3 ps-10 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/40 focus:border-[#00E5FF]/50 focus:outline-none"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPass(!showPass)}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98989D] hover:text-white"
+                                    className="absolute start-3 top-1/2 -translate-y-1/2 text-[#98989D] hover:text-white"
                                 >
                                     {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
