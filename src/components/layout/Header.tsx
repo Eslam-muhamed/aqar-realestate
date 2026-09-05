@@ -170,6 +170,22 @@ export default function Header() {
                             {link.label}
                         </Link>
                     ))}
+                    <Link to="/favorites" className="flex items-center justify-between py-3 text-sm font-medium text-aqar-muted hover:text-aqar-text border-b border-aqar-border">
+                        <span>{t("nav.favorites")}</span>
+                        {favorites.length > 0 && (
+                            <span className="w-5 h-5 bg-aqar-cyan text-aqar-base rounded-full text-xs font-bold flex items-center justify-center">
+                                {favorites.length}
+                            </span>
+                        )}
+                    </Link>
+                    <Link to="/compare" className="flex items-center justify-between py-3 text-sm font-medium text-aqar-muted hover:text-aqar-text border-b border-aqar-border">
+                        <span>المقارنة</span>
+                        {compareList.length > 0 && (
+                            <span className="w-5 h-5 bg-aqar-cyan text-aqar-base rounded-full text-xs font-bold flex items-center justify-center">
+                                {compareList.length}
+                            </span>
+                        )}
+                    </Link>
                     <div className="pt-4 flex gap-3">
                         {user ? (
                             <button onClick={handleLogout} className="flex-1 py-2.5 border border-aqar-border text-sm text-aqar-danger rounded-md">{t("nav.logout")}</button>
