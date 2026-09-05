@@ -37,10 +37,13 @@ export default function Properties() {
 
     // Sync URL search params to local filters state
     useEffect(() => {
-        const newStatus = searchParams.get("status") as FilterState["status"];
-        if (newStatus) {
-            setFilters(prev => ({ ...prev, status: newStatus }));
-        }
+        setFilters(prev => ({
+            ...prev,
+            status: (searchParams.get("status") as FilterState["status"]) || "all",
+            location: searchParams.get("location") || "",
+            type: searchParams.get("type") || "",
+            bedrooms: searchParams.get("bedrooms") || "",
+        }));
     }, [searchParams]);
 
     const filtered = useMemo(() => {
