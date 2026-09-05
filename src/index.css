@@ -132,7 +132,7 @@
     body[dir="rtl"] *,
     html[dir="rtl"] *,
     [lang="ar"] * {
-        letter-spacing: normal !important;
+        letter-spacing: 0 !important;
     }
 
     .font-mono {
