@@ -29,17 +29,17 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
     const cityMap: Record<string, string> = { Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت" };
 
     return (
-        <aside className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl p-6 text-right" dir="rtl">
+        <aside className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 text-right" dir="rtl">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-sm">الفلاتر</h3>
+                <h3 className="text-aqar-text font-semibold text-sm">الفلاتر</h3>
                 <div className="flex items-center gap-2">
                     {hasActive && (
-                        <button onClick={clear} className="text-xs text-[#00E5FF] hover:text-[#00E5FF]/80 transition-colors">
+                        <button onClick={clear} className="text-xs text-aqar-cyan hover:text-aqar-cyan/80 transition-colors">
                             مسح الكل
                         </button>
                     )}
                     {onClose && (
-                        <button onClick={onClose} className="text-[#98989D] hover:text-white lg:hidden">
+                        <button onClick={onClose} className="text-aqar-muted hover:text-aqar-text lg:hidden">
                             <X size={16} />
                         </button>
                     )}
@@ -49,13 +49,13 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
             <div className="space-y-6">
                 {/* Status */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">نوع العرض</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">نوع العرض</p>
                     <div className="flex gap-2">
                         {(["all", "for-sale", "for-rent"] as const).map((s) => (
                             <button key={s} onClick={() => set("status", s)}
                                 className={`flex-1 py-2 text-xs font-medium rounded-lg border transition-colors ${filters.status === s
-                                        ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]"
-                                        : "border-[#2C2C2E] text-[#98989D] hover:text-white"
+                                        ? "border-aqar-cyan bg-aqar-cyan/10 text-aqar-cyan"
+                                        : "border-aqar-border text-aqar-muted hover:text-aqar-text"
                                     }`}>
                                 {s === "all" ? "الكل" : s === "for-sale" ? "للبيع" : "للإيجار"}
                             </button>
@@ -65,9 +65,9 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Location */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">الموقع</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">الموقع</p>
                     <select value={filters.location} onChange={(e) => set("location", e.target.value)}
-                        className="w-full px-3 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-lg text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none">
+                        className="w-full px-3 py-2.5 bg-aqar-base border border-aqar-border rounded-lg text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none">
                         <option value="">أي مدينة</option>
                         {CITIES.map((c) => <option key={c} value={c}>{cityMap[c] || c}</option>)}
                     </select>
@@ -75,13 +75,13 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Type */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">نوع العقار</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">نوع العقار</p>
                     <div className="grid grid-cols-2 gap-2">
                         {PROPERTY_TYPES.map((t) => (
                             <button key={t} onClick={() => set("type", filters.type === t.toLowerCase() ? "" : t.toLowerCase())}
                                 className={`py-2 text-xs font-medium rounded-lg border transition-colors ${filters.type === t.toLowerCase()
-                                        ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]"
-                                        : "border-[#2C2C2E] text-[#98989D] hover:text-white"
+                                        ? "border-aqar-cyan bg-aqar-cyan/10 text-aqar-cyan"
+                                        : "border-aqar-border text-aqar-muted hover:text-aqar-text"
                                     }`}>
                                 {typeMap[t] || t}
                             </button>
@@ -91,9 +91,9 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Price */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">الحد الأقصى للسعر (ر.س)</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">الحد الأقصى للسعر (ر.س)</p>
                     <select value={filters.priceMax} onChange={(e) => set("priceMax", e.target.value)}
-                        className="w-full px-3 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-lg text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none" dir="ltr">
+                        className="w-full px-3 py-2.5 bg-aqar-base border border-aqar-border rounded-lg text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none" dir="ltr">
                         <option value="">بدون حد</option>
                         {PRICE_OPTIONS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
                     </select>
@@ -101,13 +101,13 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Bedrooms */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">الحد الأدنى لغرف النوم</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">الحد الأدنى لغرف النوم</p>
                     <div className="flex gap-1.5 flex-wrap">
                         {["Studio", "1", "2", "3", "4", "5+"].map((b) => (
                             <button key={b} onClick={() => set("bedrooms", filters.bedrooms === b ? "" : b)}
                                 className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${filters.bedrooms === b
-                                        ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]"
-                                        : "border-[#2C2C2E] text-[#98989D] hover:text-white"
+                                        ? "border-aqar-cyan bg-aqar-cyan/10 text-aqar-cyan"
+                                        : "border-aqar-border text-aqar-muted hover:text-aqar-text"
                                     }`} dir="ltr">
                                 {b === "Studio" ? "استوديو" : b}
                             </button>
@@ -117,7 +117,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Amenities */}
                 <div>
-                    <p className="text-xs text-[#98989D] font-medium uppercase tracking-wider mb-3 text-start">المميزات</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">المميزات</p>
                     <div className="space-y-2.5">
                         {[
                             { key: "furnished" as const, label: "مفروشة" },
@@ -126,9 +126,9 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                             { key: "garden" as const, label: "حديقة" },
                         ].map(({ key, label }) => (
                             <label key={key} className="flex items-center justify-between cursor-pointer group">
-                                <span className={`text-sm transition-colors ${filters[key] ? "text-white" : "text-[#98989D] group-hover:text-white"}`}>{label}</span>
+                                <span className={`text-sm transition-colors ${filters[key] ? "text-aqar-text" : "text-aqar-muted group-hover:text-aqar-text"}`}>{label}</span>
                                 <div onClick={() => set(key, !filters[key])}
-                                    className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer ${filters[key] ? "bg-[#00E5FF]" : "bg-[#2C2C2E]"}`}>
+                                    className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer ${filters[key] ? "bg-aqar-cyan" : "bg-[#2C2C2E]"}`}>
                                     <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${filters[key] ? "-translate-x-4" : "-translate-x-0.5"}`} />
                                 </div>
                             </label>

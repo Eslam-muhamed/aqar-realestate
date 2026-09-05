@@ -42,7 +42,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-[#121212] flex flex-row-reverse text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base flex flex-row-reverse text-right" dir="rtl">
             {/* Left/Image panel */}
             <div className="hidden lg:flex lg:flex-1 relative overflow-hidden">
                 <img
@@ -54,15 +54,15 @@ export default function Login() {
                 <div className="relative z-10 flex flex-col justify-end p-12 w-full">
                     <div className="max-w-md">
                         <div className="flex items-center gap-3 mb-8">
-                            <div className="w-9 h-9 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/20">
+                            <div className="w-9 h-9 bg-aqar-cyan rounded-xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/20">
                                 <span className="text-[#121212] font-black text-sm">عقار</span>
                             </div>
-                            <span className="text-white font-bold text-xl">نظام إدارة العقارات والمشرفين</span>
+                            <span className="text-aqar-text font-bold text-xl">نظام إدارة العقارات والمشرفين</span>
                         </div>
-                        <blockquote className="text-white text-2xl font-bold leading-relaxed mb-4">
+                        <blockquote className="text-aqar-text text-2xl font-bold leading-relaxed mb-4">
                             "نظام آمن يتيح للمكتب إدارة العقارات وتوزيع العملاء بدقة لمنع أي تعارض بين المشرفين."
                         </blockquote>
-                        <p className="text-[#98989D] text-sm">منصة عقار المتطورة — مدعومة بقواعد بيانات Supabase</p>
+                        <p className="text-aqar-muted text-sm">منصة عقار المتطورة — مدعومة بقواعد بيانات Supabase</p>
                     </div>
                 </div>
             </div>
@@ -71,14 +71,14 @@ export default function Login() {
             <div className="w-full lg:w-[500px] flex flex-col justify-center px-8 lg:px-14 py-12">
                 <div className="max-w-sm mx-auto w-full">
                     <Link to="/" className="flex items-center gap-2 mb-10">
-                        <div className="w-8 h-8 bg-[#00E5FF] rounded-xl flex items-center justify-center">
+                        <div className="w-8 h-8 bg-aqar-cyan rounded-xl flex items-center justify-center">
                             <span className="text-[#121212] font-bold text-xs">عقار</span>
                         </div>
-                        <span className="text-white font-bold text-lg">منصة عقار</span>
+                        <span className="text-aqar-text font-bold text-lg">منصة عقار</span>
                     </Link>
 
-                    <h1 className="text-white text-2xl font-bold mb-2">تسجيل دخول فريق العمل</h1>
-                    <p className="text-[#98989D] text-xs mb-6">
+                    <h1 className="text-aqar-text text-2xl font-bold mb-2">تسجيل دخول فريق العمل</h1>
+                    <p className="text-aqar-muted text-xs mb-6">
                         سجل دخولك كمدير للمكتب (Admin) أو كمشرف (Supervisor) لمتابعة العملاء المكلف بهم.
                     </p>
 
@@ -91,18 +91,18 @@ export default function Login() {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="text-xs text-[#98989D] mb-1.5 block">البريد الإلكتروني</label>
+                            <label className="text-xs text-aqar-muted mb-1.5 block">البريد الإلكتروني</label>
                             <input
                                 required
                                 type="email"
                                 value={form.email}
                                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                                 placeholder="name@aqar.com"
-                                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/40 focus:border-[#00E5FF]/50 focus:outline-none"
+                                className="w-full px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/40 focus:border-aqar-cyan/50 focus:outline-none"
                             />
                         </div>
                         <div>
-                            <label className="text-xs text-[#98989D] mb-1.5 block">كلمة المرور</label>
+                            <label className="text-xs text-aqar-muted mb-1.5 block">كلمة المرور</label>
                             <div className="relative">
                                 <input
                                     required
@@ -110,12 +110,12 @@ export default function Login() {
                                     value={form.password}
                                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                                     placeholder="••••••••"
-                                    className="w-full px-4 py-3 ps-10 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/40 focus:border-[#00E5FF]/50 focus:outline-none"
+                                    className="w-full px-4 py-3 ps-10 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/40 focus:border-aqar-cyan/50 focus:outline-none"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPass(!showPass)}
-                                    className="absolute start-3 top-1/2 -translate-y-1/2 text-[#98989D] hover:text-white"
+                                    className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted hover:text-aqar-text"
                                 >
                                     {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
@@ -125,47 +125,47 @@ export default function Login() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3.5 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#121212] font-bold text-sm rounded-xl transition-all disabled:opacity-60 flex items-center justify-center gap-2 mt-2 shadow-lg shadow-[#00E5FF]/10"
+                            className="w-full py-3.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] font-bold text-sm rounded-xl transition-all disabled:opacity-60 flex items-center justify-center gap-2 mt-2 shadow-lg shadow-[#00E5FF]/10"
                         >
                             {loading ? <Loader2 size={16} className="animate-spin" /> : "تسجيل الدخول"}
                         </button>
                     </form>
 
                     {/* Quick Access / Demo Accounts */}
-                    <div className="mt-8 pt-6 border-t border-[#2C2C2E]">
-                        <p className="text-xs text-[#98989D] mb-3 font-semibold">الدخول السريع لتجربة الصلاحيات وتوزيع الـ Leads:</p>
+                    <div className="mt-8 pt-6 border-t border-aqar-border">
+                        <p className="text-xs text-aqar-muted mb-3 font-semibold">الدخول السريع لتجربة الصلاحيات وتوزيع الـ Leads:</p>
                         <div className="space-y-2">
                             <button
                                 type="button"
                                 onClick={() => handleQuickLogin("admin@aqar.com", "password123", "مدير المكتب (Admin)")}
-                                className="w-full px-3.5 py-2.5 bg-[#1E1E1E] hover:bg-[#2C2C2E] border border-amber-500/30 rounded-xl text-xs font-semibold text-amber-400 flex items-center justify-between transition-colors"
+                                className="w-full px-3.5 py-2.5 bg-aqar-surface hover:bg-[#2C2C2E] border border-amber-500/30 rounded-xl text-xs font-semibold text-amber-400 flex items-center justify-between transition-colors"
                             >
                                 <span className="flex items-center gap-2">
                                     <ShieldCheck size={16} /> دخول كـ مدير المكتب (Admin)
                                 </span>
-                                <span className="text-[10px] text-[#98989D]">كامل الصلاحيات وتوزيع الـ Leads</span>
+                                <span className="text-[10px] text-aqar-muted">كامل الصلاحيات وتوزيع الـ Leads</span>
                             </button>
 
                             <button
                                 type="button"
                                 onClick={() => handleQuickLogin("ahmed@aqar.com", "password123", "مشرف المبيعات 1 (أحمد)")}
-                                className="w-full px-3.5 py-2.5 bg-[#1E1E1E] hover:bg-[#2C2C2E] border border-cyan-500/30 rounded-xl text-xs font-semibold text-cyan-400 flex items-center justify-between transition-colors"
+                                className="w-full px-3.5 py-2.5 bg-aqar-surface hover:bg-[#2C2C2E] border border-cyan-500/30 rounded-xl text-xs font-semibold text-cyan-400 flex items-center justify-between transition-colors"
                             >
                                 <span className="flex items-center gap-2">
                                     <UserCheck size={16} /> دخول كـ مشرف 1 (أحمد)
                                 </span>
-                                <span className="text-[10px] text-[#98989D]">يرى فقط الـ Leads المكلف بها</span>
+                                <span className="text-[10px] text-aqar-muted">يرى فقط الـ Leads المكلف بها</span>
                             </button>
 
                             <button
                                 type="button"
                                 onClick={() => handleQuickLogin("sara@aqar.com", "password123", "مشرفة العقارات 2 (سارة)")}
-                                className="w-full px-3.5 py-2.5 bg-[#1E1E1E] hover:bg-[#2C2C2E] border border-purple-500/30 rounded-xl text-xs font-semibold text-purple-400 flex items-center justify-between transition-colors"
+                                className="w-full px-3.5 py-2.5 bg-aqar-surface hover:bg-[#2C2C2E] border border-purple-500/30 rounded-xl text-xs font-semibold text-purple-400 flex items-center justify-between transition-colors"
                             >
                                 <span className="flex items-center gap-2">
                                     <UserCheck size={16} /> دخول كـ مشرفة 2 (سارة)
                                 </span>
-                                <span className="text-[10px] text-[#98989D]">قفل خاص لعملائها فقط</span>
+                                <span className="text-[10px] text-aqar-muted">قفل خاص لعملائها فقط</span>
                             </button>
                         </div>
                     </div>

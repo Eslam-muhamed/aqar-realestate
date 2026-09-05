@@ -27,14 +27,14 @@ export default {
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",
                 aqar: {
-                    base: "#121212",
-                    surface: "#1E1E1E",
-                    border: "#2C2C2E",
-                    cyan: "#00E5FF",
-                    text: "#FFFFFF",
-                    muted: "#98989D",
-                    success: "#32D74B",
-                    danger: "#FF453A",
+                    base: "hsl(var(--aqar-base))",
+                    surface: "hsl(var(--aqar-surface))",
+                    border: "hsl(var(--aqar-border))",
+                    cyan: "#00E5FF", /* Keep cyan hardcoded since it's an accent color */
+                    text: "hsl(var(--aqar-text))",
+                    muted: "hsl(var(--aqar-muted))",
+                    success: "#32D74B", /* Keep success hardcoded */
+                    danger: "#FF453A", /* Keep danger hardcoded */
                 },
                 primary: {
                     DEFAULT: "hsl(var(--primary))",

@@ -11,45 +11,45 @@ export default function AgentDetail() {
     const properties = MOCK_PROPERTIES.filter((p) => p.agent === id);
 
     if (!agent) return (
-        <div className="min-h-screen bg-[#121212]">
+        <div className="min-h-screen bg-aqar-base">
             <Header />
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <p className="text-white text-lg">Agent not found.</p>
-                    <Link to="/agents" className="text-[#00E5FF] text-sm mt-4 block">← Back to Agents</Link>
+                    <p className="text-aqar-text text-lg">Agent not found.</p>
+                    <Link to="/agents" className="text-aqar-cyan text-sm mt-4 block">← Back to Agents</Link>
                 </div>
             </div>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-[#121212] text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base text-right" dir="rtl">
             <Header />
             <div className="pt-16">
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-10">
-                    <Link to="/agents" className="inline-flex items-center gap-2 text-sm text-[#98989D] hover:text-white mb-8 transition-colors">
+                    <Link to="/agents" className="inline-flex items-center gap-2 text-sm text-aqar-muted hover:text-aqar-text mb-8 transition-colors">
                         <ArrowLeft size={14} className="rotate-180" /> جميع المستشارين
                     </Link>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                         {/* Profile */}
                         <div className="lg:col-span-1">
-                            <div className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl p-8 sticky top-24">
+                            <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-8 sticky top-24">
                                 <div className="text-center mb-6">
                                     <div className="relative inline-block mb-4">
                                         <img src={agent.avatar} alt={agent.name} className="w-20 h-20 rounded-2xl object-cover mx-auto" />
                                         {agent.verified && (
-                                            <div className="absolute -bottom-1 -end-1 w-6 h-6 bg-[#00E5FF] rounded-full flex items-center justify-center">
+                                            <div className="absolute -bottom-1 -end-1 w-6 h-6 bg-aqar-cyan rounded-full flex items-center justify-center">
                                                 <BadgeCheck size={13} className="text-[#121212]" />
                                             </div>
                                         )}
                                     </div>
-                                    <h1 className="text-white font-bold text-xl mb-1">{agent.name}</h1>
-                                    <p className="text-[#98989D] text-sm">{agent.title}</p>
+                                    <h1 className="text-aqar-text font-bold text-xl mb-1">{agent.name}</h1>
+                                    <p className="text-aqar-muted text-sm">{agent.title}</p>
                                     <div className="flex items-center justify-center gap-2 mt-2">
                                         <Star size={13} className="text-yellow-400 fill-yellow-400" />
-                                        <span className="text-white text-sm font-medium">{agent.rating}</span>
-                                        <span className="text-[#98989D] text-xs">({agent.reviews} تقييم)</span>
+                                        <span className="text-aqar-text text-sm font-medium">{agent.rating}</span>
+                                        <span className="text-aqar-muted text-xs">({agent.reviews} تقييم)</span>
                                     </div>
                                 </div>
 
@@ -60,35 +60,35 @@ export default function AgentDetail() {
                                         { icon: Phone, label: agent.phone, href: `tel:${agent.phone}`, ltr: true },
                                         { icon: Mail, label: agent.email, href: `mailto:${agent.email}` },
                                     ].map(({ icon: Icon, label, href, ltr }) => (
-                                        <div key={label} className="flex items-center gap-3 text-sm text-[#98989D]">
-                                            <Icon size={13} className="text-[#00E5FF] shrink-0" />
-                                            {href ? <a href={href} className="hover:text-white transition-colors" dir={ltr ? "ltr" : "auto"}>{label}</a> : <span>{label}</span>}
+                                        <div key={label} className="flex items-center gap-3 text-sm text-aqar-muted">
+                                            <Icon size={13} className="text-aqar-cyan shrink-0" />
+                                            {href ? <a href={href} className="hover:text-aqar-text transition-colors" dir={ltr ? "ltr" : "auto"}>{label}</a> : <span>{label}</span>}
                                         </div>
                                     ))}
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3 mb-6">
-                                    <div className="bg-[#121212] border border-[#2C2C2E] rounded-xl p-3 text-center">
-                                        <p className="text-white font-mono font-bold text-xl">{agent.listings}</p>
-                                        <p className="text-[#98989D] text-xs">عقارات</p>
+                                    <div className="bg-aqar-base border border-aqar-border rounded-xl p-3 text-center">
+                                        <p className="text-aqar-text font-mono font-bold text-xl">{agent.listings}</p>
+                                        <p className="text-aqar-muted text-xs">عقارات</p>
                                     </div>
-                                    <div className="bg-[#121212] border border-[#2C2C2E] rounded-xl p-3 text-center">
-                                        <p className="text-white font-mono font-bold text-xl">{agent.reviews}</p>
-                                        <p className="text-[#98989D] text-xs">مراجعات</p>
+                                    <div className="bg-aqar-base border border-aqar-border rounded-xl p-3 text-center">
+                                        <p className="text-aqar-text font-mono font-bold text-xl">{agent.reviews}</p>
+                                        <p className="text-aqar-muted text-xs">مراجعات</p>
                                     </div>
                                 </div>
 
                                 <div className="mb-5">
-                                    <p className="text-xs text-[#98989D] mb-2">اللغات</p>
+                                    <p className="text-xs text-aqar-muted mb-2">اللغات</p>
                                     <div className="flex flex-wrap gap-2">
                                         {agent.languages.map((l) => (
-                                            <span key={l} className="px-2.5 py-1 text-xs text-[#98989D] border border-[#2C2C2E] rounded-lg">{l}</span>
+                                            <span key={l} className="px-2.5 py-1 text-xs text-aqar-muted border border-aqar-border rounded-lg">{l}</span>
                                         ))}
                                     </div>
                                 </div>
 
                                 <a href={`tel:${agent.phone}`}
-                                    className="block w-full py-3 bg-[#00E5FF] text-[#121212] font-semibold text-sm text-center rounded-xl hover:bg-[#00E5FF]/90 transition-colors">
+                                    className="block w-full py-3 bg-aqar-cyan text-[#121212] font-semibold text-sm text-center rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                                     تواصل مع المستشار
                                 </a>
                             </div>
@@ -96,19 +96,19 @@ export default function AgentDetail() {
 
                         {/* Bio + Listings */}
                         <div className="lg:col-span-2">
-                            <div className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl p-6 mb-8">
-                                <h2 className="text-white font-semibold text-lg mb-4">نبذة شخصية</h2>
-                                <p className="text-[#98989D] text-sm leading-relaxed">{agent.bio}</p>
+                            <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 mb-8">
+                                <h2 className="text-aqar-text font-semibold text-lg mb-4">نبذة شخصية</h2>
+                                <p className="text-aqar-muted text-sm leading-relaxed">{agent.bio}</p>
                             </div>
 
-                            <h2 className="text-white font-semibold text-lg mb-5">العقارات النشطة ({properties.length})</h2>
+                            <h2 className="text-aqar-text font-semibold text-lg mb-5">العقارات النشطة ({properties.length})</h2>
                             {properties.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {properties.map((p) => <PropertyCard key={p.id} property={p} />)}
                                 </div>
                             ) : (
-                                <div className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl p-12 text-center">
-                                    <p className="text-[#98989D] text-sm">لا توجد عقارات نشطة حالياً.</p>
+                                <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-12 text-center">
+                                    <p className="text-aqar-muted text-sm">لا توجد عقارات نشطة حالياً.</p>
                                 </div>
                             )}
                         </div>

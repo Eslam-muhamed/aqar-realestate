@@ -31,7 +31,7 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-[#121212] flex flex-row-reverse text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base flex flex-row-reverse text-right" dir="rtl">
             {/* Left */}
             <div className="hidden lg:flex lg:flex-1 relative overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80" alt="Luxury Property"
@@ -39,12 +39,12 @@ export default function Signup() {
                 <div className="absolute inset-0 bg-gradient-to-l from-[#121212]/80 to-black/30" />
                 <div className="relative z-10 flex flex-col justify-end p-12">
                     <div className="flex items-center gap-2 mb-12">
-                        <div className="w-7 h-7 bg-[#00E5FF] rounded-sm flex items-center justify-center">
+                        <div className="w-7 h-7 bg-aqar-cyan rounded-sm flex items-center justify-center">
                             <span className="text-[#121212] font-bold text-xs font-mono">عقار</span>
                         </div>
-                        <span className="text-white font-semibold text-lg">عقار</span>
+                        <span className="text-aqar-text font-semibold text-lg">عقار</span>
                     </div>
-                    <h2 className="text-white text-3xl font-bold max-w-sm">انضم لآلاف الباحثين عن العقارات في منطقة الشرق الأوسط.</h2>
+                    <h2 className="text-aqar-text text-3xl font-bold max-w-sm">انضم لآلاف الباحثين عن العقارات في منطقة الشرق الأوسط.</h2>
                 </div>
             </div>
 
@@ -52,15 +52,15 @@ export default function Signup() {
             <div className="w-full lg:w-[480px] flex flex-col justify-center px-8 lg:px-16">
                 <div className="max-w-sm mx-auto w-full">
                     <Link to="/" className="flex items-center gap-2 mb-12 lg:hidden">
-                        <div className="w-7 h-7 bg-[#00E5FF] rounded-sm flex items-center justify-center">
+                        <div className="w-7 h-7 bg-aqar-cyan rounded-sm flex items-center justify-center">
                             <span className="text-[#121212] font-bold text-xs font-mono">عقار</span>
                         </div>
-                        <span className="text-white font-semibold text-lg">عقار</span>
+                        <span className="text-aqar-text font-semibold text-lg">عقار</span>
                     </Link>
 
-                    <h1 className="text-white text-2xl font-bold mb-2">إنشاء حساب جديد</h1>
-                    <p className="text-[#98989D] text-sm mb-8">
-                        لديك حساب بالفعل؟ <Link to="/login" className="text-[#00E5FF] hover:underline">تسجيل الدخول</Link>
+                    <h1 className="text-aqar-text text-2xl font-bold mb-2">إنشاء حساب جديد</h1>
+                    <p className="text-aqar-muted text-sm mb-8">
+                        لديك حساب بالفعل؟ <Link to="/login" className="text-aqar-cyan hover:underline">تسجيل الدخول</Link>
                     </p>
 
                     {error && (
@@ -72,43 +72,43 @@ export default function Signup() {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="text-xs text-[#98989D] mb-1.5 block">الاسم الكامل</label>
+                            <label className="text-xs text-aqar-muted mb-1.5 block">الاسم الكامل</label>
                             <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="اسمك الكامل"
-                                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/50 focus:border-[#00E5FF]/50 focus:outline-none" />
+                                className="w-full px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none" />
                         </div>
                         <div>
-                            <label className="text-xs text-[#98989D] mb-1.5 block">البريد الإلكتروني</label>
+                            <label className="text-xs text-aqar-muted mb-1.5 block">البريد الإلكتروني</label>
                             <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com"
-                                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/50 focus:border-[#00E5FF]/50 focus:outline-none text-left" dir="ltr" />
+                                className="w-full px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none text-left" dir="ltr" />
                         </div>
                         <div>
-                            <label className="text-xs text-[#98989D] mb-1.5 block">كلمة المرور</label>
+                            <label className="text-xs text-aqar-muted mb-1.5 block">كلمة المرور</label>
                             <div className="relative">
                                 <input required type={showPass ? "text" : "password"} value={form.password}
                                     onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="8 أحرف كحد أدنى"
-                                    className="w-full px-4 py-3 ps-10 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/50 focus:border-[#00E5FF]/50 focus:outline-none" />
-                                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute start-3 top-1/2 -translate-y-1/2 text-[#98989D]">
+                                    className="w-full px-4 py-3 ps-10 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none" />
+                                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted">
                                     {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs text-[#98989D] mb-1.5 block">تأكيد كلمة المرور</label>
+                            <label className="text-xs text-aqar-muted mb-1.5 block">تأكيد كلمة المرور</label>
                             <input required type="password" value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })}
                                 placeholder="إعادة كلمة المرور"
-                                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/50 focus:border-[#00E5FF]/50 focus:outline-none" />
+                                className="w-full px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none" />
                         </div>
 
                         <button type="submit" disabled={loading}
-                            className="w-full py-3.5 bg-[#00E5FF] text-[#121212] font-semibold text-sm rounded-xl hover:bg-[#00E5FF]/90 transition-colors disabled:opacity-60 mt-2">
+                            className="w-full py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors disabled:opacity-60 mt-2">
                             {loading ? "جاري إنشاء الحساب..." : "إنشاء الحساب"}
                         </button>
                     </form>
 
-                    <p className="mt-6 text-[#98989D] text-xs leading-relaxed">
+                    <p className="mt-6 text-aqar-muted text-xs leading-relaxed">
                         بإنشائك حساباً، أنت توافق على{" "}
-                        <a href="#" className="text-[#00E5FF] hover:underline">شروط الخدمة</a> و{" "}
-                        <a href="#" className="text-[#00E5FF] hover:underline">سياسة الخصوصية</a>.
+                        <a href="#" className="text-aqar-cyan hover:underline">شروط الخدمة</a> و{" "}
+                        <a href="#" className="text-aqar-cyan hover:underline">سياسة الخصوصية</a>.
                     </p>
                 </div>
             </div>

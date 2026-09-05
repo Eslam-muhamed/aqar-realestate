@@ -50,18 +50,18 @@ export default function Compare() {
     };
 
     return (
-        <div className="min-h-screen bg-[#121212] text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base text-right" dir="rtl">
             <Header />
             <div className="pt-16">
-                <div className="border-b border-[#2C2C2E] bg-[#1E1E1E]/30">
+                <div className="border-b border-aqar-border bg-aqar-surface/30">
                     <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
                         <div className="flex items-end justify-between">
                             <div>
-                                <h1 className="text-white text-3xl font-bold tracking-tight">مقارنة العقارات</h1>
-                                <p className="text-[#98989D] text-sm mt-2">مقارنة حتى 4 عقارات جنباً إلى جنب</p>
+                                <h1 className="text-aqar-text text-3xl font-bold tracking-tight">مقارنة العقارات</h1>
+                                <p className="text-aqar-muted text-sm mt-2">مقارنة حتى 4 عقارات جنباً إلى جنب</p>
                             </div>
                             {properties.length > 0 && (
-                                <button onClick={clearAll} className="text-sm text-[#98989D] hover:text-[#FF453A] transition-colors">
+                                <button onClick={clearAll} className="text-sm text-aqar-muted hover:text-[#FF453A] transition-colors">
                                     مسح الكل
                                 </button>
                             )}
@@ -72,14 +72,14 @@ export default function Compare() {
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
                     {properties.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-24 text-center">
-                            <div className="w-16 h-16 border border-[#2C2C2E] rounded-2xl flex items-center justify-center mb-6">
-                                <ArrowLeftRight size={24} className="text-[#98989D]" />
+                            <div className="w-16 h-16 border border-aqar-border rounded-2xl flex items-center justify-center mb-6">
+                                <ArrowLeftRight size={24} className="text-aqar-muted" />
                             </div>
-                            <h3 className="text-white font-semibold text-lg mb-2">لا توجد عقارات للمقارنة</h3>
-                            <p className="text-[#98989D] text-sm max-w-sm mb-8">
+                            <h3 className="text-aqar-text font-semibold text-lg mb-2">لا توجد عقارات للمقارنة</h3>
+                            <p className="text-aqar-muted text-sm max-w-sm mb-8">
                                 استخدم زر المقارنة على بطاقات العقار لإضافتها هنا.
                             </p>
-                            <Link to="/properties" className="px-6 py-3 bg-[#00E5FF] text-[#121212] font-semibold text-sm rounded-xl">
+                            <Link to="/properties" className="px-6 py-3 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl">
                                 تصفح العقارات
                             </Link>
                         </div>
@@ -92,24 +92,24 @@ export default function Compare() {
                                         <th className="w-40 text-start" />
                                         {properties.map((p) => (
                                             <th key={p.id} className="px-4 pb-6 text-start align-top">
-                                                <div className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl overflow-hidden">
+                                                <div className="bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden">
                                                     <div className="relative">
                                                         <img src={p.images[0]} alt={p.title} className="w-full h-32 object-cover" />
                                                         <button onClick={() => remove(p.id)}
-                                                            className="absolute top-2 end-2 w-7 h-7 bg-[#121212]/80 rounded-lg flex items-center justify-center text-white hover:bg-[#FF453A] transition-colors">
+                                                            className="absolute top-2 end-2 w-7 h-7 bg-aqar-base/80 rounded-lg flex items-center justify-center text-aqar-text hover:bg-[#FF453A] transition-colors">
                                                             <X size={13} />
                                                         </button>
                                                     </div>
                                                     <div className="p-4">
-                                                        <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{p.title}</h3>
-                                                        <div className="flex items-center gap-1.5 text-[#98989D] text-xs mb-3">
+                                                        <h3 className="text-aqar-text font-semibold text-sm mb-1 line-clamp-2">{p.title}</h3>
+                                                        <div className="flex items-center gap-1.5 text-aqar-muted text-xs mb-3">
                                                             <MapPin size={10} /> {p.location.city}
                                                         </div>
-                                                        <p className="font-mono text-[#00E5FF] text-base font-bold text-start" dir="ltr">
+                                                        <p className="font-mono text-aqar-cyan text-base font-bold text-start" dir="ltr">
                                                             {formatPrice(p.price, p.currency)}
                                                         </p>
                                                         <Link to={`/property/${p.slug}`}
-                                                            className="mt-3 block w-full py-2 border border-[#2C2C2E] text-white text-xs font-medium text-center rounded-xl hover:border-[#00E5FF]/40 transition-colors">
+                                                            className="mt-3 block w-full py-2 border border-aqar-border text-aqar-text text-xs font-medium text-center rounded-xl hover:border-aqar-cyan/40 transition-colors">
                                                             عرض العقار
                                                         </Link>
                                                     </div>
@@ -119,9 +119,9 @@ export default function Compare() {
                                         {properties.length < 4 && (
                                             <th className="px-4 pb-6 align-top">
                                                 <Link to="/properties"
-                                                    className="flex flex-col items-center justify-center w-full h-[280px] border-2 border-dashed border-[#2C2C2E] rounded-2xl hover:border-[#00E5FF]/40 transition-colors group">
-                                                    <Plus size={20} className="text-[#98989D] group-hover:text-[#00E5FF] mb-2" />
-                                                    <span className="text-[#98989D] text-xs group-hover:text-[#00E5FF]">إضافة عقار</span>
+                                                    className="flex flex-col items-center justify-center w-full h-[280px] border-2 border-dashed border-aqar-border rounded-2xl hover:border-aqar-cyan/40 transition-colors group">
+                                                    <Plus size={20} className="text-aqar-muted group-hover:text-aqar-cyan mb-2" />
+                                                    <span className="text-aqar-muted text-xs group-hover:text-aqar-cyan">إضافة عقار</span>
                                                 </Link>
                                             </th>
                                         )}
@@ -131,10 +131,10 @@ export default function Compare() {
                                 {/* Comparison Rows */}
                                 <tbody>
                                     {COMPARE_ROWS.map((row, ri) => (
-                                        <tr key={row.key} className={ri % 2 === 0 ? "bg-[#1E1E1E]/30" : ""}>
-                                            <td className="py-4 pe-4 text-[#98989D] text-xs font-medium">{row.label}</td>
+                                        <tr key={row.key} className={ri % 2 === 0 ? "bg-aqar-surface/30" : ""}>
+                                            <td className="py-4 pe-4 text-aqar-muted text-xs font-medium">{row.label}</td>
                                             {properties.map((p) => (
-                                                <td key={p.id} className={`px-4 py-4 text-sm ${row.key === "price" ? "text-[#00E5FF] font-mono font-semibold text-start" : "text-white"}`} dir={row.key === "price" ? "ltr" : "auto"}>
+                                                <td key={p.id} className={`px-4 py-4 text-sm ${row.key === "price" ? "text-aqar-cyan font-mono font-semibold text-start" : "text-aqar-text"}`} dir={row.key === "price" ? "ltr" : "auto"}>
                                                     {getValue(p, row.key)}
                                                 </td>
                                             ))}
@@ -144,12 +144,12 @@ export default function Compare() {
 
                                     {/* Features */}
                                     <tr>
-                                        <td className="py-4 pe-4 text-[#98989D] text-xs font-medium align-top">المميزات</td>
+                                        <td className="py-4 pe-4 text-aqar-muted text-xs font-medium align-top">المميزات</td>
                                         {properties.map((p) => (
                                             <td key={p.id} className="px-4 py-4 align-top">
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {p.features.slice(0, 4).map((f) => (
-                                                        <span key={f} className="px-2 py-1 text-xs text-[#98989D] border border-[#2C2C2E] rounded-lg">{f}</span>
+                                                        <span key={f} className="px-2 py-1 text-xs text-aqar-muted border border-aqar-border rounded-lg">{f}</span>
                                                     ))}
                                                 </div>
                                             </td>

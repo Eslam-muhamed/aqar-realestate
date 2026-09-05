@@ -176,30 +176,30 @@ export default function Dashboard() {
     const currentTabs = isAdmin ? adminNavTabs : supervisorNavTabs;
 
     return (
-        <div className="min-h-screen bg-[#121212] text-right font-sans" dir="rtl">
+        <div className="min-h-screen bg-aqar-base text-right font-sans" dir="rtl">
             <Header />
             <div className="pt-20">
                 <div className="max-w-[1440px] mx-auto px-4 lg:px-10 py-8">
                     {/* Top Welcome Bar */}
-                    <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 bg-[#00E5FF]/10 border border-[#00E5FF]/30 rounded-2xl flex items-center justify-center text-[#00E5FF]">
+                            <div className="w-14 h-14 bg-aqar-cyan/10 border border-aqar-cyan/30 rounded-2xl flex items-center justify-center text-aqar-cyan">
                                 {isAdmin ? <ShieldCheck size={28} /> : <User size={28} />}
                             </div>
                             <div>
                                 <div className="flex items-center gap-3">
-                                    <h1 className="text-white text-2xl font-bold">{user.name}</h1>
+                                    <h1 className="text-aqar-text text-2xl font-bold">{user.name}</h1>
                                     <span
                                         className={`px-3 py-0.5 text-xs font-semibold rounded-full border ${
                                             isAdmin
                                                 ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                                                : "bg-[#00E5FF]/10 text-[#00E5FF] border-[#00E5FF]/30"
+                                                : "bg-aqar-cyan/10 text-aqar-cyan border-aqar-cyan/30"
                                         }`}
                                     >
                                         {isAdmin ? "مدير المكتب" : "مشرف عقارات"}
                                     </span>
                                 </div>
-                                <p className="text-[#98989D] text-sm mt-1">
+                                <p className="text-aqar-muted text-sm mt-1">
                                     {isAdmin
                                         ? "لوحة تحكم المكتب وإدارة وتوزيع العملاء المحتملين وصلاحيات المشرفين"
                                         : "مرحباً بك! هنا تجد فقط العملاء المعينين لك لحمايتهم من التعارض مع باقي الزملاء"}
@@ -210,7 +210,7 @@ export default function Dashboard() {
                         <div className="flex items-center gap-3">
                             <Link
                                 to="/list-property"
-                                className="flex items-center gap-2 px-5 py-2.5 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#121212] text-sm font-bold rounded-xl transition-all shadow-lg shadow-[#00E5FF]/10"
+                                className="flex items-center gap-2 px-5 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] text-sm font-bold rounded-xl transition-all shadow-lg shadow-[#00E5FF]/10"
                             >
                                 <PlusCircle size={16} /> إضافة عقار جديد
                             </Link>
@@ -220,15 +220,15 @@ export default function Dashboard() {
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Sidebar Navigation */}
                         <aside className="w-full lg:w-72 shrink-0">
-                            <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-4 sticky top-28 space-y-1.5">
+                            <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-4 sticky top-28 space-y-1.5">
                                 {currentTabs.map(({ id, label, icon: Icon, badge }) => (
                                     <button
                                         key={id}
                                         onClick={() => setTab(id)}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                                             tab === id
-                                                ? "bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/30 shadow-sm"
-                                                : "text-[#98989D] hover:text-white hover:bg-[#2C2C2E]/60 border border-transparent"
+                                                ? "bg-aqar-cyan/15 text-aqar-cyan border border-aqar-cyan/30 shadow-sm"
+                                                : "text-aqar-muted hover:text-aqar-text hover:bg-[#2C2C2E]/60 border border-transparent"
                                         }`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -236,14 +236,14 @@ export default function Dashboard() {
                                             <span>{label}</span>
                                         </div>
                                         {badge !== undefined && (
-                                            <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-[#00E5FF] text-[#121212]">
+                                            <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-aqar-cyan text-[#121212]">
                                                 {badge}
                                             </span>
                                         )}
                                     </button>
                                 ))}
 
-                                <div className="pt-4 mt-4 border-t border-[#2C2C2E]">
+                                <div className="pt-4 mt-4 border-t border-aqar-border">
                                     <button
                                         onClick={() => logout()}
                                         className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-[#FF453A] hover:bg-[#FF453A]/10 transition-colors"
@@ -261,56 +261,56 @@ export default function Dashboard() {
                                 <div className="space-y-8">
                                     {/* KPI Stats */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                                        <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-5 relative overflow-hidden">
+                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-5 relative overflow-hidden">
                                             <div className="flex items-center justify-between mb-3">
-                                                <span className="text-[#98989D] text-xs font-medium">إجمالي العملاء (Leads)</span>
+                                                <span className="text-aqar-muted text-xs font-medium">إجمالي العملاء (Leads)</span>
                                                 <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
                                                     <MessageSquare size={18} />
                                                 </div>
                                             </div>
-                                            <p className="text-white text-3xl font-mono font-bold">{leads.length}</p>
-                                            <p className="text-xs text-[#98989D] mt-2">
+                                            <p className="text-aqar-text text-3xl font-mono font-bold">{leads.length}</p>
+                                            <p className="text-xs text-aqar-muted mt-2">
                                                 {unassignedCount > 0 ? `⚠️ ${unassignedCount} طلب يحتاج تعيين` : "كل الطلبات تم تعيينها"}
                                             </p>
                                         </div>
 
-                                        <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-5">
+                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-5">
                                             <div className="flex items-center justify-between mb-3">
-                                                <span className="text-[#98989D] text-xs font-medium">العقارات المتاحة</span>
+                                                <span className="text-aqar-muted text-xs font-medium">العقارات المتاحة</span>
                                                 <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
                                                     <Home size={18} />
                                                 </div>
                                             </div>
-                                            <p className="text-white text-3xl font-mono font-bold">{properties.length}</p>
-                                            <p className="text-xs text-[#98989D] mt-2">جاهزة للعرض في الموقع</p>
+                                            <p className="text-aqar-text text-3xl font-mono font-bold">{properties.length}</p>
+                                            <p className="text-xs text-aqar-muted mt-2">جاهزة للعرض في الموقع</p>
                                         </div>
 
-                                        <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-5">
+                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-5">
                                             <div className="flex items-center justify-between mb-3">
-                                                <span className="text-[#98989D] text-xs font-medium">
+                                                <span className="text-aqar-muted text-xs font-medium">
                                                     {isAdmin ? "المشرفين النشطين" : "العملاء المكلف بهم"}
                                                 </span>
                                                 <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
                                                     {isAdmin ? <Users size={18} /> : <UserCheck size={18} />}
                                                 </div>
                                             </div>
-                                            <p className="text-white text-3xl font-mono font-bold">
+                                            <p className="text-aqar-text text-3xl font-mono font-bold">
                                                 {isAdmin ? supervisors.length : filteredLeads.length}
                                             </p>
-                                            <p className="text-xs text-[#98989D] mt-2">
+                                            <p className="text-xs text-aqar-muted mt-2">
                                                 {isAdmin ? "يعملون تحت إدارتك بدون تعارض" : "مقفولين لحسابك فقط"}
                                             </p>
                                         </div>
 
-                                        <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-5">
+                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-5">
                                             <div className="flex items-center justify-between mb-3">
-                                                <span className="text-[#98989D] text-xs font-medium">الصفقات الناجحة</span>
+                                                <span className="text-aqar-muted text-xs font-medium">الصفقات الناجحة</span>
                                                 <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
                                                     <CheckCircle2 size={18} />
                                                 </div>
                                             </div>
-                                            <p className="text-white text-3xl font-mono font-bold">{closedWonCount}</p>
-                                            <p className="text-xs text-[#98989D] mt-2">تم التعاقد والإغلاق</p>
+                                            <p className="text-aqar-text text-3xl font-mono font-bold">{closedWonCount}</p>
+                                            <p className="text-xs text-aqar-muted mt-2">تم التعاقد والإغلاق</p>
                                         </div>
                                     </div>
 
@@ -320,10 +320,10 @@ export default function Dashboard() {
                                             <div className="flex items-center gap-3">
                                                 <AlertCircle className="text-amber-400 shrink-0" size={24} />
                                                 <div>
-                                                    <h3 className="text-white font-bold text-base">
+                                                    <h3 className="text-aqar-text font-bold text-base">
                                                         يوجد {unassignedCount} عميل محتمل جديد بدون مشرف!
                                                     </h3>
-                                                    <p className="text-[#98989D] text-sm mt-0.5">
+                                                    <p className="text-aqar-muted text-sm mt-0.5">
                                                         قم بتعيينهم لأحد المشرفين فوراً لمنع التأخير وضمان خدمة العميل بسرعة.
                                                     </p>
                                                 </div>
@@ -341,14 +341,14 @@ export default function Dashboard() {
                                     )}
 
                                     {/* Latest Leads Preview */}
-                                    <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-6">
+                                    <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-6">
                                         <div className="flex items-center justify-between mb-6">
-                                            <h2 className="text-white text-lg font-bold">
+                                            <h2 className="text-aqar-text text-lg font-bold">
                                                 {isAdmin ? "أحدث استفسارات العملاء" : "أحدث عملائك المكلف بهم"}
                                             </h2>
                                             <button
                                                 onClick={() => setTab(isAdmin ? "leads" : "my_leads")}
-                                                className="text-xs text-[#00E5FF] hover:underline"
+                                                className="text-xs text-aqar-cyan hover:underline"
                                             >
                                                 عرض الكل
                                             </button>
@@ -359,11 +359,11 @@ export default function Dashboard() {
                                                 {filteredLeads.slice(0, 4).map((lead) => (
                                                     <div
                                                         key={lead.id}
-                                                        className="bg-[#121212] border border-[#2C2C2E] rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                                                        className="bg-aqar-base border border-aqar-border rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
                                                     >
                                                         <div>
                                                             <div className="flex items-center gap-3 mb-1">
-                                                                <h4 className="text-white font-bold text-sm">{lead.client_name}</h4>
+                                                                <h4 className="text-aqar-text font-bold text-sm">{lead.client_name}</h4>
                                                                 <span
                                                                     className={`px-2 py-0.5 text-xs rounded-full border ${
                                                                         STATUS_LABELS[lead.status]?.color ||
@@ -373,15 +373,15 @@ export default function Dashboard() {
                                                                     {STATUS_LABELS[lead.status]?.label || lead.status}
                                                                 </span>
                                                             </div>
-                                                            <p className="text-[#98989D] text-xs">
+                                                            <p className="text-aqar-muted text-xs">
                                                                 📞 {lead.client_phone} | {lead.property_title || "طلب عام"}
                                                             </p>
                                                         </div>
 
                                                         <div className="flex items-center gap-3">
                                                             {lead.assigned_supervisor ? (
-                                                                <span className="text-xs text-[#98989D] bg-[#2C2C2E] px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                                                                    <UserCheck size={14} className="text-[#00E5FF]" />
+                                                                <span className="text-xs text-aqar-muted bg-[#2C2C2E] px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                                                                    <UserCheck size={14} className="text-aqar-cyan" />
                                                                     {lead.assigned_supervisor.full_name}
                                                                 </span>
                                                             ) : (
@@ -402,7 +402,7 @@ export default function Dashboard() {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p className="text-center text-[#98989D] py-8 text-sm">لا توجد طلبات عملاء حتى الآن</p>
+                                            <p className="text-center text-aqar-muted py-8 text-sm">لا توجد طلبات عملاء حتى الآن</p>
                                         )}
                                     </div>
                                 </div>
@@ -413,10 +413,10 @@ export default function Dashboard() {
                                 <div className="space-y-6">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div>
-                                            <h2 className="text-white text-xl font-bold">
+                                            <h2 className="text-aqar-text text-xl font-bold">
                                                 {isAdmin ? "مركز إدارة وتوزيع العملاء" : "العملاء المكلف بهم"}
                                             </h2>
-                                            <p className="text-[#98989D] text-xs mt-1">
+                                            <p className="text-aqar-muted text-xs mt-1">
                                                 {isAdmin
                                                     ? "تحكم في توزيع العملاء على المشرفين لمنع تداخل أو تعارض العمل على نفس الـ Lead"
                                                     : "هذه القائمة خاصة بك وحدك ومقفولة في النظام حتى لا يتواصل زميل آخر مع نفس العميل"}
@@ -424,11 +424,11 @@ export default function Dashboard() {
                                         </div>
 
                                         {isAdmin && (
-                                            <div className="flex items-center gap-2 bg-[#1C1C1E] border border-[#2C2C2E] p-1 rounded-xl">
+                                            <div className="flex items-center gap-2 bg-[#1C1C1E] border border-aqar-border p-1 rounded-xl">
                                                 <button
                                                     onClick={() => setLeadFilter("all")}
                                                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                                                        leadFilter === "all" ? "bg-[#00E5FF] text-[#121212]" : "text-[#98989D]"
+                                                        leadFilter === "all" ? "bg-aqar-cyan text-[#121212]" : "text-aqar-muted"
                                                     }`}
                                                 >
                                                     الكل ({leads.length})
@@ -436,7 +436,7 @@ export default function Dashboard() {
                                                 <button
                                                     onClick={() => setLeadFilter("unassigned")}
                                                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                                                        leadFilter === "unassigned" ? "bg-amber-400 text-[#121212]" : "text-[#98989D]"
+                                                        leadFilter === "unassigned" ? "bg-amber-400 text-[#121212]" : "text-aqar-muted"
                                                     }`}
                                                 >
                                                     غير معين ({unassignedCount})
@@ -444,7 +444,7 @@ export default function Dashboard() {
                                                 <button
                                                     onClick={() => setLeadFilter("assigned")}
                                                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                                                        leadFilter === "assigned" ? "bg-[#00E5FF] text-[#121212]" : "text-[#98989D]"
+                                                        leadFilter === "assigned" ? "bg-aqar-cyan text-[#121212]" : "text-aqar-muted"
                                                     }`}
                                                 >
                                                     معين ({leads.length - unassignedCount})
@@ -467,13 +467,13 @@ export default function Dashboard() {
                                                         className={`bg-[#1C1C1E] border rounded-2xl p-6 transition-all ${
                                                             !lead.assigned_to
                                                                 ? "border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-transparent"
-                                                                : "border-[#2C2C2E]"
+                                                                : "border-aqar-border"
                                                         }`}
                                                     >
-                                                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#2C2C2E]">
+                                                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-aqar-border">
                                                             <div>
                                                                 <div className="flex items-center gap-3 flex-wrap">
-                                                                    <h3 className="text-white font-bold text-base">{lead.client_name}</h3>
+                                                                    <h3 className="text-aqar-text font-bold text-base">{lead.client_name}</h3>
                                                                     <span
                                                                         className={`px-2.5 py-0.5 text-xs font-medium rounded-full border ${
                                                                             STATUS_LABELS[lead.status]?.color ||
@@ -483,12 +483,12 @@ export default function Dashboard() {
                                                                         {STATUS_LABELS[lead.status]?.label || lead.status}
                                                                     </span>
                                                                     {lead.property_title && (
-                                                                        <span className="text-xs bg-[#2C2C2E] text-[#98989D] px-2.5 py-0.5 rounded-full">
+                                                                        <span className="text-xs bg-[#2C2C2E] text-aqar-muted px-2.5 py-0.5 rounded-full">
                                                                             {lead.property_title}
                                                                         </span>
                                                                     )}
                                                                 </div>
-                                                                <p className="text-xs text-[#98989D] mt-1.5 flex items-center gap-4">
+                                                                <p className="text-xs text-aqar-muted mt-1.5 flex items-center gap-4">
                                                                     <span>تاريخ الطلب: {new Date(lead.created_at).toLocaleDateString("ar-EG")}</span>
                                                                     <span>المصدر: {lead.source || "الموقع الإلكتروني"}</span>
                                                                 </p>
@@ -498,9 +498,9 @@ export default function Dashboard() {
                                                             <div className="flex items-center gap-2 flex-wrap">
                                                                 <a
                                                                     href={`tel:${lead.client_phone}`}
-                                                                    className="flex items-center gap-1.5 px-3 py-2 bg-[#2C2C2E] hover:bg-[#3C3C3E] text-white text-xs font-medium rounded-xl transition-colors"
+                                                                    className="flex items-center gap-1.5 px-3 py-2 bg-[#2C2C2E] hover:bg-[#3C3C3E] text-aqar-text text-xs font-medium rounded-xl transition-colors"
                                                                 >
-                                                                    <Phone size={14} className="text-[#00E5FF]" /> {lead.client_phone}
+                                                                    <Phone size={14} className="text-aqar-cyan" /> {lead.client_phone}
                                                                 </a>
                                                                 <a
                                                                     href={`https://wa.me/${lead.client_phone.replace(/\D/g, "")}`}
@@ -515,24 +515,24 @@ export default function Dashboard() {
 
                                                         {/* Client Message */}
                                                         {lead.message && (
-                                                            <div className="mt-4 p-3.5 bg-[#121212] rounded-xl border border-[#2C2C2E]">
-                                                                <p className="text-xs text-[#98989D] mb-1">رسالة العميل:</p>
-                                                                <p className="text-white text-sm">{lead.message}</p>
+                                                            <div className="mt-4 p-3.5 bg-aqar-base rounded-xl border border-aqar-border">
+                                                                <p className="text-xs text-aqar-muted mb-1">رسالة العميل:</p>
+                                                                <p className="text-aqar-text text-sm">{lead.message}</p>
                                                             </div>
                                                         )}
 
                                                         {/* Workflow Controls: Assignment & Status */}
-                                                        <div className="mt-5 pt-4 border-t border-[#2C2C2E] grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div className="mt-5 pt-4 border-t border-aqar-border grid grid-cols-1 md:grid-cols-2 gap-4">
                                                             {/* Assignment (Admin only) or Readonly for Supervisor */}
                                                             <div>
-                                                                <label className="text-xs text-[#98989D] font-medium block mb-1.5">
+                                                                <label className="text-xs text-aqar-muted font-medium block mb-1.5">
                                                                     المشرف المكلف بمتابعة هذا العميل:
                                                                 </label>
                                                                 {isAdmin ? (
                                                                     <select
                                                                         value={lead.assigned_to || ""}
                                                                         onChange={(e) => handleAssignLead(lead.id, e.target.value)}
-                                                                        className="w-full px-3.5 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                                                        className="w-full px-3.5 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none"
                                                                     >
                                                                         <option value="">-- غير معين (متاح للجميع أو معلق) --</option>
                                                                         {supervisors.map((sup) => (
@@ -542,7 +542,7 @@ export default function Dashboard() {
                                                                         ))}
                                                                     </select>
                                                                 ) : (
-                                                                    <div className="px-3.5 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-[#00E5FF] flex items-center gap-2">
+                                                                    <div className="px-3.5 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-cyan flex items-center gap-2">
                                                                         <UserCheck size={16} /> مكلف لك وحدك
                                                                     </div>
                                                                 )}
@@ -550,13 +550,13 @@ export default function Dashboard() {
 
                                                             {/* Status Selector */}
                                                             <div>
-                                                                <label className="text-xs text-[#98989D] font-medium block mb-1.5">
+                                                                <label className="text-xs text-aqar-muted font-medium block mb-1.5">
                                                                     حالة المتابعة:
                                                                 </label>
                                                                 <select
                                                                     value={lead.status}
                                                                     onChange={(e) => handleUpdateLeadStatus(lead.id, e.target.value as LeadStatus)}
-                                                                    className="w-full px-3.5 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                                                    className="w-full px-3.5 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none"
                                                                 >
                                                                     <option value="new">طلب جديد</option>
                                                                     <option value="contacted">تم التواصل هاتفياً</option>
@@ -570,12 +570,12 @@ export default function Dashboard() {
                                                         {/* Notes & Follow-up log */}
                                                         <div className="mt-4">
                                                             <div className="flex items-center justify-between mb-1.5">
-                                                                <label className="text-xs text-[#98989D]">ملاحظات المتابعة الداخلية:</label>
+                                                                <label className="text-xs text-aqar-muted">ملاحظات المتابعة الداخلية:</label>
                                                                 {notesEditState[lead.id] !== undefined &&
                                                                     notesEditState[lead.id] !== lead.internal_notes && (
                                                                         <button
                                                                             onClick={() => handleSaveLeadNote(lead.id)}
-                                                                            className="flex items-center gap-1 text-xs text-[#00E5FF] hover:underline"
+                                                                            className="flex items-center gap-1 text-xs text-aqar-cyan hover:underline"
                                                                         >
                                                                             <Save size={12} /> حفظ الملاحظة
                                                                         </button>
@@ -588,7 +588,7 @@ export default function Dashboard() {
                                                                 }
                                                                 onBlur={() => handleSaveLeadNote(lead.id)}
                                                                 placeholder="اكتب تفاصيل المكالمة أو موعد المعاينة واضغط Enter للحفظ..."
-                                                                className="w-full px-3.5 py-2 bg-[#121212] border border-[#2C2C2E] rounded-xl text-xs text-white placeholder:text-[#98989D]/60 focus:border-[#00E5FF]/50 focus:outline-none"
+                                                                className="w-full px-3.5 py-2 bg-aqar-base border border-aqar-border rounded-xl text-xs text-aqar-text placeholder:text-aqar-muted/60 focus:border-aqar-cyan/50 focus:outline-none"
                                                             />
                                                         </div>
                                                     </div>
@@ -596,10 +596,10 @@ export default function Dashboard() {
                                             })}
                                         </div>
                                     ) : (
-                                        <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-12 text-center">
-                                            <MessageSquare size={36} className="text-[#98989D] mx-auto mb-3" />
-                                            <h3 className="text-white font-bold text-base mb-1">لا توجد طلبات مطابقة</h3>
-                                            <p className="text-xs text-[#98989D]">
+                                        <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-12 text-center">
+                                            <MessageSquare size={36} className="text-aqar-muted mx-auto mb-3" />
+                                            <h3 className="text-aqar-text font-bold text-base mb-1">لا توجد طلبات مطابقة</h3>
+                                            <p className="text-xs text-aqar-muted">
                                                 {isAdmin ? "لم يتم استلام طلبات في هذا القسم حالياً" : "لم يتم تعيين عملاء لك حتى الآن"}
                                             </p>
                                         </div>
@@ -612,8 +612,8 @@ export default function Dashboard() {
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h2 className="text-white text-xl font-bold">فريق المشرفين والوكلاء</h2>
-                                            <p className="text-[#98989D] text-xs mt-1">
+                                            <h2 className="text-aqar-text text-xl font-bold">فريق المشرفين والوكلاء</h2>
+                                            <p className="text-aqar-muted text-xs mt-1">
                                                 إدارة حسابات المشرفين، تفعيلهم، وتخصيص صلاحياتهم في نشر العقارات واستلام الـ Leads
                                             </p>
                                         </div>
@@ -625,16 +625,16 @@ export default function Dashboard() {
                                             const wonCount = supLeads.filter((l) => l.status === "closed_won").length;
 
                                             return (
-                                                <div key={sup.id} className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-6">
+                                                <div key={sup.id} className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-6">
                                                     <div className="flex items-start justify-between gap-4 mb-4">
                                                         <div className="flex items-center gap-3">
-                                                            <div className="w-12 h-12 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF] font-bold">
+                                                            <div className="w-12 h-12 rounded-xl bg-aqar-cyan/10 border border-aqar-cyan/30 flex items-center justify-center text-aqar-cyan font-bold">
                                                                 {sup.full_name.charAt(0)}
                                                             </div>
                                                             <div>
-                                                                <h3 className="text-white font-bold text-base">{sup.full_name}</h3>
-                                                                <p className="text-xs text-[#98989D]">{sup.email}</p>
-                                                                {sup.phone && <p className="text-xs text-[#98989D] mt-0.5">📞 {sup.phone}</p>}
+                                                                <h3 className="text-aqar-text font-bold text-base">{sup.full_name}</h3>
+                                                                <p className="text-xs text-aqar-muted">{sup.email}</p>
+                                                                {sup.phone && <p className="text-xs text-aqar-muted mt-0.5">📞 {sup.phone}</p>}
                                                             </div>
                                                         </div>
                                                         <span
@@ -649,15 +649,15 @@ export default function Dashboard() {
                                                     </div>
 
                                                     {/* Supervisor performance snapshot */}
-                                                    <div className="grid grid-cols-2 gap-2 p-3 bg-[#121212] rounded-xl border border-[#2C2C2E] mb-4 text-center">
+                                                    <div className="grid grid-cols-2 gap-2 p-3 bg-aqar-base rounded-xl border border-aqar-border mb-4 text-center">
                                                         <div>
-                                                            <p className="text-xs text-[#98989D]">الـ Leads المكلف بها</p>
-                                                            <p className="text-white font-mono font-bold text-base mt-1">
+                                                            <p className="text-xs text-aqar-muted">الـ Leads المكلف بها</p>
+                                                            <p className="text-aqar-text font-mono font-bold text-base mt-1">
                                                                 {supLeads.length}
                                                             </p>
                                                         </div>
                                                         <div>
-                                                            <p className="text-xs text-[#98989D]">الصفقات المكتملة</p>
+                                                            <p className="text-xs text-aqar-muted">الصفقات المكتملة</p>
                                                             <p className="text-emerald-400 font-mono font-bold text-base mt-1">
                                                                 {wonCount}
                                                             </p>
@@ -665,10 +665,10 @@ export default function Dashboard() {
                                                     </div>
 
                                                     {/* Permissions list */}
-                                                    <div className="space-y-1.5 text-xs text-[#98989D] pt-3 border-t border-[#2C2C2E]">
+                                                    <div className="space-y-1.5 text-xs text-aqar-muted pt-3 border-t border-aqar-border">
                                                         <div className="flex items-center justify-between">
                                                             <span>نشر وإضافة عقارات جديدة:</span>
-                                                            <span className="text-white font-semibold">مسموح</span>
+                                                            <span className="text-aqar-text font-semibold">مسموح</span>
                                                         </div>
                                                         <div className="flex items-center justify-between">
                                                             <span>الاطلاع على عملاء الزملاء:</span>
@@ -687,14 +687,14 @@ export default function Dashboard() {
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h2 className="text-white text-xl font-bold">إدارة العقارات</h2>
-                                            <p className="text-[#98989D] text-xs mt-1">
+                                            <h2 className="text-aqar-text text-xl font-bold">إدارة العقارات</h2>
+                                            <p className="text-aqar-muted text-xs mt-1">
                                                 {isAdmin ? "قائمة بجميع العقارات المنشورة في الموقع" : "العقارات المتاحة والمعروضة"}
                                             </p>
                                         </div>
                                         <Link
                                             to="/list-property"
-                                            className="px-4 py-2 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#121212] text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5"
+                                            className="px-4 py-2 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5"
                                         >
                                             <PlusCircle size={14} /> إضافة عقار جديد
                                         </Link>
@@ -710,35 +710,35 @@ export default function Dashboard() {
 
                             {/* SETTINGS TAB */}
                             {tab === "settings" && (
-                                <div className="bg-[#1C1C1E] border border-[#2C2C2E] rounded-2xl p-6 max-w-xl">
-                                    <h2 className="text-white font-bold text-lg mb-4">إعدادات الحساب</h2>
+                                <div className="bg-[#1C1C1E] border border-aqar-border rounded-2xl p-6 max-w-xl">
+                                    <h2 className="text-aqar-text font-bold text-lg mb-4">إعدادات الحساب</h2>
                                     <div className="space-y-4 text-xs">
                                         <div>
-                                            <label className="text-[#98989D] block mb-1">الاسم الكامل:</label>
+                                            <label className="text-aqar-muted block mb-1">الاسم الكامل:</label>
                                             <input
                                                 defaultValue={user.name}
-                                                className="w-full px-4 py-2.5 bg-[#121212] border border-[#2C2C2E] rounded-xl text-white text-sm focus:border-[#00E5FF]/50 focus:outline-none"
+                                                className="w-full px-4 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-aqar-text text-sm focus:border-aqar-cyan/50 focus:outline-none"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-[#98989D] block mb-1">البريد الإلكتروني:</label>
+                                            <label className="text-aqar-muted block mb-1">البريد الإلكتروني:</label>
                                             <input
                                                 defaultValue={user.email}
                                                 disabled
-                                                className="w-full px-4 py-2.5 bg-[#121212]/60 border border-[#2C2C2E] rounded-xl text-[#98989D] text-sm cursor-not-allowed"
+                                                className="w-full px-4 py-2.5 bg-aqar-base/60 border border-aqar-border rounded-xl text-aqar-muted text-sm cursor-not-allowed"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-[#98989D] block mb-1">الدور الحالي:</label>
+                                            <label className="text-aqar-muted block mb-1">الدور الحالي:</label>
                                             <input
                                                 defaultValue={isAdmin ? "أدمن (مدير المكتب)" : "مشرف عقارات (Supervisor)"}
                                                 disabled
-                                                className="w-full px-4 py-2.5 bg-[#121212]/60 border border-[#2C2C2E] rounded-xl text-cyan-400 font-semibold text-sm cursor-not-allowed"
+                                                className="w-full px-4 py-2.5 bg-aqar-base/60 border border-aqar-border rounded-xl text-cyan-400 font-semibold text-sm cursor-not-allowed"
                                             />
                                         </div>
                                         <button
                                             onClick={() => toast.success("تم حفظ البيانات بنجاح")}
-                                            className="px-6 py-2.5 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#121212] font-bold rounded-xl transition-colors mt-2"
+                                            className="px-6 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] font-bold rounded-xl transition-colors mt-2"
                                         >
                                             حفظ التعديلات
                                         </button>

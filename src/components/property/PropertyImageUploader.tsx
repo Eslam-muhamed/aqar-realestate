@@ -157,23 +157,23 @@ export default function PropertyImageUploader({
                 onClick={() => !uploading && fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
                     dragActive
-                        ? "border-[#00E5FF] bg-[#00E5FF]/10 scale-[0.99]"
-                        : "border-[#2C2C2E] hover:border-[#00E5FF]/50 bg-[#161616]/60 hover:bg-[#1C1C1E]"
+                        ? "border-aqar-cyan bg-aqar-cyan/10 scale-[0.99]"
+                        : "border-aqar-border hover:border-aqar-cyan/50 bg-[#161616]/60 hover:bg-[#1C1C1E]"
                 }`}
             >
                 {uploading ? (
                     <div className="flex flex-col items-center justify-center py-4">
-                        <Loader2 size={36} className="text-[#00E5FF] animate-spin mb-3" />
-                        <p className="text-white text-sm font-bold">جارٍ رفع الصور إلى Cloudinary...</p>
-                        <p className="text-[#98989D] text-xs mt-1">يتم معالجة وتأمين الصور سحابياً</p>
+                        <Loader2 size={36} className="text-aqar-cyan animate-spin mb-3" />
+                        <p className="text-aqar-text text-sm font-bold">جارٍ رفع الصور إلى Cloudinary...</p>
+                        <p className="text-aqar-muted text-xs mt-1">يتم معالجة وتأمين الصور سحابياً</p>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-4">
-                        <div className="w-14 h-14 rounded-2xl bg-[#00E5FF]/10 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF] mb-3">
+                        <div className="w-14 h-14 rounded-2xl bg-aqar-cyan/10 border border-aqar-cyan/30 flex items-center justify-center text-aqar-cyan mb-3">
                             <Upload size={24} />
                         </div>
-                        <p className="text-white text-sm font-bold">اسحب وأفلت صور العقار هنا، أو اضغط للاختيار</p>
-                        <p className="text-[#98989D] text-xs mt-1.5">
+                        <p className="text-aqar-text text-sm font-bold">اسحب وأفلت صور العقار هنا، أو اضغط للاختيار</p>
+                        <p className="text-aqar-muted text-xs mt-1.5">
                             يتم رفعها مباشرة إلى Cloudinary (JPG, PNG, WebP) — متاح حتى {maxImages} صور
                         </p>
                     </div>
@@ -183,7 +183,7 @@ export default function PropertyImageUploader({
             {/* Uploaded Images Grid */}
             {images.length > 0 && (
                 <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-[#98989D]">
+                    <div className="flex items-center justify-between text-xs text-aqar-muted">
                         <span>الصور المرفوعة ({images.length} من {maxImages})</span>
                         <span>الصورة الأولى هي الصورة الرئيسية للغلاف</span>
                     </div>
@@ -195,7 +195,7 @@ export default function PropertyImageUploader({
                             return (
                                 <div
                                     key={`${url}-${index}`}
-                                    className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-[#2C2C2E] bg-[#121212]"
+                                    className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-aqar-border bg-aqar-base"
                                 >
                                     <img
                                         src={url}
@@ -205,7 +205,7 @@ export default function PropertyImageUploader({
 
                                     {/* Primary Badge */}
                                     {index === 0 && (
-                                        <div className="absolute top-2 right-2 bg-[#00E5FF] text-[#121212] px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1 shadow-md">
+                                        <div className="absolute top-2 right-2 bg-aqar-cyan text-[#121212] px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1 shadow-md">
                                             <Star size={10} fill="currentColor" /> الرئيسية
                                         </div>
                                     )}
@@ -213,8 +213,8 @@ export default function PropertyImageUploader({
                                     {/* Replacing Loader Overlay */}
                                     {isReplacing && (
                                         <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-2 text-center">
-                                            <Loader2 size={24} className="text-[#00E5FF] animate-spin mb-1" />
-                                            <span className="text-[10px] text-white">جارٍ استبدال الصورة...</span>
+                                            <Loader2 size={24} className="text-aqar-cyan animate-spin mb-1" />
+                                            <span className="text-[10px] text-aqar-text">جارٍ استبدال الصورة...</span>
                                         </div>
                                     )}
 
@@ -231,7 +231,7 @@ export default function PropertyImageUploader({
                                                             handleSetCover(index);
                                                         }}
                                                         title="تعيين كصورة رئيسية"
-                                                        className="p-1.5 bg-[#2C2C2E]/90 hover:bg-[#00E5FF] text-white hover:text-[#121212] rounded-lg text-xs transition-colors"
+                                                        className="p-1.5 bg-[#2C2C2E]/90 hover:bg-aqar-cyan text-aqar-text hover:text-[#121212] rounded-lg text-xs transition-colors"
                                                     >
                                                         <Star size={12} />
                                                     </button>
@@ -244,7 +244,7 @@ export default function PropertyImageUploader({
                                                         handleDelete(index);
                                                     }}
                                                     title="حذف نهائي من Cloudinary"
-                                                    className="p-1.5 bg-[#FF453A]/80 hover:bg-[#FF453A] text-white rounded-lg transition-colors"
+                                                    className="p-1.5 bg-[#FF453A]/80 hover:bg-[#FF453A] text-aqar-text rounded-lg transition-colors"
                                                 >
                                                     <X size={12} />
                                                 </button>
@@ -257,7 +257,7 @@ export default function PropertyImageUploader({
                                                     e.stopPropagation();
                                                     initiateReplace(index);
                                                 }}
-                                                className="w-full py-1.5 px-2 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#121212] font-bold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md"
+                                                className="w-full py-1.5 px-2 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] font-bold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md"
                                             >
                                                 <RefreshCw size={12} /> استبدال الصورة
                                             </button>

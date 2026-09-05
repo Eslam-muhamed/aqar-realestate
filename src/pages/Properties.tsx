@@ -72,31 +72,31 @@ export default function Properties() {
     }, [filters, sort]);
 
     return (
-        <div className="min-h-screen bg-[#121212]">
+        <div className="min-h-screen bg-aqar-base">
             <Header />
             <div className="pt-16">
                 {/* Top bar */}
-                <div className="border-b border-[#2C2C2E] bg-[#1E1E1E]/50">
+                <div className="border-b border-aqar-border bg-aqar-surface/50">
                     <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-5 flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-white font-semibold text-lg">العقارات</h1>
-                            <p className="text-[#98989D] text-xs mt-0.5">
+                            <h1 className="text-aqar-text font-semibold text-lg">العقارات</h1>
+                            <p className="text-aqar-muted text-xs mt-0.5">
                                 {loading ? "جاري التحميل..." : `تم العثور على ${filtered.length} عقار`}
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
                             <button onClick={() => setMobileFilters(true)}
-                                className="lg:hidden flex items-center gap-2 px-4 py-2 border border-[#2C2C2E] rounded-xl text-sm text-[#98989D] hover:text-white">
+                                className="lg:hidden flex items-center gap-2 px-4 py-2 border border-aqar-border rounded-xl text-sm text-aqar-muted hover:text-aqar-text">
                                 <SlidersHorizontal size={14} /> فلاتر
                             </button>
                             <select value={sort} onChange={(e) => setSort(e.target.value)}
-                                className="px-3 py-2 bg-[#121212] border border-[#2C2C2E] rounded-xl text-sm text-white focus:outline-none">
+                                className="px-3 py-2 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:outline-none">
                                 {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                             </select>
-                            <div className="hidden sm:flex border border-[#2C2C2E] rounded-xl overflow-hidden">
+                            <div className="hidden sm:flex border border-aqar-border rounded-xl overflow-hidden">
                                 {(["grid", "list"] as ViewMode[]).map((v) => (
                                     <button key={v} onClick={() => setView(v)}
-                                        className={`p-2.5 transition-colors ${view === v ? "bg-[#2C2C2E] text-white" : "text-[#98989D] hover:text-white"}`}>
+                                        className={`p-2.5 transition-colors ${view === v ? "bg-[#2C2C2E] text-aqar-text" : "text-aqar-muted hover:text-aqar-text"}`}>
                                         {v === "grid" ? <Grid3X3 size={15} /> : <List size={15} />}
                                     </button>
                                 ))}
@@ -122,15 +122,15 @@ export default function Properties() {
                                 </div>
                             ) : filtered.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-24 text-center">
-                                    <div className="w-16 h-16 border border-[#2C2C2E] rounded-2xl flex items-center justify-center mb-6">
-                                        <SlidersHorizontal size={24} className="text-[#98989D]" />
+                                    <div className="w-16 h-16 border border-aqar-border rounded-2xl flex items-center justify-center mb-6">
+                                        <SlidersHorizontal size={24} className="text-aqar-muted" />
                                     </div>
-                                    <h3 className="text-white font-semibold text-lg mb-2">لم يتم العثور على عقارات</h3>
-                                    <p className="text-[#98989D] text-sm max-w-sm">
+                                    <h3 className="text-aqar-text font-semibold text-lg mb-2">لم يتم العثور على عقارات</h3>
+                                    <p className="text-aqar-muted text-sm max-w-sm">
                                         حاول تعديل فلاتر البحث لرؤية المزيد من النتائج.
                                     </p>
                                     <button onClick={() => setFilters(DEFAULT_FILTERS)}
-                                        className="mt-6 px-5 py-2.5 border border-[#2C2C2E] text-sm text-white rounded-xl hover:border-[#00E5FF]/40">
+                                        className="mt-6 px-5 py-2.5 border border-aqar-border text-sm text-aqar-text rounded-xl hover:border-aqar-cyan/40">
                                         مسح الفلاتر
                                     </button>
                                 </div>
@@ -148,11 +148,11 @@ export default function Properties() {
             {mobileFilters && (
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black/60" onClick={() => setMobileFilters(false)} />
-                    <div className="absolute bottom-0 inset-x-0 bg-[#121212] rounded-t-2xl max-h-[85vh] overflow-y-auto p-6">
+                    <div className="absolute bottom-0 inset-x-0 bg-aqar-base rounded-t-2xl max-h-[85vh] overflow-y-auto p-6">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-white font-semibold">فلاتر</h3>
+                            <h3 className="text-aqar-text font-semibold">فلاتر</h3>
                             <button onClick={() => setMobileFilters(false)}>
-                                <X size={20} className="text-[#98989D]" />
+                                <X size={20} className="text-aqar-muted" />
                             </button>
                         </div>
                         <FilterSidebar filters={filters} onChange={setFilters} onClose={() => setMobileFilters(false)} />
