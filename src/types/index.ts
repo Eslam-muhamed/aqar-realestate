@@ -61,12 +61,58 @@ export interface Location {
     description: string;
 }
 
+export type UserRole = "admin" | "supervisor" | "user" | "agent";
+
+export interface SupervisorPermissions {
+    can_add_properties: boolean;
+    can_edit_all_properties: boolean;
+    can_delete_properties: boolean;
+    can_claim_unassigned_leads: boolean;
+}
+
+export interface Profile {
+    id: string;
+    email: string;
+    full_name: string;
+    phone?: string;
+    avatar_url?: string;
+    role: "admin" | "supervisor";
+    permissions: SupervisorPermissions;
+    is_active: boolean;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface User {
     id: string;
     name: string;
     email: string;
-    role: "user" | "agent" | "admin";
+    role: UserRole;
     avatar?: string;
+    phone?: string;
+    permissions?: Partial<SupervisorPermissions>;
+    is_active?: boolean;
+}
+
+export type LeadStatus = "new" | "contacted" | "meeting_scheduled" | "closed_won" | "closed_lost";
+
+export interface Lead {
+    id: string;
+    property_id?: string | null;
+    property_title?: string | null;
+    client_name: string;
+    client_phone: string;
+    client_email?: string | null;
+    message?: string | null;
+    source?: string;
+    status: LeadStatus;
+    assigned_to?: string | null;
+    assigned_supervisor?: { id: string; full_name: string; email: string; phone?: string } | null;
+    assigned_at?: string | null;
+    assigned_by?: string | null;
+    internal_notes?: string;
+    created_at: string;
+    updated_at?: string;
 }
 
 export interface Inquiry {
@@ -79,6 +125,7 @@ export interface Inquiry {
     message: string;
     date: string;
     status: "new" | "read" | "replied";
+    assignedTo?: string;
 }
 
 export type ViewMode = "grid" | "list";

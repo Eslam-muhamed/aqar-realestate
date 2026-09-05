@@ -8,6 +8,7 @@ import { MOCK_PROPERTIES, MOCK_AGENTS } from "@/constants/mockData";
 import { formatPrice } from "@/lib/utils";
 import { useFavorites } from "@/hooks/useFavorites";
 import { compareStorage, inquiriesStorage } from "@/lib/storage";
+import { leadService } from "@/services/leadService";
 import { toast } from "sonner";
 
 export default function PropertyDetail() {
@@ -46,14 +47,19 @@ export default function PropertyDetail() {
         else toast.error("Cannot add — limit reached or already added.");
     };
 
-    const handleInquiry = (e: React.FormEvent) => {
+    const handleInquiry = async (e: React.FormEvent) => {
         e.preventDefault();
-        inquiriesStorage.add({
-            id: Date.now().toString(), propertyId: property.id, propertyTitle: property.title,
-            ...form, date: new Date().toISOString(), status: "new",
+        await leadService.createLead({
+            property_id: property.id,
+            property_title: property.title,
+            client_name: form.name,
+            client_phone: form.phone,
+            client_email: form.email,
+            message: form.message,
+            source: "property_detail_page",
         });
         setSubmitted(true);
-        toast.success("Inquiry submitted successfully");
+        toast.success("تم إرسال استفسارك بنجاح! سيتم التواصل معك قريباً.");
     };
 
     const prevImg = () => setGalleryIndex((i) => (i - 1 + property.images.length) % property.images.length);

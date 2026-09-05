@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, ChevronRight } from "lucide-react";
+import { CheckCircle, ChevronRight, Loader2 } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { PROPERTY_TYPES, CITIES } from "@/constants/mockData";
+import { useAuth } from "@/hooks/useAuth";
+import { propertyService } from "@/services/propertyService";
 import { toast } from "sonner";
 
 const STEPS = [
@@ -22,6 +24,8 @@ const AMENITIES_LIST = [
 
 export default function ListProperty() {
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const [submitting, setSubmitting] = useState(false);
     const [step, setStep] = useState(1);
     const [form, setForm] = useState({
         type: "", status: "for-sale", city: "", district: "", address: "",
@@ -34,9 +38,41 @@ export default function ListProperty() {
         ...f, amenities: f.amenities.includes(a) ? f.amenities.filter((x) => x !== a) : [...f.amenities, a],
     }));
 
-    const handleSubmit = () => {
-        toast.success("Property submitted for review!", { description: "Our team will review and publish within 24 hours." });
-        navigate("/dashboard");
+    const handleSubmit = async () => {
+        setSubmitting(true);
+        const res = await propertyService.create(
+            {
+                title: form.title || "عقار جديد",
+                description: form.description || "",
+                type: (form.type as any) || "apartment",
+                status: (form.status as any) || "for-sale",
+                price: Number(form.price) || 1000000,
+                currency: form.currency || "SAR",
+                city: form.city || "Riyadh",
+                district: form.district || "",
+                address: form.address || "",
+                bedrooms: Number(form.bedrooms) || 3,
+                bathrooms: Number(form.bathrooms) || 2,
+                area: Number(form.area) || 180,
+                parking: Number(form.parking) || 1,
+                yearBuilt: Number(form.yearBuilt) || new Date().getFullYear(),
+                images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"],
+                features: [],
+                amenities: form.amenities,
+                featured: false,
+            },
+            user?.id
+        );
+
+        setSubmitting(false);
+        if (res.success) {
+            toast.success("تم نشر العقار بنجاح في Supabase!", {
+                description: "العقار الآن معروض ومتاح لتصفح الزوار والعملاء.",
+            });
+            navigate("/dashboard");
+        } else {
+            toast.error("حدث خطأ أثناء حفظ العقار: " + res.error);
+        }
     };
 
     return (
