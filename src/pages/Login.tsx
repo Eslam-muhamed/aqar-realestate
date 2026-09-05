@@ -3,21 +3,38 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, AlertCircle, ShieldCheck, UserCheck, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const loginSchema = z.object({
+    email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
+    password: z.string().min(6, { message: "كلمة المرور يجب أن تكون 6 أحرف على الأقل" }),
+});
+
+type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
     const navigate = useNavigate();
     const { login } = useAuth();
-    const [form, setForm] = useState({ email: "", password: "" });
     const [showPass, setShowPass] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue
+    } = useForm<LoginForm>({
+        resolver: zodResolver(loginSchema),
+    });
+
+    const onSubmit = async (data: LoginForm) => {
         setError("");
         setLoading(true);
 
-        const result = await login(form.email, form.password);
+        const result = await login(data.email, data.password);
         setLoading(false);
         if (result.success) {
             toast.success("تم تسجيل الدخول بنجاح");
@@ -28,7 +45,8 @@ export default function Login() {
     };
 
     const handleQuickLogin = async (email: string, pass: string, roleName: string) => {
-        setForm({ email, password: pass });
+        setValue("email", email);
+        setValue("password", pass);
         setLoading(true);
         setError("");
         const result = await login(email, pass);
@@ -89,28 +107,25 @@ export default function Login() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div>
                             <label className="text-xs text-aqar-muted mb-1.5 block">البريد الإلكتروني</label>
                             <input
-                                required
+                                {...register("email")}
                                 type="email"
-                                value={form.email}
-                                onChange={(e) => setForm({ ...form, email: e.target.value })}
                                 placeholder="name@aqar.com"
-                                className="w-full px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/40 focus:border-aqar-cyan/50 focus:outline-none"
+                                className={`w-full px-4 py-3 bg-aqar-surface border ${errors.email ? 'border-[#FF453A]' : 'border-aqar-border'} rounded-xl text-sm text-aqar-text placeholder-[#98989D]/40 focus:border-aqar-cyan/50 focus:outline-none`}
                             />
+                            {errors.email && <p className="text-[#FF453A] text-xs mt-1">{errors.email.message}</p>}
                         </div>
                         <div>
                             <label className="text-xs text-aqar-muted mb-1.5 block">كلمة المرور</label>
                             <div className="relative">
                                 <input
-                                    required
+                                    {...register("password")}
                                     type={showPass ? "text" : "password"}
-                                    value={form.password}
-                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
                                     placeholder="••••••••"
-                                    className="w-full px-4 py-3 ps-10 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/40 focus:border-aqar-cyan/50 focus:outline-none"
+                                    className={`w-full px-4 py-3 ps-10 bg-aqar-surface border ${errors.password ? 'border-[#FF453A]' : 'border-aqar-border'} rounded-xl text-sm text-aqar-text placeholder-[#98989D]/40 focus:border-aqar-cyan/50 focus:outline-none`}
                                 />
                                 <button
                                     type="button"
@@ -120,6 +135,7 @@ export default function Login() {
                                     {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
                             </div>
+                            {errors.password && <p className="text-[#FF453A] text-xs mt-1">{errors.password.message}</p>}
                         </div>
 
                         <button

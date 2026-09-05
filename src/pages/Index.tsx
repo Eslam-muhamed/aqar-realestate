@@ -9,9 +9,11 @@ import { MOCK_PROPERTIES, MOCK_AGENTS, MOCK_LOCATIONS } from "@/constants/mockDa
 import heroImg from "@/assets/hero-property.jpg";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Index() {
     const { t, i18n } = useTranslation();
+    const { user } = useAuth();
     const featured = MOCK_PROPERTIES.filter((p) => p.featured).slice(0, 6);
     const topAgents = MOCK_AGENTS.slice(0, 3);
     const isRTL = i18n.language === 'ar';
@@ -176,10 +178,12 @@ export default function Index() {
                             {t("home.listDesc")}
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            <Link to="/list-property"
-                                className="px-8 py-3.5 bg-aqar-cyan text-black font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
-                                {t("home.addPropertyBtn")}
-                            </Link>
+                            {user && (user.role === "admin" || user.role === "supervisor") && (
+                                <Link to="/list-property"
+                                    className="px-8 py-3.5 bg-aqar-cyan text-black font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
+                                    {t("home.addPropertyBtn")}
+                                </Link>
+                            )}
                             <Link to="/agents"
                                 className="px-8 py-3.5 border border-aqar-border text-aqar-text text-sm rounded-xl hover:border-aqar-muted transition-colors">
                                 {t("home.contactAgentBtn")}

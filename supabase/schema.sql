@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS public.properties (
     verified BOOLEAN NOT NULL DEFAULT true,
     views INTEGER NOT NULL DEFAULT 0,
     is_published BOOLEAN NOT NULL DEFAULT true,
-    created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL DEFAULT auth.uid(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -287,7 +287,11 @@ DROP POLICY IF EXISTS "Public visitors can create leads" ON public.leads;
 CREATE POLICY "Public visitors can create leads" ON public.leads FOR
 INSERT
 WITH
-    CHECK (true);
+    CHECK (
+        assigned_to IS NULL 
+        AND assigned_by IS NULL
+        AND status = 'new'
+    );
 
 DROP POLICY IF EXISTS "Admins and assigned supervisors can view leads" ON public.leads;
 

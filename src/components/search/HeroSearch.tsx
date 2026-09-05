@@ -2,13 +2,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, MapPin, Home, DollarSign, BedDouble } from "lucide-react";
 import { CITIES, PROPERTY_TYPES } from "@/constants/mockData";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
 
 export default function HeroSearch() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [status, setStatus] = useState<"for-sale" | "for-rent">("for-sale");
     const [location, setLocation] = useState("");
     const [type, setType] = useState("");
     const [beds, setBeds] = useState("");
+    const [priceMin, setPriceMin] = useState("");
     const [priceMax, setPriceMax] = useState("");
 
     const handleSearch = () => {
@@ -17,6 +22,7 @@ export default function HeroSearch() {
         if (location) params.set("location", location);
         if (type) params.set("type", type.toLowerCase());
         if (beds) params.set("bedrooms", beds);
+        if (priceMin) params.set("priceMin", priceMin);
         if (priceMax) params.set("priceMax", priceMax);
         navigate(`/properties?${params.toString()}`);
     };
@@ -57,18 +63,48 @@ export default function HeroSearch() {
                     </select>
                 </div>
 
-                <div className="relative">
-                    <DollarSign size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted" />
-                    <select value={priceMax} onChange={(e) => setPriceMax(e.target.value)}
-                        className="w-full ps-9 pe-3 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none appearance-none cursor-pointer">
-                        <option value="">الحد الأقصى للسعر</option>
-                        <option value="1000000">1,000,000 ر.س</option>
-                        <option value="2000000">2,000,000 ر.س</option>
-                        <option value="3000000">3,000,000 ر.س</option>
-                        <option value="5000000">5,000,000 ر.س</option>
-                        <option value="10000000">10,000,000 ر.س</option>
-                    </select>
-                </div>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <button className="w-full relative flex items-center ps-9 pe-3 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none cursor-pointer">
+                            <DollarSign size={14} className="absolute start-3 text-aqar-muted" />
+                            <span className="truncate">
+                                {priceMin || priceMax ? (
+                                    `${priceMin ? priceMin : '0'} - ${priceMax ? priceMax : t("search.anyPrice", "أي سعر")}`
+                                ) : (
+                                    t("search.priceRange", "نطاق السعر")
+                                )}
+                            </span>
+                        </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-72 bg-aqar-surface border-aqar-border p-4 rounded-xl" align="center">
+                        <div className="space-y-4 text-right" dir="rtl">
+                            <h4 className="font-medium text-aqar-text text-sm">{t("search.priceRange", "نطاق السعر (ر.س)")}</h4>
+                            <div className="flex items-center gap-3">
+                                <div className="space-y-1 w-full">
+                                    <label className="text-xs text-aqar-muted">{t("search.min", "الحد الأدنى")}</label>
+                                    <Input 
+                                        type="number" 
+                                        placeholder="0" 
+                                        value={priceMin} 
+                                        onChange={(e) => setPriceMin(e.target.value)}
+                                        className="bg-aqar-base border-aqar-border text-aqar-text h-9 text-sm"
+                                    />
+                                </div>
+                                <span className="text-aqar-muted pt-5">-</span>
+                                <div className="space-y-1 w-full">
+                                    <label className="text-xs text-aqar-muted">{t("search.max", "الحد الأقصى")}</label>
+                                    <Input 
+                                        type="number" 
+                                        placeholder={t("search.anyPrice", "أي سعر")} 
+                                        value={priceMax} 
+                                        onChange={(e) => setPriceMax(e.target.value)}
+                                        className="bg-aqar-base border-aqar-border text-aqar-text h-9 text-sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
 
                 <div className="relative">
                     <BedDouble size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted" />

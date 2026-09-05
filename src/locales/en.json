@@ -72,5 +72,11 @@
     "listDesc": "Reach thousands of qualified buyers and tenants. Our verified listing process ensures your property reaches serious, pre-screened clients.",
     "addPropertyBtn": "Add Property",
     "contactAgentBtn": "Contact an Agent"
+  },
+  "search": {
+    "priceRange": "Price Range (SAR)",
+    "min": "Min",
+    "max": "Max",
+    "anyPrice": "Any Price"
   }
 }

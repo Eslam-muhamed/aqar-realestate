@@ -126,10 +126,12 @@ export default function Header() {
                                 {t("nav.login")}
                             </Link>
                         )}
-                        <Link to="/list-property"
-                            className="px-4 py-2 bg-aqar-cyan text-aqar-base text-sm font-semibold rounded-md hover:bg-aqar-cyan/90 transition-colors">
-                            {t("nav.addProperty")}
-                        </Link>
+                        {user && (user.role === "admin" || user.role === "supervisor") && (
+                            <Link to="/list-property"
+                                className="px-4 py-2 bg-aqar-cyan text-aqar-base text-sm font-semibold rounded-md hover:bg-aqar-cyan/90 transition-colors">
+                                {t("nav.addProperty")}
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -164,9 +166,11 @@ export default function Header() {
                         ) : (
                             <Link to="/login" className="flex-1 py-2.5 border border-aqar-border text-sm text-center text-aqar-muted rounded-md">{t("nav.login")}</Link>
                         )}
-                        <Link to="/list-property" className="flex-1 py-2.5 bg-aqar-cyan text-aqar-base text-sm font-semibold text-center rounded-md">
-                            {t("nav.addProperty")}
-                        </Link>
+                        {user && (user.role === "admin" || user.role === "supervisor") && (
+                            <Link to="/list-property" className="flex-1 py-2.5 bg-aqar-cyan text-aqar-base text-sm font-semibold text-center rounded-md">
+                                {t("nav.addProperty")}
+                            </Link>
+                        )}
                     </div>
                 </div>
             )}

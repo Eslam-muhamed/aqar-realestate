@@ -1,6 +1,8 @@
 import { X } from "lucide-react";
 import { CITIES, PROPERTY_TYPES } from "@/constants/mockData";
+import { Input } from "@/components/ui/input";
 import type { FilterState } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     filters: FilterState;
@@ -15,6 +17,7 @@ const PRICE_OPTIONS = [
 ];
 
 export default function FilterSidebar({ filters, onChange, onClose }: Props) {
+    const { t } = useTranslation();
     const set = (key: keyof FilterState, value: FilterState[keyof FilterState]) =>
         onChange({ ...filters, [key]: value });
 
@@ -91,12 +94,24 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Price */}
                 <div>
-                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">الحد الأقصى للسعر (ر.س)</p>
-                    <select value={filters.priceMax} onChange={(e) => set("priceMax", e.target.value)}
-                        className="w-full px-3 py-2.5 bg-aqar-base border border-aqar-border rounded-lg text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none" dir="ltr">
-                        <option value="">بدون حد</option>
-                        {PRICE_OPTIONS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-                    </select>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">{t("search.priceRange", "نطاق السعر (ر.س)")}</p>
+                    <div className="flex items-center gap-2">
+                        <Input 
+                            type="number" 
+                            placeholder={t("search.min", "الحد الأدنى")}
+                            value={filters.priceMin} 
+                            onChange={(e) => set("priceMin", e.target.value)}
+                            className="bg-aqar-base border-aqar-border text-aqar-text h-9 text-xs"
+                        />
+                        <span className="text-aqar-muted">-</span>
+                        <Input 
+                            type="number" 
+                            placeholder={t("search.max", "الحد الأقصى")} 
+                            value={filters.priceMax} 
+                            onChange={(e) => set("priceMax", e.target.value)}
+                            className="bg-aqar-base border-aqar-border text-aqar-text h-9 text-xs"
+                        />
+                    </div>
                 </div>
 
                 {/* Bedrooms */}

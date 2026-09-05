@@ -9,7 +9,7 @@ export default function AgentCard({ agent }: Props) {
         <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 hover:border-[#3C3C3E] transition-all duration-300 hover:-translate-y-0.5 group" dir="rtl">
             <div className="flex items-start gap-4 mb-5">
                 <div className="relative shrink-0">
-                    <img src={agent.avatar} alt={agent.name} className="w-14 h-14 rounded-xl object-cover" />
+                    <img src={agent.avatar} alt={agent.name} loading="lazy" className="w-14 h-14 rounded-xl object-cover" />
                     {agent.verified && (
                         <div className="absolute -bottom-1 -end-1 w-5 h-5 bg-aqar-cyan rounded-full flex items-center justify-center">
                             <BadgeCheck size={11} className="text-[#121212]" />

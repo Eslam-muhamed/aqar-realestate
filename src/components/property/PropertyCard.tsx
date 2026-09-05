@@ -38,9 +38,13 @@ export default function PropertyCard({ property, className }: Props) {
         <Link to={`/property/${property.slug}`} className={cn("property-card group block", className)}>
             <div className="bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-[#3C3C3E] hover:shadow-xl hover:shadow-black/40">
                 {/* Image */}
-                <div className="relative overflow-hidden aspect-[4/3]">
-                    <img src={property.images[0]} alt={property.title} loading="lazy"
-                        className="property-img w-full h-full object-cover" />
+                <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                        src={property.images[0] || "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800"}
+                        alt={property.title}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                     {/* Badges */}

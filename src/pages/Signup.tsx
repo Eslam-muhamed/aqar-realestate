@@ -1,33 +1,50 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const signupSchema = z.object({
+    name: z.string().min(2, { message: "الاسم يجب أن يكون حرفين على الأقل" }),
+    email: z.string().email({ message: "البريد الإلكتروني غير صالح" }),
+    password: z.string().min(8, { message: "كلمة المرور يجب أن تكون 8 أحرف على الأقل" }),
+    confirm: z.string(),
+}).refine((data) => data.password === data.confirm, {
+    message: "كلمات المرور غير متطابقة",
+    path: ["confirm"],
+});
+
+type SignupForm = z.infer<typeof signupSchema>;
 
 export default function Signup() {
     const navigate = useNavigate();
     const { signup } = useAuth();
-    const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
     const [showPass, setShowPass] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<SignupForm>({
+        resolver: zodResolver(signupSchema),
+    });
+
+    const onSubmit = async (data: SignupForm) => {
         setError("");
-        if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
-        if (form.password.length < 8) { setError("Password must be at least 8 characters."); return; }
         setLoading(true);
-        setTimeout(async () => {
-            const result = await signup(form.name, form.email, form.password);
-            setLoading(false);
-            if (result.success) {
-                toast.success("تم إنشاء الحساب بنجاح");
-                navigate("/dashboard");
-            } else {
-                setError(result.error || "فشل إنشاء الحساب.");
-            }
-        }, 600);
+        const result = await signup(data.name, data.email, data.password);
+        setLoading(false);
+        if (result.success) {
+            toast.success("تم إنشاء الحساب بنجاح");
+            navigate("/dashboard");
+        } else {
+            setError(result.error || "فشل إنشاء الحساب.");
+        }
     };
 
     return (
@@ -70,38 +87,55 @@ export default function Signup() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div>
                             <label className="text-xs text-aqar-muted mb-1.5 block">الاسم الكامل</label>
-                            <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="اسمك الكامل"
-                                className="w-full px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none" />
+                            <input 
+                                {...register("name")} 
+                                placeholder="اسمك الكامل"
+                                className={`w-full px-4 py-3 bg-aqar-surface border ${errors.name ? 'border-[#FF453A]' : 'border-aqar-border'} rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none`} 
+                            />
+                            {errors.name && <p className="text-[#FF453A] text-xs mt-1">{errors.name.message}</p>}
                         </div>
                         <div>
                             <label className="text-xs text-aqar-muted mb-1.5 block">البريد الإلكتروني</label>
-                            <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com"
-                                className="w-full px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none text-left" dir="ltr" />
+                            <input 
+                                {...register("email")} 
+                                type="email" 
+                                placeholder="you@example.com"
+                                className={`w-full px-4 py-3 bg-aqar-surface border ${errors.email ? 'border-[#FF453A]' : 'border-aqar-border'} rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none text-left`} dir="ltr" 
+                            />
+                            {errors.email && <p className="text-[#FF453A] text-xs mt-1">{errors.email.message}</p>}
                         </div>
                         <div>
                             <label className="text-xs text-aqar-muted mb-1.5 block">كلمة المرور</label>
                             <div className="relative">
-                                <input required type={showPass ? "text" : "password"} value={form.password}
-                                    onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="8 أحرف كحد أدنى"
-                                    className="w-full px-4 py-3 ps-10 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none" />
-                                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted">
+                                <input 
+                                    {...register("password")} 
+                                    type={showPass ? "text" : "password"}
+                                    placeholder="8 أحرف كحد أدنى"
+                                    className={`w-full px-4 py-3 ps-10 bg-aqar-surface border ${errors.password ? 'border-[#FF453A]' : 'border-aqar-border'} rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none`} 
+                                />
+                                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted hover:text-aqar-text">
                                     {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                                 </button>
                             </div>
+                            {errors.password && <p className="text-[#FF453A] text-xs mt-1">{errors.password.message}</p>}
                         </div>
                         <div>
                             <label className="text-xs text-aqar-muted mb-1.5 block">تأكيد كلمة المرور</label>
-                            <input required type="password" value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+                            <input 
+                                {...register("confirm")} 
+                                type="password"
                                 placeholder="إعادة كلمة المرور"
-                                className="w-full px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none" />
+                                className={`w-full px-4 py-3 bg-aqar-surface border ${errors.confirm ? 'border-[#FF453A]' : 'border-aqar-border'} rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none`} 
+                            />
+                            {errors.confirm && <p className="text-[#FF453A] text-xs mt-1">{errors.confirm.message}</p>}
                         </div>
 
                         <button type="submit" disabled={loading}
-                            className="w-full py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors disabled:opacity-60 mt-2">
-                            {loading ? "جاري إنشاء الحساب..." : "إنشاء الحساب"}
+                            className="w-full py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors disabled:opacity-60 mt-2 flex items-center justify-center gap-2">
+                            {loading ? <Loader2 size={16} className="animate-spin" /> : "إنشاء الحساب"}
                         </button>
                     </form>
 
