@@ -1,20 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, ChevronRight, Loader2 } from "lucide-react";
+import { CheckCircle, ChevronRight, Loader2, Sparkles } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import PropertyImageUploader from "@/components/property/PropertyImageUploader";
 import { PROPERTY_TYPES, CITIES } from "@/constants/mockData";
 import { useAuth } from "@/hooks/useAuth";
 import { propertyService } from "@/services/propertyService";
 import { toast } from "sonner";
 
 const STEPS = [
-    { num: 1, label: "Property Type" },
-    { num: 2, label: "Location" },
-    { num: 3, label: "Details" },
-    { num: 4, label: "Pricing" },
-    { num: 5, label: "Amenities" },
-    { num: 6, label: "Review" },
+    { num: 1, label: "نوع العقار" },
+    { num: 2, label: "الموقع" },
+    { num: 3, label: "المواصفات" },
+    { num: 4, label: "السعر" },
+    { num: 5, label: "المميزات" },
+    { num: 6, label: "الصور (Cloudinary)" },
+    { num: 7, label: "المراجعة والنشر" },
 ];
 
 const AMENITIES_LIST = [
@@ -28,21 +30,41 @@ export default function ListProperty() {
     const [submitting, setSubmitting] = useState(false);
     const [step, setStep] = useState(1);
     const [form, setForm] = useState({
-        type: "", status: "for-sale", city: "", district: "", address: "",
-        title: "", description: "", bedrooms: "", bathrooms: "", area: "", parking: "", yearBuilt: "",
-        price: "", currency: "SAR", amenities: [] as string[],
+        type: "apartment",
+        status: "for-sale",
+        city: "Riyadh",
+        district: "",
+        address: "",
+        title: "",
+        description: "",
+        bedrooms: "3",
+        bathrooms: "2",
+        area: "180",
+        parking: "1",
+        yearBuilt: new Date().getFullYear().toString(),
+        price: "",
+        currency: "SAR",
+        amenities: [] as string[],
+        images: [] as string[],
     });
 
     const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
-    const toggleAmenity = (a: string) => setForm((f) => ({
-        ...f, amenities: f.amenities.includes(a) ? f.amenities.filter((x) => x !== a) : [...f.amenities, a],
-    }));
+    const toggleAmenity = (a: string) =>
+        setForm((f) => ({
+            ...f,
+            amenities: f.amenities.includes(a) ? f.amenities.filter((x) => x !== a) : [...f.amenities, a],
+        }));
 
     const handleSubmit = async () => {
         setSubmitting(true);
+        const defaultImages = [
+            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
+            "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
+        ];
+
         const res = await propertyService.create(
             {
-                title: form.title || "عقار جديد",
+                title: form.title || "عقار فاخر متميز",
                 description: form.description || "",
                 type: (form.type as any) || "apartment",
                 status: (form.status as any) || "for-sale",
@@ -56,7 +78,7 @@ export default function ListProperty() {
                 area: Number(form.area) || 180,
                 parking: Number(form.parking) || 1,
                 yearBuilt: Number(form.yearBuilt) || new Date().getFullYear(),
-                images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"],
+                images: form.images.length > 0 ? form.images : defaultImages,
                 features: [],
                 amenities: form.amenities,
                 featured: false,
@@ -66,7 +88,7 @@ export default function ListProperty() {
 
         setSubmitting(false);
         if (res.success) {
-            toast.success("تم نشر العقار بنجاح في Supabase!", {
+            toast.success("تم نشر العقار بنجاح في Supabase و Cloudinary!", {
                 description: "العقار الآن معروض ومتاح لتصفح الزوار والعملاء.",
             });
             navigate("/dashboard");
@@ -76,29 +98,40 @@ export default function ListProperty() {
     };
 
     return (
-        <div className="min-h-screen bg-[#121212]">
+        <div className="min-h-screen bg-[#121212] text-right" dir="rtl">
             <Header />
             <div className="pt-16">
                 <div className="border-b border-[#2C2C2E] bg-[#1E1E1E]/30">
-                    <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-10">
-                        <h1 className="text-white text-3xl font-bold mb-2">List a Property</h1>
-                        <p className="text-[#98989D] text-sm">Reach thousands of qualified buyers and renters.</p>
+                    <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-8">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles size={20} className="text-[#00E5FF]" />
+                            <h1 className="text-white text-3xl font-bold">إضافة عقار جديد</h1>
+                        </div>
+                        <p className="text-[#98989D] text-sm">
+                            قم بإدخال بيانات العقار ورفع الصور مباشرة إلى Cloudinary مع إمكانية استبدال الصور لاحقاً.
+                        </p>
                     </div>
                 </div>
 
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-10">
-                    {/* Progress */}
+                    {/* Stepper Progress Bar */}
                     <div className="flex items-center gap-1 mb-10 overflow-x-auto scrollbar-hide pb-2">
                         {STEPS.map((s, i) => (
                             <div key={s.num} className="flex items-center gap-1">
-                                <button onClick={() => s.num < step && setStep(s.num)}
-                                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-colors whitespace-nowrap ${step === s.num ? "bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30"
-                                            : step > s.num ? "text-[#32D74B]" : "text-[#98989D]"
-                                        }`}>
-                                    {step > s.num ? <CheckCircle size={12} /> : <span className="font-mono">{s.num}</span>}
+                                <button
+                                    onClick={() => s.num < step && setStep(s.num)}
+                                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs transition-colors whitespace-nowrap ${
+                                        step === s.num
+                                            ? "bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30 font-bold"
+                                            : step > s.num
+                                            ? "text-[#32D74B] bg-[#32D74B]/5"
+                                            : "text-[#98989D]"
+                                    }`}
+                                >
+                                    {step > s.num ? <CheckCircle size={14} /> : <span className="font-mono">{s.num}</span>}
                                     {s.label}
                                 </button>
-                                {i < STEPS.length - 1 && <ChevronRight size={12} className="text-[#2C2C2E] shrink-0" />}
+                                {i < STEPS.length - 1 && <ChevronRight size={12} className="text-[#2C2C2E] rotate-180 shrink-0" />}
                             </div>
                         ))}
                     </div>
@@ -107,23 +140,35 @@ export default function ListProperty() {
                         {/* Step 1: Type */}
                         {step === 1 && (
                             <div>
-                                <h2 className="text-white font-semibold text-xl mb-2">What type of property?</h2>
-                                <p className="text-[#98989D] text-sm mb-6">Select the category that best describes your property.</p>
+                                <h2 className="text-white font-bold text-xl mb-2">ما هو نوع العقار؟</h2>
+                                <p className="text-[#98989D] text-sm mb-6">اختر نوع العقار والغرض من عرضه.</p>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
                                     {PROPERTY_TYPES.map((t) => (
-                                        <button key={t} onClick={() => set("type", t.toLowerCase())}
-                                            className={`py-4 px-4 border rounded-xl text-sm font-medium transition-colors ${form.type === t.toLowerCase() ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]" : "border-[#2C2C2E] text-[#98989D] hover:text-white"
-                                                }`}>
+                                        <button
+                                            key={t}
+                                            onClick={() => set("type", t.toLowerCase())}
+                                            className={`py-4 px-4 border rounded-xl text-sm font-medium transition-colors ${
+                                                form.type === t.toLowerCase()
+                                                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF] font-bold"
+                                                    : "border-[#2C2C2E] text-[#98989D] hover:text-white"
+                                            }`}
+                                        >
                                             {t}
                                         </button>
                                     ))}
                                 </div>
                                 <div className="flex gap-3 mb-6">
                                     {(["for-sale", "for-rent"] as const).map((s) => (
-                                        <button key={s} onClick={() => set("status", s)}
-                                            className={`flex-1 py-3 border rounded-xl text-sm font-medium transition-colors ${form.status === s ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]" : "border-[#2C2C2E] text-[#98989D] hover:text-white"
-                                                }`}>
-                                            {s === "for-sale" ? "For Sale" : "For Rent"}
+                                        <button
+                                            key={s}
+                                            onClick={() => set("status", s)}
+                                            className={`flex-1 py-3 border rounded-xl text-sm font-medium transition-colors ${
+                                                form.status === s
+                                                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF] font-bold"
+                                                    : "border-[#2C2C2E] text-[#98989D] hover:text-white"
+                                            }`}
+                                        >
+                                            {s === "for-sale" ? "للبيع (For Sale)" : "للإيجار (For Rent)"}
                                         </button>
                                     ))}
                                 </div>
@@ -133,26 +178,40 @@ export default function ListProperty() {
                         {/* Step 2: Location */}
                         {step === 2 && (
                             <div>
-                                <h2 className="text-white font-semibold text-xl mb-2">Where is the property?</h2>
-                                <p className="text-[#98989D] text-sm mb-6">Enter the property location details.</p>
+                                <h2 className="text-white font-bold text-xl mb-2">موقع العقار</h2>
+                                <p className="text-[#98989D] text-sm mb-6">حدد المدينة والحي لمساعدة الباحثين.</p>
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-xs text-[#98989D] mb-1.5 block">City</label>
-                                        <select value={form.city} onChange={(e) => set("city", e.target.value)}
-                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none">
-                                            <option value="">Select city</option>
-                                            {CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                                        <label className="text-xs text-[#98989D] mb-1.5 block">المدينة</label>
+                                        <select
+                                            value={form.city}
+                                            onChange={(e) => set("city", e.target.value)}
+                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                        >
+                                            {CITIES.map((c) => (
+                                                <option key={c} value={c}>
+                                                    {c}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="text-xs text-[#98989D] mb-1.5 block">District / Neighborhood</label>
-                                        <input value={form.district} onChange={(e) => set("district", e.target.value)} placeholder="e.g. Al Malqa"
-                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/50 focus:border-[#00E5FF]/50 focus:outline-none" />
+                                        <label className="text-xs text-[#98989D] mb-1.5 block">الحي</label>
+                                        <input
+                                            value={form.district}
+                                            onChange={(e) => set("district", e.target.value)}
+                                            placeholder="مثال: الملقا، النرجس، حي الكورنيش..."
+                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                        />
                                     </div>
                                     <div>
-                                        <label className="text-xs text-[#98989D] mb-1.5 block">Street Address</label>
-                                        <input value={form.address} onChange={(e) => set("address", e.target.value)} placeholder="Street name and number"
-                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/50 focus:border-[#00E5FF]/50 focus:outline-none" />
+                                        <label className="text-xs text-[#98989D] mb-1.5 block">العنوان التفصيلي</label>
+                                        <input
+                                            value={form.address}
+                                            onChange={(e) => set("address", e.target.value)}
+                                            placeholder="الشارع أو المعلم القريب"
+                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -161,32 +220,65 @@ export default function ListProperty() {
                         {/* Step 3: Details */}
                         {step === 3 && (
                             <div>
-                                <h2 className="text-white font-semibold text-xl mb-2">Property details</h2>
-                                <p className="text-[#98989D] text-sm mb-6">Provide key information about the property.</p>
+                                <h2 className="text-white font-bold text-xl mb-2">تفاصيل ومواصفات العقار</h2>
+                                <p className="text-[#98989D] text-sm mb-6">اكتب عنواناً جذاباً ومواصفات دقيقة.</p>
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-xs text-[#98989D] mb-1.5 block">Property Title</label>
-                                        <input value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Contemporary Villa in Al Malqa"
-                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/50 focus:border-[#00E5FF]/50 focus:outline-none" />
+                                        <label className="text-xs text-[#98989D] mb-1.5 block">عنوان الإعلان</label>
+                                        <input
+                                            value={form.title}
+                                            onChange={(e) => set("title", e.target.value)}
+                                            placeholder="مثال: فيلا مودرن فاخرة مع مسبح خاص وحديقة"
+                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                        />
                                     </div>
                                     <div>
-                                        <label className="text-xs text-[#98989D] mb-1.5 block">Description</label>
-                                        <textarea rows={4} value={form.description} onChange={(e) => set("description", e.target.value)}
-                                            placeholder="Describe the property in detail..."
-                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white placeholder-[#98989D]/50 focus:border-[#00E5FF]/50 focus:outline-none resize-none" />
+                                        <label className="text-xs text-[#98989D] mb-1.5 block">الوصف التفصيلي</label>
+                                        <textarea
+                                            rows={4}
+                                            value={form.description}
+                                            onChange={(e) => set("description", e.target.value)}
+                                            placeholder="صف مميزات العقار، التشطيبات، والإطلالة..."
+                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                        />
                                     </div>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                        {[
-                                            { key: "bedrooms", label: "Bedrooms" }, { key: "bathrooms", label: "Bathrooms" },
-                                            { key: "area", label: "Area (m²)" }, { key: "parking", label: "Parking Spaces" },
-                                            { key: "yearBuilt", label: "Year Built" },
-                                        ].map(({ key, label }) => (
-                                            <div key={key}>
-                                                <label className="text-xs text-[#98989D] mb-1.5 block">{label}</label>
-                                                <input type="number" value={(form as any)[key]} onChange={(e) => set(key, e.target.value)} placeholder="0"
-                                                    className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none" />
-                                            </div>
-                                        ))}
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                        <div>
+                                            <label className="text-xs text-[#98989D] mb-1.5 block">غرف النوم</label>
+                                            <input
+                                                type="number"
+                                                value={form.bedrooms}
+                                                onChange={(e) => set("bedrooms", e.target.value)}
+                                                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs text-[#98989D] mb-1.5 block">دورات المياه</label>
+                                            <input
+                                                type="number"
+                                                value={form.bathrooms}
+                                                onChange={(e) => set("bathrooms", e.target.value)}
+                                                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs text-[#98989D] mb-1.5 block">المساحة (م²)</label>
+                                            <input
+                                                type="number"
+                                                value={form.area}
+                                                onChange={(e) => set("area", e.target.value)}
+                                                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs text-[#98989D] mb-1.5 block">مواقف السيارات</label>
+                                            <input
+                                                type="number"
+                                                value={form.parking}
+                                                onChange={(e) => set("parking", e.target.value)}
+                                                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -195,16 +287,22 @@ export default function ListProperty() {
                         {/* Step 4: Pricing */}
                         {step === 4 && (
                             <div>
-                                <h2 className="text-white font-semibold text-xl mb-2">Pricing</h2>
-                                <p className="text-[#98989D] text-sm mb-6">Set your asking price or rental rate.</p>
+                                <h2 className="text-white font-bold text-xl mb-2">السعر ونوع العملة</h2>
+                                <p className="text-[#98989D] text-sm mb-6">حدد القيمة السعرية المناسبة للعقار.</p>
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-xs text-[#98989D] mb-1.5 block">Currency</label>
+                                        <label className="text-xs text-[#98989D] mb-1.5 block">العملة</label>
                                         <div className="flex gap-3">
-                                            {["SAR", "AED", "USD"].map((c) => (
-                                                <button key={c} onClick={() => set("currency", c)}
-                                                    className={`px-4 py-2.5 border rounded-xl text-sm font-medium transition-colors ${form.currency === c ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]" : "border-[#2C2C2E] text-[#98989D] hover:text-white"
-                                                        }`}>
+                                            {["SAR", "AED", "EGP", "USD"].map((c) => (
+                                                <button
+                                                    key={c}
+                                                    onClick={() => set("currency", c)}
+                                                    className={`px-4 py-2.5 border rounded-xl text-sm font-medium transition-colors ${
+                                                        form.currency === c
+                                                            ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF] font-bold"
+                                                            : "border-[#2C2C2E] text-[#98989D] hover:text-white"
+                                                    }`}
+                                                >
                                                     {c}
                                                 </button>
                                             ))}
@@ -212,17 +310,21 @@ export default function ListProperty() {
                                     </div>
                                     <div>
                                         <label className="text-xs text-[#98989D] mb-1.5 block">
-                                            {form.status === "for-rent" ? "Annual Rent" : "Asking Price"} ({form.currency})
+                                            {form.status === "for-rent" ? "قيمة الإيجار السنوي" : "سعر البيع المطلوب"} ({form.currency})
                                         </label>
-                                        <input type="number" value={form.price} onChange={(e) => set("price", e.target.value)}
+                                        <input
+                                            type="number"
+                                            value={form.price}
+                                            onChange={(e) => set("price", e.target.value)}
                                             placeholder="0"
-                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none" />
+                                            className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl text-sm text-white focus:border-[#00E5FF]/50 focus:outline-none"
+                                        />
                                     </div>
                                     {form.price && (
                                         <div className="p-4 bg-[#1E1E1E] border border-[#2C2C2E] rounded-xl">
-                                            <p className="text-[#98989D] text-xs mb-1">Listed price</p>
+                                            <p className="text-[#98989D] text-xs mb-1">السعر المعروض:</p>
                                             <p className="text-[#00E5FF] font-mono font-bold text-2xl">
-                                                {form.currency} {Number(form.price).toLocaleString()}
+                                                {Number(form.price).toLocaleString()} {form.currency}
                                             </p>
                                         </div>
                                     )}
@@ -233,13 +335,19 @@ export default function ListProperty() {
                         {/* Step 5: Amenities */}
                         {step === 5 && (
                             <div>
-                                <h2 className="text-white font-semibold text-xl mb-2">Amenities & Features</h2>
-                                <p className="text-[#98989D] text-sm mb-6">Select all amenities available in this property.</p>
+                                <h2 className="text-white font-bold text-xl mb-2">المميزات والخدمات</h2>
+                                <p className="text-[#98989D] text-sm mb-6">حدد جميع وسائل الراحة المتاحة في هذا العقار.</p>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                     {AMENITIES_LIST.map((a) => (
-                                        <button key={a} onClick={() => toggleAmenity(a)}
-                                            className={`py-3 px-4 border rounded-xl text-xs font-medium transition-colors text-left ${form.amenities.includes(a) ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF]" : "border-[#2C2C2E] text-[#98989D] hover:text-white"
-                                                }`}>
+                                        <button
+                                            key={a}
+                                            onClick={() => toggleAmenity(a)}
+                                            className={`py-3 px-4 border rounded-xl text-xs font-medium transition-colors text-right ${
+                                                form.amenities.includes(a)
+                                                    ? "border-[#00E5FF] bg-[#00E5FF]/10 text-[#00E5FF] font-bold"
+                                                    : "border-[#2C2C2E] text-[#98989D] hover:text-white"
+                                            }`}
+                                        >
                                             {a}
                                         </button>
                                     ))}
@@ -247,47 +355,100 @@ export default function ListProperty() {
                             </div>
                         )}
 
-                        {/* Step 6: Review */}
+                        {/* Step 6: Images (Cloudinary Uploader & Smart Replacement) */}
                         {step === 6 && (
                             <div>
-                                <h2 className="text-white font-semibold text-xl mb-2">Review your listing</h2>
-                                <p className="text-[#98989D] text-sm mb-6">Check your details before submitting for review.</p>
-                                <div className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl divide-y divide-[#2C2C2E]">
-                                    {[
-                                        { label: "Type", value: `${form.type} · ${form.status === "for-sale" ? "For Sale" : "For Rent"}` },
-                                        { label: "Location", value: `${form.district}, ${form.city}` },
-                                        { label: "Title", value: form.title },
-                                        { label: "Price", value: `${form.currency} ${Number(form.price).toLocaleString()}` },
-                                        { label: "Beds / Baths", value: `${form.bedrooms} beds · ${form.bathrooms} baths` },
-                                        { label: "Area", value: `${form.area} m²` },
-                                        { label: "Amenities", value: form.amenities.join(", ") || "None selected" },
-                                    ].map(({ label, value }) => (
-                                        <div key={label} className="flex items-start gap-4 px-5 py-4">
-                                            <span className="text-[#98989D] text-xs w-24 shrink-0">{label}</span>
-                                            <span className="text-white text-xs">{value || "—"}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                <h2 className="text-white font-bold text-xl mb-2">صور العقار (سحابة Cloudinary)</h2>
+                                <p className="text-[#98989D] text-sm mb-6">
+                                    ارفع صور العقار هنا. عند استبدال أي صورة، يتم حذف القديمة نهائياً من Cloudinary لتوفير المساحة وتجنب التكرار.
+                                </p>
+                                <PropertyImageUploader
+                                    images={form.images}
+                                    onChange={(newImages) => setForm((f) => ({ ...f, images: newImages }))}
+                                    maxImages={10}
+                                />
                             </div>
                         )}
 
-                        {/* Navigation */}
+                        {/* Step 7: Review & Submit */}
+                        {step === 7 && (
+                            <div>
+                                <h2 className="text-white font-bold text-xl mb-2">مراجعة ونشر العقار</h2>
+                                <p className="text-[#98989D] text-sm mb-6">تأكد من صحة البيانات قبل حفظها ونشرها في الموقع.</p>
+                                <div className="bg-[#1E1E1E] border border-[#2C2C2E] rounded-2xl divide-y divide-[#2C2C2E] overflow-hidden mb-6">
+                                    {[
+                                        { label: "نوع العقار", value: `${form.type} · ${form.status === "for-sale" ? "للبيع" : "للإيجار"}` },
+                                        { label: "الموقع", value: `${form.district || "—"}، ${form.city}` },
+                                        { label: "عنوان الإعلان", value: form.title || "—" },
+                                        { label: "السعر", value: `${Number(form.price || 0).toLocaleString()} ${form.currency}` },
+                                        { label: "الغرف والدورات", value: `${form.bedrooms} غرف · ${form.bathrooms} دورات مياه` },
+                                        { label: "المساحة", value: `${form.area} م²` },
+                                        { label: "عدد الصور المرفوعة على Cloudinary", value: `${form.images.length} صورة` },
+                                        { label: "المميزات", value: form.amenities.join("، ") || "لا توجد" },
+                                    ].map(({ label, value }) => (
+                                        <div key={label} className="flex items-start justify-between gap-4 px-5 py-4 text-xs">
+                                            <span className="text-[#98989D] font-medium shrink-0">{label}</span>
+                                            <span className="text-white font-semibold">{value}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {form.images.length > 0 ? (
+                                    <div className="mb-6">
+                                        <p className="text-xs text-[#98989D] mb-3">معاينة صور العقار المرفوعة:</p>
+                                        <div className="flex gap-2 overflow-x-auto pb-2">
+                                            {form.images.map((url, i) => (
+                                                <img
+                                                    key={i}
+                                                    src={url}
+                                                    alt={`صورة ${i + 1}`}
+                                                    className="w-20 h-16 rounded-lg object-cover border border-[#2C2C2E]"
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-400">
+                                        ⚠️ لم ترفع صوراً خاصة، سيتم استخدام صور افتراضية عالية الدقة للعقار. يمكنك العودة للخطوة السابقة لرفع صور حقيقية.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Navigation Buttons */}
                         <div className="flex items-center gap-3 mt-8">
                             {step > 1 && (
-                                <button onClick={() => setStep(step - 1)}
-                                    className="px-6 py-3 border border-[#2C2C2E] text-white text-sm rounded-xl hover:border-[#3C3C3E] transition-colors">
-                                    Back
+                                <button
+                                    type="button"
+                                    onClick={() => setStep(step - 1)}
+                                    className="px-6 py-3 border border-[#2C2C2E] text-white text-sm rounded-xl hover:border-[#3C3C3E] transition-colors"
+                                >
+                                    السابق
                                 </button>
                             )}
-                            {step < 6 ? (
-                                <button onClick={() => setStep(step + 1)}
-                                    className="px-8 py-3 bg-[#00E5FF] text-[#121212] font-semibold text-sm rounded-xl hover:bg-[#00E5FF]/90 transition-colors">
-                                    Continue
+
+                            {step < 7 ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setStep(step + 1)}
+                                    className="px-8 py-3 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#121212] font-bold text-sm rounded-xl transition-all shadow-lg shadow-[#00E5FF]/10"
+                                >
+                                    التالي
                                 </button>
                             ) : (
-                                <button onClick={handleSubmit}
-                                    className="px-8 py-3 bg-[#00E5FF] text-[#121212] font-semibold text-sm rounded-xl hover:bg-[#00E5FF]/90 transition-colors">
-                                    Submit Listing
+                                <button
+                                    type="button"
+                                    onClick={handleSubmit}
+                                    disabled={submitting}
+                                    className="px-8 py-3 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#121212] font-bold text-sm rounded-xl transition-all shadow-lg shadow-[#00E5FF]/10 disabled:opacity-60 flex items-center gap-2"
+                                >
+                                    {submitting ? (
+                                        <>
+                                            <Loader2 size={16} className="animate-spin" /> جارٍ الحفظ والنشر...
+                                        </>
+                                    ) : (
+                                        "نشر العقار الآن 🚀"
+                                    )}
                                 </button>
                             )}
                         </div>
