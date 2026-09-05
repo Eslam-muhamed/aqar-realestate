@@ -54,7 +54,7 @@ export default function Index() {
                             <div className="w-1.5 h-1.5 rounded-full bg-aqar-cyan animate-pulse" />
                             <span className="text-aqar-muted text-xs font-medium uppercase tracking-widest">{t("home.searchTitle")}</span>
                         </div>
-                        <h1 className="text-5xl lg:text-7xl font-bold text-aqar-text leading-tight tracking-normal mb-6">
+                        <h1 className="text-5xl lg:text-7xl font-bold text-aqar-text leading-tight mb-6">
                             {t("home.heroTitle1")}<br />
                             <span className="text-aqar-cyan">{t("home.heroTitle2")}</span>
                         </h1>
