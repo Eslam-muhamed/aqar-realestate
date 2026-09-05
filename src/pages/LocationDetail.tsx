@@ -15,7 +15,7 @@ export default function LocationDetail() {
 
     if (!location) {
         return (
-            <div className="min-h-screen bg-aqar-base" dir="rtl">
+            <div className="min-h-screen bg-aqar-base">
                 <Header />
                 <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
@@ -31,7 +31,7 @@ export default function LocationDetail() {
     const nameMap: Record<string, string> = { Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت" };
 
     return (
-        <div className="min-h-screen bg-aqar-base text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base text-start">
             <Header />
             <div className="pt-16">
                 {/* Hero */}

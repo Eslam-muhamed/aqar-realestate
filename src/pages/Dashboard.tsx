@@ -175,7 +175,7 @@ export default function Dashboard() {
     const currentTabs = isAdmin ? adminNavTabs : supervisorNavTabs;
 
     return (
-        <div className="min-h-screen bg-aqar-base text-right font-sans" dir="rtl">
+        <div className="min-h-screen bg-aqar-base text-start font-sans">
             <Header />
             <div className="pt-20">
                 <div className="max-w-[1440px] mx-auto px-4 lg:px-10 py-8">

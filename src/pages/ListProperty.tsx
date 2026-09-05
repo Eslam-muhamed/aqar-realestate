@@ -106,7 +106,7 @@ export default function ListProperty() {
     };
 
     return (
-        <div className="min-h-screen bg-aqar-base text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base text-start">
             <Header />
             <div className="pt-16">
                 <div className="border-b border-aqar-border bg-aqar-surface/30">
@@ -350,7 +350,7 @@ export default function ListProperty() {
                                         <button
                                             key={a}
                                             onClick={() => toggleAmenity(a)}
-                                            className={`py-3 px-4 border rounded-xl text-xs font-medium transition-colors text-right ${
+                                            className={`py-3 px-4 border rounded-xl text-xs font-medium transition-colors text-start ${
                                                 form.amenities.includes(a)
                                                     ? "border-aqar-cyan bg-aqar-cyan/10 text-aqar-cyan font-bold"
                                                     : "border-aqar-border text-aqar-muted hover:text-aqar-text"

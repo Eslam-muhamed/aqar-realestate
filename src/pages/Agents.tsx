@@ -21,7 +21,7 @@ export default function Agents() {
     });
 
     return (
-        <div className="min-h-screen bg-aqar-base text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base text-start">
             <Header />
             <div className="pt-16">
                 {/* Header */}

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Heart, Menu, X, ChevronDown, LayoutDashboard, LogOut, User, Sun, Moon, Globe } from "lucide-react";
+import { Search, Heart, ArrowLeftRight, Menu, X, ChevronDown, LayoutDashboard, LogOut, User, Sun, Moon, Globe } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useCompare } from "@/hooks/useCompare";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
@@ -15,6 +16,7 @@ export default function Header() {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
     const { favorites } = useFavorites();
+    const { compareList } = useCompare();
     const { t, i18n } = useTranslation();
     const { theme, setTheme } = useTheme();
 
@@ -97,6 +99,14 @@ export default function Header() {
                             {favorites.length > 0 && (
                                 <span className="absolute -top-0.5 -end-0.5 w-4 h-4 bg-aqar-cyan text-aqar-base rounded-full text-[10px] font-bold flex items-center justify-center">
                                     {favorites.length}
+                                </span>
+                            )}
+                        </Link>
+                        <Link to="/compare" className="relative p-2 text-aqar-muted hover:text-aqar-text transition-colors rounded-md" aria-label="Compare">
+                            <ArrowLeftRight size={18} />
+                            {compareList.length > 0 && (
+                                <span className="absolute -top-0.5 -end-0.5 w-4 h-4 bg-aqar-cyan text-aqar-base rounded-full text-[10px] font-bold flex items-center justify-center">
+                                    {compareList.length}
                                 </span>
                             )}
                         </Link>

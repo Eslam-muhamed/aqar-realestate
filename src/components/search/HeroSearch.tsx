@@ -31,14 +31,14 @@ export default function HeroSearch() {
     const cityMap: Record<string, string> = { Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت" };
 
     return (
-        <div className="bg-aqar-surface/90 backdrop-blur-md border border-aqar-border rounded-2xl p-2 w-full max-w-4xl text-right" dir="rtl">
+        <div className="bg-aqar-surface/90 backdrop-blur-md border border-aqar-border rounded-2xl p-2 w-full max-w-4xl text-start">
             {/* Toggle */}
             <div className="flex gap-1 mb-3 px-1 pt-1">
                 {(["for-sale", "for-rent"] as const).map((s) => (
                     <button key={s} onClick={() => setStatus(s)}
                         className={`px-5 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${status === s ? "bg-aqar-cyan text-[#121212]" : "text-aqar-muted hover:text-aqar-text"
                             }`}>
-                        {s === "for-sale" ? "شراء" : "استئجار"}
+                        {s === "for-sale" ? t("search.buy", "شراء") : t("search.rent", "استئجار")}
                     </button>
                 ))}
             </div>
@@ -77,7 +77,7 @@ export default function HeroSearch() {
                         </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-72 bg-aqar-surface border-aqar-border p-4 rounded-xl" align="center">
-                        <div className="space-y-4 text-right" dir="rtl">
+                        <div className="space-y-4 text-start">
                             <h4 className="font-medium text-aqar-text text-sm">{t("search.priceRange", "نطاق السعر (ر.س)")}</h4>
                             <div className="flex items-center gap-3">
                                 <div className="space-y-1 w-full">

@@ -48,7 +48,7 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-aqar-base flex flex-row-reverse text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base flex  text-start">
             {/* Left */}
             <div className="hidden lg:flex lg:flex-1 relative overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80" alt="Luxury Property"

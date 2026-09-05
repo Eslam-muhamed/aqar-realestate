@@ -32,7 +32,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
     const cityMap: Record<string, string> = { Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت" };
 
     return (
-        <aside className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 text-right" dir="rtl">
+        <aside className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 text-start">
             <div className="flex items-center justify-between mb-6">
                 <h3 className="text-aqar-text font-semibold text-sm">الفلاتر</h3>
                 <div className="flex items-center gap-2">

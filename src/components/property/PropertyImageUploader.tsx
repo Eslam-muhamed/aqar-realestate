@@ -137,7 +137,7 @@ export default function PropertyImageUploader({
     };
 
     return (
-        <div className="space-y-4 text-right" dir="rtl">
+        <div className="space-y-4 text-start">
             {/* Hidden replace input */}
             <input
                 ref={replaceInputRef}

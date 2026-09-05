@@ -51,7 +51,7 @@ export default function Compare() {
     };
 
     return (
-        <div className="min-h-screen bg-aqar-base text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base text-start">
             <Header />
             <div className="pt-16">
                 <div className="border-b border-aqar-border bg-aqar-surface/30">

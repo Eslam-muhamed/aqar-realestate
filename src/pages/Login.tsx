@@ -60,7 +60,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-aqar-base flex flex-row-reverse text-right" dir="rtl">
+        <div className="min-h-screen bg-aqar-base flex  text-start">
             {/* Left/Image panel */}
             <div className="hidden lg:flex lg:flex-1 relative overflow-hidden">
                 <img
@@ -101,7 +101,7 @@ export default function Login() {
                     </p>
 
                     {error && (
-                        <div className="flex items-center gap-2 p-3.5 bg-[#FF453A]/10 border border-[#FF453A]/30 rounded-xl mb-5 text-right">
+                        <div className="flex items-center gap-2 p-3.5 bg-[#FF453A]/10 border border-[#FF453A]/30 rounded-xl mb-5 text-start">
                             <AlertCircle size={16} className="text-[#FF453A] shrink-0" />
                             <p className="text-[#FF453A] text-xs font-medium leading-relaxed">{error}</p>
                         </div>
