@@ -17,7 +17,7 @@ export default function Header() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
-    const { pathname } = useLocation();
+    const { pathname, search } = useLocation();
     const navigate = useNavigate();
     const { user, logout } = useAuth();
     const { favorites } = useFavorites();
@@ -49,14 +49,20 @@ export default function Header() {
 
                     {/* Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-1">
-                        {NAV_LINKS.map((link) => (
-                            <Link key={link.label} to={link.href}
-                                className={cn("px-4 py-2 text-sm font-medium transition-colors rounded-md",
-                                    pathname === link.href.split("?")[0] ? "text-[#00E5FF]" : "text-[#98989D] hover:text-white"
-                                )}>
-                                {link.label}
-                            </Link>
-                        ))}
+                        {NAV_LINKS.map((link) => {
+                            const isActive = link.href.includes("?") 
+                                ? pathname + search === link.href
+                                : pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/");
+
+                            return (
+                                <Link key={link.label} to={link.href}
+                                    className={cn("px-4 py-2 text-sm font-medium transition-colors rounded-md",
+                                        isActive ? "text-[#00E5FF]" : "text-[#98989D] hover:text-white"
+                                    )}>
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
                     </nav>
 
                     {/* Right Actions */}

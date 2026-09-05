@@ -124,7 +124,7 @@ export const propertyService = {
                         amenities: input.amenities,
                         featured: !!input.featured,
                         is_published: true,
-                        created_by: userId || null,
+                        created_by: userId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId) ? userId : null,
                     },
                 ])
                 .select()
