@@ -81,6 +81,7 @@ export interface Profile {
     role: "admin" | "supervisor";
     permissions: SupervisorPermissions;
     is_active: boolean;
+    show_in_public?: boolean;
     created_at?: string;
     updated_at?: string;
 }
@@ -94,6 +95,7 @@ export interface User {
     phone?: string;
     permissions?: Partial<SupervisorPermissions>;
     is_active?: boolean;
+    show_in_public?: boolean;
 }
 
 export type LeadStatus = "new" | "contacted" | "meeting_scheduled" | "closed_won" | "closed_lost";

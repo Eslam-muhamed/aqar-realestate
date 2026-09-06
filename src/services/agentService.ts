@@ -10,7 +10,8 @@ export const agentService = {
             const { data, error } = await supabase
                 .from("profiles")
                 .select("*")
-                .eq("is_active", true);
+                .eq("is_active", true)
+                .eq("show_in_public", true);
 
             if (error || !data) return [];
 

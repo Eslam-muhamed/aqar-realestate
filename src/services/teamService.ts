@@ -181,4 +181,24 @@ export const teamService = {
             return { success: false, error: err instanceof Error ? err.message : String(err) };
         }
     },
+
+    /**
+     * Show or hide a supervisor from the public page
+     */
+    async togglePublicVisibility(supervisorId: string, showInPublic: boolean): Promise<{ success: boolean; error?: string }> {
+        try {
+            const { error } = await supabase
+                .from("profiles")
+                .update({
+                    show_in_public: showInPublic,
+                    updated_at: new Date().toISOString(),
+                })
+                .eq("id", supervisorId);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (err: unknown) {
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
+        }
+    },
 };

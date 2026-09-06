@@ -330,6 +330,18 @@ export default function Dashboard() {
         }
     };
 
+    const handleTogglePublicVisibility = async (supId: string, currentVisibility: boolean) => {
+        const res = await teamService.togglePublicVisibility(supId, !currentVisibility);
+        if (res.success) {
+            setSupervisors((prev) =>
+                prev.map((s) => (s.id === supId ? { ...s, show_in_public: !currentVisibility } : s))
+            );
+            toast.success(!currentVisibility ? "تم إظهار الملف في الصفحة العامة" : "تم إخفاء الملف من الصفحة العامة");
+        } else {
+            toast.error("فشل تعديل حالة الظهور: " + res.error);
+        }
+    };
+
     // Filter leads (supporting Active vs Archived)
     const leadsSource = leadFilter === "archived" ? archivedLeads : leads;
     const filteredLeads = leadsSource.filter((lead) => {
@@ -1183,6 +1195,19 @@ export default function Dashboard() {
                                                                 <div className="flex items-center justify-between">
                                                                     <span>الاطلاع على عملاء الزملاء:</span>
                                                                     <span className="text-rose-400 font-semibold">محظور (منع التعارض)</span>
+                                                                </div>
+                                                                
+                                                                <div className="flex items-center justify-between pt-2 mt-2 border-t border-aqar-border/50">
+                                                                    <span className="text-aqar-text font-medium">الظهور في الصفحة العامة:</span>
+                                                                    <label className="relative inline-flex items-center cursor-pointer">
+                                                                        <input 
+                                                                            type="checkbox" 
+                                                                            className="sr-only peer"
+                                                                            checked={sup.show_in_public !== false}
+                                                                            onChange={() => handleTogglePublicVisibility(sup.id, sup.show_in_public !== false)}
+                                                                        />
+                                                                        <div className="w-9 h-5 bg-aqar-hover peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-aqar-cyan"></div>
+                                                                    </label>
                                                                 </div>
                                                             </div>
                                                         </div>
