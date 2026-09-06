@@ -105,7 +105,7 @@ export default function AgentDetail() {
 
                                 <a href={`tel:${agent.phone}`}
                                     className="block w-full py-3 bg-aqar-cyan text-aqar-btnText font-semibold text-sm text-center rounded-xl hover:bg-aqar-cyan/90 transition-colors">
-                                    {t("agentsPage.contactAdvisor")}
+                                    {t("agentsPage.contact")}
                                 </a>
                             </div>
                         </div>
@@ -117,7 +117,7 @@ export default function AgentDetail() {
                                 <p className="text-aqar-muted text-sm leading-relaxed">{agent.bio}</p>
                             </div>
 
-                            <h2 className="text-aqar-text font-semibold text-lg mb-5">{t("agentsPage.activeProperties")} ({properties.length})</h2>
+                            <h2 className="text-aqar-text font-semibold text-lg mb-5">{t("agentsPage.activeProps")} ({properties.length})</h2>
                             {properties.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {properties.map((p) => <PropertyCard key={p.id} property={p} />)}
