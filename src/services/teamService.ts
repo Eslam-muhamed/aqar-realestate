@@ -177,8 +177,8 @@ export const teamService = {
 
             if (error) throw error;
             return { success: true };
-        } catch (err: unknown) {
-            return { success: false, error: err instanceof Error ? err.message : String(err) };
+        } catch (err: any) {
+            return { success: false, error: err?.message || JSON.stringify(err) };
         }
     },
 
@@ -197,8 +197,8 @@ export const teamService = {
 
             if (error) throw error;
             return { success: true };
-        } catch (err: unknown) {
-            return { success: false, error: err instanceof Error ? err.message : String(err) };
+        } catch (err: any) {
+            return { success: false, error: err?.message || JSON.stringify(err) };
         }
     },
 };
