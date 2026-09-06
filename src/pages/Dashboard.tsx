@@ -29,6 +29,10 @@ import {
     RefreshCw,
     PieChart,
     Sparkles,
+    UserPlus,
+    Trash2,
+    X,
+    Loader2,
 } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -78,6 +82,21 @@ export default function Dashboard() {
     const [assigningLeadId, setAssigningLeadId] = useState<string | null>(null);
     const [updatingStatusLeadId, setUpdatingStatusLeadId] = useState<string | null>(null);
     const [savingNoteLeadId, setSavingNoteLeadId] = useState<string | null>(null);
+    const [isAddSupervisorOpen, setIsAddSupervisorOpen] = useState(false);
+    const [addingSupervisor, setAddingSupervisor] = useState(false);
+    const [deletingSupervisorId, setDeletingSupervisorId] = useState<string | null>(null);
+    const [newSupervisorForm, setNewSupervisorForm] = useState({
+        full_name: "",
+        email: "",
+        phone: "",
+        password: "",
+        permissions: {
+            can_add_properties: true,
+            can_edit_all_properties: false,
+            can_delete_properties: false,
+            can_claim_unassigned_leads: true,
+        },
+    });
 
     useEffect(() => {
         let isMounted = true;
@@ -239,6 +258,75 @@ export default function Dashboard() {
             toast.success("تمت استعادة العقار ونشره مجدداً في الموقع");
         } else {
             toast.error("فشل استعادة العقار: " + res.error);
+        }
+    };
+
+    const handleCreateSupervisor = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newSupervisorForm.full_name || !newSupervisorForm.email || !newSupervisorForm.password) {
+            toast.error("يرجى ملء جميع الحقول المطلوبة (الاسم، البريد، كلمة المرور)");
+            return;
+        }
+        if (newSupervisorForm.password.length < 6) {
+            toast.error("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+            return;
+        }
+
+        setAddingSupervisor(true);
+        const res = await teamService.createSupervisor(newSupervisorForm);
+        setAddingSupervisor(false);
+
+        if (res.success) {
+            toast.success("تم إنشاء حساب المشرف بنجاح ويمكنه تسجيل الدخول فوراً!");
+            setIsAddSupervisorOpen(false);
+            setNewSupervisorForm({
+                full_name: "",
+                email: "",
+                phone: "",
+                password: "",
+                permissions: {
+                    can_add_properties: true,
+                    can_edit_all_properties: false,
+                    can_delete_properties: false,
+                    can_claim_unassigned_leads: true,
+                },
+            });
+            const refresh = await teamService.getSupervisors(1, limit);
+            if (refresh.success) setSupervisors(refresh.data);
+        } else {
+            toast.error("فشل إنشاء المشرف: " + res.error);
+        }
+    };
+
+    const handleDeleteSupervisor = async (supId: string, supName: string) => {
+        if (!confirm(`هل أنت متأكد من حذف حساب المشرف "${supName}" نهائياً؟ سيتم إلغاء تعيين أي عملاء مكلف بهم.`)) {
+            return;
+        }
+
+        setDeletingSupervisorId(supId);
+        const res = await teamService.deleteSupervisor(supId);
+        setDeletingSupervisorId(null);
+
+        if (res.success) {
+            toast.success("تم حذف حساب المشرف بنجاح");
+            setSupervisors((prev) => prev.filter((s) => s.id !== supId));
+            setLeads((prev) =>
+                prev.map((l) => (l.assigned_to === supId ? { ...l, assigned_to: null, assigned_supervisor: undefined } : l))
+            );
+        } else {
+            toast.error("فشل حذف المشرف: " + res.error);
+        }
+    };
+
+    const handleToggleSupervisorStatus = async (supId: string, currentStatus: boolean) => {
+        const res = await teamService.toggleStatus(supId, !currentStatus);
+        if (res.success) {
+            setSupervisors((prev) =>
+                prev.map((s) => (s.id === supId ? { ...s, is_active: !currentStatus } : s))
+            );
+            toast.success(!currentStatus ? "تم تفعيل حساب المشرف" : "تم تعطيل حساب المشرف مؤقتاً");
+        } else {
+            toast.error("فشل تعديل حالة المشرف: " + res.error);
         }
     };
 
@@ -1004,75 +1092,142 @@ export default function Dashboard() {
                             {/* SUPERVISORS MANAGEMENT TAB (ADMIN ONLY) */}
                             {tab === "supervisors" && isAdmin && (
                                 <div className="space-y-6">
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div>
                                             <h2 className="text-aqar-text text-xl font-bold">فريق المشرفين والوكلاء</h2>
                                             <p className="text-aqar-muted text-xs mt-1">
-                                                إدارة حسابات المشرفين، تفعيلهم، وتخصيص صلاحياتهم في نشر العقارات واستلام الـ Leads
+                                                إدارة حسابات المشرفين، إضافة مشرفين جدد، تخصيص الصلاحيات، وحذف الحسابات
                                             </p>
                                         </div>
+                                        <button
+                                            onClick={() => setIsAddSupervisorOpen(true)}
+                                            className="flex items-center gap-2 px-5 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText text-xs font-bold rounded-xl transition-all shadow-md shrink-0"
+                                        >
+                                            <UserPlus size={16} /> إضافة مشرف جديد
+                                        </button>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {supervisors.map((sup) => {
-                                            const supLeads = leads.filter((l) => l.assigned_to === sup.id);
-                                            const wonCount = supLeads.filter((l) => l.status === "closed_won").length;
+                                    {supervisors.length === 0 ? (
+                                        <div className="text-center py-16 bg-aqar-surface border border-aqar-border rounded-2xl">
+                                            <Users size={36} className="mx-auto text-aqar-muted mb-3 opacity-40" />
+                                            <h3 className="text-aqar-text font-bold text-base mb-1">لا يوجد مشرفين حالياً</h3>
+                                            <p className="text-aqar-muted text-xs mb-4">يمكنك إضافة أول مشرف في فريقك لبدء توزيع العملاء وإدارة العقارات</p>
+                                            <button
+                                                onClick={() => setIsAddSupervisorOpen(true)}
+                                                className="px-5 py-2.5 bg-aqar-cyan text-aqar-btnText text-xs font-bold rounded-xl shadow-md"
+                                            >
+                                                + إضافة أول مشرف الآن
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {supervisors.map((sup) => {
+                                                const supLeads = leads.filter((l) => l.assigned_to === sup.id);
+                                                const wonCount = supLeads.filter((l) => l.status === "closed_won").length;
 
-                                            return (
-                                                <div key={sup.id} className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6">
-                                                    <div className="flex items-start justify-between gap-4 mb-4">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-12 h-12 rounded-xl bg-aqar-cyan/10 border border-aqar-cyan/30 flex items-center justify-center text-aqar-cyan font-bold">
-                                                                {sup.full_name.charAt(0)}
-                                                            </div>
-                                                            <div>
-                                                                <h3 className="text-aqar-text font-bold text-base">{sup.full_name}</h3>
-                                                                <p className="text-xs text-aqar-muted">{sup.email}</p>
-                                                                {sup.phone && <p className="text-xs text-aqar-muted mt-0.5">📞 {sup.phone}</p>}
-                                                            </div>
-                                                        </div>
-                                                        <span
-                                                            className={`px-2.5 py-0.5 text-xs font-semibold rounded-full border ${
-                                                                sup.is_active
-                                                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                                                    : "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                                                            }`}
-                                                        >
-                                                            {sup.is_active ? "نشط" : "معطل"}
-                                                        </span>
-                                                    </div>
-
-                                                    {/* Supervisor performance snapshot */}
-                                                    <div className="grid grid-cols-2 gap-2 p-3 bg-aqar-base rounded-xl border border-aqar-border mb-4 text-center">
+                                                return (
+                                                    <div key={sup.id} className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6 flex flex-col justify-between">
                                                         <div>
-                                                            <p className="text-xs text-aqar-muted">الـ Leads المكلف بها</p>
-                                                            <p className="text-aqar-text font-mono font-bold text-base mt-1">
-                                                                {supLeads.length}
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-xs text-aqar-muted">الصفقات المكتملة</p>
-                                                            <p className="text-emerald-400 font-mono font-bold text-base mt-1">
-                                                                {wonCount}
-                                                            </p>
-                                                        </div>
-                                                    </div>
+                                                            <div className="flex items-start justify-between gap-4 mb-4">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="w-12 h-12 rounded-xl bg-aqar-cyan/10 border border-aqar-cyan/30 flex items-center justify-center text-aqar-cyan font-bold text-lg">
+                                                                        {sup.full_name ? sup.full_name.charAt(0) : "م"}
+                                                                    </div>
+                                                                    <div>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <h3 className="text-aqar-text font-bold text-base">{sup.full_name}</h3>
+                                                                            {sup.role === "admin" && (
+                                                                                <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-aqar-cyan/15 text-aqar-cyan border border-aqar-cyan/30">
+                                                                                    مدير النظام
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                        <p className="text-xs text-aqar-muted">{sup.email}</p>
+                                                                        {sup.phone && <p className="text-xs text-aqar-muted mt-0.5">📞 {sup.phone}</p>}
+                                                                    </div>
+                                                                </div>
+                                                                <span
+                                                                    className={`px-2.5 py-0.5 text-xs font-semibold rounded-full border ${
+                                                                        sup.is_active
+                                                                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                                                            : "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                                                    }`}
+                                                                >
+                                                                    {sup.is_active ? "نشط" : "معطل"}
+                                                                </span>
+                                                            </div>
 
-                                                    {/* Permissions list */}
-                                                    <div className="space-y-1.5 text-xs text-aqar-muted pt-3 border-t border-aqar-border">
-                                                        <div className="flex items-center justify-between">
-                                                            <span>نشر وإضافة عقارات جديدة:</span>
-                                                            <span className="text-aqar-text font-semibold">مسموح</span>
+                                                            {/* Supervisor performance snapshot */}
+                                                            <div className="grid grid-cols-2 gap-2 p-3 bg-aqar-base rounded-xl border border-aqar-border mb-4 text-center">
+                                                                <div>
+                                                                    <p className="text-xs text-aqar-muted">الـ Leads المكلف بها</p>
+                                                                    <p className="text-aqar-text font-mono font-bold text-base mt-1">
+                                                                        {supLeads.length}
+                                                                    </p>
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-xs text-aqar-muted">الصفقات المكتملة</p>
+                                                                    <p className="text-emerald-400 font-mono font-bold text-base mt-1">
+                                                                        {wonCount}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Permissions list */}
+                                                            <div className="space-y-1.5 text-xs text-aqar-muted pt-3 border-t border-aqar-border mb-4">
+                                                                <div className="flex items-center justify-between">
+                                                                    <span>نشر وإضافة عقارات جديدة:</span>
+                                                                    <span className={`font-semibold ${sup.permissions?.can_add_properties ? "text-emerald-400" : "text-rose-400"}`}>
+                                                                        {sup.permissions?.can_add_properties ? "مسموح" : "محظور"}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="flex items-center justify-between">
+                                                                    <span>استلام العملاء غير الموزعين:</span>
+                                                                    <span className={`font-semibold ${sup.permissions?.can_claim_unassigned_leads ? "text-emerald-400" : "text-rose-400"}`}>
+                                                                        {sup.permissions?.can_claim_unassigned_leads ? "مسموح" : "محظور"}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="flex items-center justify-between">
+                                                                    <span>الاطلاع على عملاء الزملاء:</span>
+                                                                    <span className="text-rose-400 font-semibold">محظور (منع التعارض)</span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex items-center justify-between">
-                                                            <span>الاطلاع على عملاء الزملاء:</span>
-                                                            <span className="text-rose-400 font-semibold">محظور (منع التعارض)</span>
-                                                        </div>
+
+                                                        {/* Actions: Toggle Status & Delete */}
+                                                        {sup.role !== "admin" && (
+                                                            <div className="flex items-center justify-between gap-3 pt-3 border-t border-aqar-border mt-auto">
+                                                                <button
+                                                                    onClick={() => handleToggleSupervisorStatus(sup.id, sup.is_active)}
+                                                                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                                                                        sup.is_active
+                                                                            ? "bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20"
+                                                                            : "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20"
+                                                                    }`}
+                                                                >
+                                                                    {sup.is_active ? "تعطيل الحساب" : "تفعيل الحساب"}
+                                                                </button>
+
+                                                                <button
+                                                                    onClick={() => handleDeleteSupervisor(sup.id, sup.full_name)}
+                                                                    disabled={deletingSupervisorId === sup.id}
+                                                                    title="حذف حساب المشرف نهائياً"
+                                                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white transition-colors text-xs font-semibold disabled:opacity-50"
+                                                                >
+                                                                    {deletingSupervisorId === sup.id ? (
+                                                                        <Loader2 size={13} className="animate-spin" />
+                                                                    ) : (
+                                                                        <Trash2 size={13} />
+                                                                    )}
+                                                                    حذف المشرف
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
 
                                     {/* Pagination Controls */}
                                     <div className="flex items-center justify-between mt-4">
@@ -1281,6 +1436,157 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* ADD SUPERVISOR MODAL */}
+            {isAddSupervisorOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+                    <div className="bg-aqar-surface border border-aqar-border rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-center justify-between pb-4 mb-4 border-b border-aqar-border">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2.5 rounded-xl bg-aqar-cyan/15 text-aqar-cyan border border-aqar-cyan/30">
+                                    <UserPlus size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-aqar-text font-bold text-lg">إضافة مشرف جديد</h3>
+                                    <p className="text-aqar-muted text-xs">إنشاء حساب للمشرف ومنحه صلاحيات العمل على المنصة</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsAddSupervisorOpen(false)}
+                                className="p-2 rounded-xl text-aqar-muted hover:text-aqar-text hover:bg-aqar-hover transition-colors"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleCreateSupervisor} className="space-y-4 text-xs">
+                            <div>
+                                <label className="text-aqar-text font-medium block mb-1.5">الاسم بالكامل *</label>
+                                <input
+                                    required
+                                    value={newSupervisorForm.full_name}
+                                    onChange={(e) => setNewSupervisorForm({ ...newSupervisorForm, full_name: e.target.value })}
+                                    placeholder="مثال: عمر خالد"
+                                    className="w-full px-4 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-aqar-text text-sm focus:border-aqar-cyan/50 focus:outline-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-aqar-text font-medium block mb-1.5">البريد الإلكتروني (لتسجيل الدخول) *</label>
+                                <input
+                                    required
+                                    type="email"
+                                    value={newSupervisorForm.email}
+                                    onChange={(e) => setNewSupervisorForm({ ...newSupervisorForm, email: e.target.value })}
+                                    placeholder="omar@aqar.com"
+                                    className="w-full px-4 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-aqar-text text-sm focus:border-aqar-cyan/50 focus:outline-none"
+                                    dir="ltr"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label className="text-aqar-text font-medium block mb-1.5">رقم الهاتف / واتساب</label>
+                                    <input
+                                        value={newSupervisorForm.phone}
+                                        onChange={(e) => setNewSupervisorForm({ ...newSupervisorForm, phone: e.target.value })}
+                                        placeholder="+966 50 123 4567"
+                                        className="w-full px-4 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-aqar-text text-sm focus:border-aqar-cyan/50 focus:outline-none"
+                                        dir="ltr"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-aqar-text font-medium block mb-1.5">كلمة المرور الأولية *</label>
+                                    <input
+                                        required
+                                        type="password"
+                                        value={newSupervisorForm.password}
+                                        onChange={(e) => setNewSupervisorForm({ ...newSupervisorForm, password: e.target.value })}
+                                        placeholder="6 أحرف على الأقل"
+                                        className="w-full px-4 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-aqar-text text-sm focus:border-aqar-cyan/50 focus:outline-none"
+                                        dir="ltr"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Permissions */}
+                            <div className="pt-2">
+                                <label className="text-aqar-text font-bold block mb-2">صلاحيات المشرف الممنوحة:</label>
+                                <div className="space-y-2.5 bg-aqar-base p-3.5 rounded-xl border border-aqar-border">
+                                    <label className="flex items-center gap-2.5 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={newSupervisorForm.permissions.can_add_properties}
+                                            onChange={(e) =>
+                                                setNewSupervisorForm({
+                                                    ...newSupervisorForm,
+                                                    permissions: { ...newSupervisorForm.permissions, can_add_properties: e.target.checked },
+                                                })
+                                            }
+                                            className="w-4 h-4 rounded text-aqar-cyan accent-aqar-cyan"
+                                        />
+                                        <span className="text-aqar-text">إضافة ونشر عقارات جديدة في المنصة</span>
+                                    </label>
+
+                                    <label className="flex items-center gap-2.5 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={newSupervisorForm.permissions.can_claim_unassigned_leads}
+                                            onChange={(e) =>
+                                                setNewSupervisorForm({
+                                                    ...newSupervisorForm,
+                                                    permissions: { ...newSupervisorForm.permissions, can_claim_unassigned_leads: e.target.checked },
+                                                })
+                                            }
+                                            className="w-4 h-4 rounded text-aqar-cyan accent-aqar-cyan"
+                                        />
+                                        <span className="text-aqar-text">استلام ومتابعة العملاء غير الموزعين</span>
+                                    </label>
+
+                                    <label className="flex items-center gap-2.5 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={newSupervisorForm.permissions.can_edit_all_properties}
+                                            onChange={(e) =>
+                                                setNewSupervisorForm({
+                                                    ...newSupervisorForm,
+                                                    permissions: { ...newSupervisorForm.permissions, can_edit_all_properties: e.target.checked },
+                                                })
+                                            }
+                                            className="w-4 h-4 rounded text-aqar-cyan accent-aqar-cyan"
+                                        />
+                                        <span className="text-aqar-text">تعديل بيانات عقارات الزملاء</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-end gap-3 pt-4 border-t border-aqar-border">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAddSupervisorOpen(false)}
+                                    className="px-5 py-2.5 border border-aqar-border text-aqar-muted hover:text-aqar-text rounded-xl transition-colors"
+                                >
+                                    إلغاء
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={addingSupervisor}
+                                    className="flex items-center gap-2 px-6 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText font-bold rounded-xl transition-all shadow-md disabled:opacity-50"
+                                >
+                                    {addingSupervisor ? (
+                                        <>
+                                            <Loader2 size={16} className="animate-spin" /> جارٍ إنشاء الحساب...
+                                        </>
+                                    ) : (
+                                        "إنشاء وتفعيل الحساب فوراً"
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div>
     );

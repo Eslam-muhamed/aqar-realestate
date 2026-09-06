@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, AlertCircle, ShieldCheck, UserCheck, Loader2 } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -25,7 +25,6 @@ export default function Login() {
         register,
         handleSubmit,
         formState: { errors },
-        setValue
     } = useForm<LoginForm>({
         resolver: zodResolver(loginSchema),
     });
@@ -41,21 +40,6 @@ export default function Login() {
             navigate("/dashboard");
         } else {
             setError(result.error || "فشل تسجيل الدخول. تأكد من صحة البيانات.");
-        }
-    };
-
-    const handleQuickLogin = async (email: string, pass: string, roleName: string) => {
-        setValue("email", email);
-        setValue("password", pass);
-        setLoading(true);
-        setError("");
-        const result = await login(email, pass);
-        setLoading(false);
-        if (result.success) {
-            toast.success(`مرحباً بك! تم الدخول كـ ${roleName}`);
-            navigate("/dashboard");
-        } else {
-            setError(result.error || "فشل الدخول السريع.");
         }
     };
 
@@ -146,45 +130,6 @@ export default function Login() {
                             {loading ? <Loader2 size={16} className="animate-spin" /> : "تسجيل الدخول"}
                         </button>
                     </form>
-
-                    {/* Quick Access / Demo Accounts */}
-                    <div className="mt-8 pt-6 border-t border-aqar-border">
-                        <p className="text-xs text-aqar-muted mb-3 font-semibold">الدخول السريع لتجربة الصلاحيات وتوزيع الـ Leads:</p>
-                        <div className="space-y-2">
-                            <button
-                                type="button"
-                                onClick={() => handleQuickLogin("admin@aqar.com", "password123", "مدير المكتب (Admin)")}
-                                className="w-full px-3.5 py-2.5 bg-aqar-surface hover:bg-aqar-hover border border-amber-500/30 rounded-xl text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center justify-between transition-colors"
-                            >
-                                <span className="flex items-center gap-2">
-                                    <ShieldCheck size={16} /> دخول كـ مدير المكتب (Admin)
-                                </span>
-                                <span className="text-[10px] text-aqar-muted">كامل الصلاحيات وتوزيع الـ Leads</span>
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => handleQuickLogin("ahmed@aqar.com", "password123", "مشرف المبيعات 1 (أحمد)")}
-                                className="w-full px-3.5 py-2.5 bg-aqar-surface hover:bg-aqar-hover border border-cyan-500/30 rounded-xl text-xs font-semibold text-cyan-600 dark:text-cyan-400 flex items-center justify-between transition-colors"
-                            >
-                                <span className="flex items-center gap-2">
-                                    <UserCheck size={16} /> دخول كـ مشرف 1 (أحمد)
-                                </span>
-                                <span className="text-[10px] text-aqar-muted">يرى فقط الـ Leads المكلف بها</span>
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => handleQuickLogin("sara@aqar.com", "password123", "مشرفة العقارات 2 (سارة)")}
-                                className="w-full px-3.5 py-2.5 bg-aqar-surface hover:bg-aqar-hover border border-purple-500/30 rounded-xl text-xs font-semibold text-purple-600 dark:text-purple-400 flex items-center justify-between transition-colors"
-                            >
-                                <span className="flex items-center gap-2">
-                                    <UserCheck size={16} /> دخول كـ مشرفة 2 (سارة)
-                                </span>
-                                <span className="text-[10px] text-aqar-muted">قفل خاص لعملائها فقط</span>
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

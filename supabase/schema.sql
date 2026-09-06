@@ -259,9 +259,16 @@ CREATE POLICY "Users update own profile" ON public.profiles FOR
 UPDATE USING (auth.uid () = id);
 
 DROP POLICY IF EXISTS "Admin update any profile" ON public.profiles;
-
 CREATE POLICY "Admin update any profile" ON public.profiles FOR
 UPDATE USING (public.is_admin ());
+
+DROP POLICY IF EXISTS "Admin insert any profile" ON public.profiles;
+CREATE POLICY "Admin insert any profile" ON public.profiles FOR
+INSERT WITH CHECK (public.is_admin ());
+
+DROP POLICY IF EXISTS "Admin delete any profile" ON public.profiles;
+CREATE POLICY "Admin delete any profile" ON public.profiles FOR
+DELETE USING (public.is_admin ());
 
 -- 8.2 PROPERTIES POLICIES
 DROP POLICY IF EXISTS "Public read published properties" ON public.properties;

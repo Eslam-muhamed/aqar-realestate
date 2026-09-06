@@ -51,7 +51,14 @@ const DEMO_USERS: (User & { password: string })[] = [
 ];
 
 export function useAuth() {
-    const [user, setUser] = useState<User | null>(() => authStorage.get());
+    const [user, setUser] = useState<User | null>(() => {
+        const stored = authStorage.get();
+        if (!import.meta.env.DEV && stored?.id?.endsWith("-demo")) {
+            authStorage.clear();
+            return null;
+        }
+        return stored;
+    });
     const [loading, setLoading] = useState(true);
 
     const fetchUserProfile = async (userId: string, email: string) => {
@@ -106,9 +113,9 @@ export function useAuth() {
             if (session?.user) {
                 await fetchUserProfile(session.user.id, session.user.email || "");
             } else {
-                // If not signed in via Supabase, keep current user if logged in via demo account
+                // In DEV mode only, preserve demo session if not using Supabase
                 const currentLocal = authStorage.get();
-                if (!currentLocal?.id?.endsWith("-demo")) {
+                if (!import.meta.env.DEV || !currentLocal?.id?.endsWith("-demo")) {
                     setUser(null);
                     authStorage.clear();
                 }
@@ -150,26 +157,28 @@ export function useAuth() {
                     return { success: true };
                 }
             } catch (err) {
-                console.warn("Supabase login attempted, checking demo fallback:", err);
+                console.warn("Supabase login error:", err);
             }
 
-            // 2. Demo fallback accounts for immediate testing
-            const demoMatch = DEMO_USERS.find(
-                (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-            );
+            // 2. In DEV mode only: Demo fallback accounts for local testing
+            if (import.meta.env.DEV) {
+                const demoMatch = DEMO_USERS.find(
+                    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+                );
 
-            if (demoMatch) {
-                const { password: _p, ...userData } = demoMatch;
-                authStorage.set(userData);
-                setUser(userData);
-                setLoading(false);
-                return { success: true };
+                if (demoMatch) {
+                    const { password: _p, ...userData } = demoMatch;
+                    authStorage.set(userData);
+                    setUser(userData);
+                    setLoading(false);
+                    return { success: true };
+                }
             }
 
             setLoading(false);
             return {
                 success: false,
-                error: "بيانات الدخول غير صحيحة. يمكنك تجربة admin@aqar.com أو ahmed@aqar.com مع كلمة المرور password123",
+                error: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
             };
         },
         []

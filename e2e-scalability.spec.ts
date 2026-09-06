@@ -3,9 +3,9 @@ import { test, expect, Page } from '@playwright/test';
 async function loginAsAdmin(page: Page) {
   await page.goto('http://localhost:8080/login', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => localStorage.clear());
-  const adminBtn = page.getByRole('button', { name: /دخول كـ مدير المكتب/i });
-  await adminBtn.waitFor({ state: 'visible' });
-  await adminBtn.click();
+  await page.fill('input[type="email"]', 'admin@aqar.com');
+  await page.fill('input[type="password"]', 'password123');
+  await page.click('button[type="submit"]');
   await expect(page).toHaveURL(/.*dashboard/, { timeout: 20000 });
 }
 
@@ -104,5 +104,35 @@ test.describe('Scalability & Long-Term Operations Verification', () => {
     // Verify re-sync button
     const resyncBtn = page.getByRole('button', { name: /تفريغ الذاكرة المؤقتة وإعادة المزامنة/i });
     await expect(resyncBtn).toBeVisible();
+  });
+
+  test('6. Admin Supervisor Management (Add & Delete)', async ({ page }) => {
+    await loginAsAdmin(page);
+
+    // Switch to Supervisors tab
+    const supsTab = page.locator('aside button').filter({ hasText: 'فريق المشرفين' });
+    await expect(supsTab).toBeVisible();
+    await supsTab.click();
+
+    // Verify Add Supervisor button is present
+    const addSupBtn = page.getByRole('button', { name: /إضافة مشرف جديد/i });
+    await expect(addSupBtn).toBeVisible();
+
+    // Click Add Supervisor button to open modal
+    await addSupBtn.click();
+
+    // Verify modal elements
+    await expect(page.getByText('إنشاء حساب للمشرف ومنحه صلاحيات العمل على المنصة')).toBeVisible();
+    await expect(page.getByPlaceholder('مثال: عمر خالد')).toBeVisible();
+    await expect(page.getByPlaceholder('omar@aqar.com')).toBeVisible();
+    await expect(page.getByRole('button', { name: /إنشاء وتفعيل الحساب فوراً/i })).toBeVisible();
+
+    // Close modal
+    await page.getByRole('button', { name: 'إلغاء' }).click();
+    await expect(page.getByText('إنشاء حساب للمشرف ومنحه صلاحيات العمل على المنصة')).not.toBeVisible();
+
+    // Verify supervisor cards have delete action
+    const deleteSupBtn = page.getByRole('button', { name: /حذف المشرف/i }).first();
+    await expect(deleteSupBtn).toBeVisible();
   });
 });
