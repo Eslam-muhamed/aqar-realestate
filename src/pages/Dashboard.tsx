@@ -721,9 +721,15 @@ export default function Dashboard() {
                                                                         </span>
                                                                     )}
                                                                     {lead.property_title && (
-                                                                        <span className="text-xs bg-aqar-hover text-aqar-muted px-2.5 py-0.5 rounded-full">
-                                                                            {lead.property_title}
-                                                                        </span>
+                                                                        lead.property_id ? (
+                                                                            <Link to={`/property/${lead.property_id}`} target="_blank" rel="noopener noreferrer" className="text-xs bg-aqar-cyan/10 text-aqar-cyan border border-aqar-cyan/30 px-2.5 py-0.5 rounded-full hover:bg-aqar-cyan/20 transition-colors flex items-center gap-1 font-medium">
+                                                                                <ExternalLink size={12} /> {lead.property_title}
+                                                                            </Link>
+                                                                        ) : (
+                                                                            <span className="text-xs bg-aqar-hover text-aqar-muted px-2.5 py-0.5 rounded-full">
+                                                                                {lead.property_title}
+                                                                            </span>
+                                                                        )
                                                                     )}
                                                                 </div>
                                                                 <p className="text-xs text-aqar-muted mt-1.5 flex items-center gap-4">
