@@ -4,8 +4,18 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { MOCK_LOCATIONS } from "@/constants/mockData";
 import { formatPrice } from "@/lib/utils";
+import { useProperties } from "@/hooks/useRealData";
 
 export default function Locations() {
+    const { data: properties } = useProperties();
+    const activeLocations = MOCK_LOCATIONS.map(loc => {
+        const locProps = properties?.filter(p => p.location?.city?.toLowerCase() === loc.name.toLowerCase()) || [];
+        const count = locProps.length;
+        const avgPrice = count > 0 ? locProps.reduce((acc, p) => acc + p.price, 0) / count : loc.avgPrice;
+        const types = count > 0 ? Array.from(new Set(locProps.map(p => p.type))) : loc.types;
+        return { ...loc, properties: count, avgPrice, types };
+    }).filter(loc => loc.properties > 0);
+
     return (
         <div className="min-h-screen bg-aqar-base text-start">
             <Header />
@@ -22,8 +32,14 @@ export default function Locations() {
                 </div>
 
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16">
+                    {activeLocations.length === 0 ? (
+                        <div className="text-center py-20">
+                            <h2 className="text-aqar-text text-xl font-bold mb-2">لا توجد مناطق متاحة حالياً</h2>
+                            <p className="text-aqar-muted text-sm">سيتم عرض المناطق هنا بمجرد إضافة عقارات إليها.</p>
+                        </div>
+                    ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {MOCK_LOCATIONS.map((loc) => {
+                        {activeLocations.map((loc) => {
                             const typeMap: Record<string, string> = { Villa: "فيلا", Apartment: "شقة", Penthouse: "بنتهاوس", Townhouse: "تاون هاوس", Duplex: "دوبلكس", Commercial: "تجاري" };
                             const countryMap: Record<string, string> = { "Saudi Arabia": "السعودية", "UAE": "الإمارات", "Egypt": "مصر", "Oman": "عُمان", "Kuwait": "الكويت" };
                             const nameMap: Record<string, string> = { Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت" };
@@ -67,6 +83,7 @@ export default function Locations() {
                             </Link>
                         )})}
                     </div>
+                    )}
                 </div>
             </div>
             <Footer />

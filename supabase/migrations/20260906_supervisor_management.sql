@@ -55,7 +55,11 @@ BEGIN
         role,
         aud,
         created_at,
-        updated_at
+        updated_at,
+        confirmation_token,
+        recovery_token,
+        email_change_token_new,
+        email_change
     )
     VALUES (
         new_user_id,
@@ -68,7 +72,11 @@ BEGIN
         'authenticated',
         'authenticated',
         now(),
-        now()
+        now(),
+        '',
+        '',
+        '',
+        ''
     );
 
     -- Insert into auth.identities to prevent "Database error loading user" and allow login

@@ -131,33 +131,46 @@ export default function Index() {
 
             {/* Locations */}
             <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
-                <div className="flex items-end justify-between mb-12">
-                    <div>
-                        <p className="text-aqar-cyan text-xs font-medium uppercase tracking-widest mb-3">{t("home.whereWeWork")}</p>
-                        <h2 className="text-aqar-text text-3xl lg:text-4xl font-bold tracking-tight">{t("home.topLocations")}</h2>
-                    </div>
-                    <Link to="/locations" className="hidden sm:flex items-center gap-2 text-sm text-aqar-muted hover:text-aqar-text group">
-                        {t("home.allLocations")} <ArrowIcon size={14} className={cn("transition-transform", isRTL ? "group-hover:-translate-x-1" : "group-hover:translate-x-1")} />
-                    </Link>
-                </div>
+                {(() => {
+                    const activeLocations = MOCK_LOCATIONS.map(loc => ({
+                        ...loc,
+                        properties: properties?.filter(p => p.location?.city?.toLowerCase() === loc.name.toLowerCase()).length || 0
+                    })).filter(loc => loc.properties > 0);
+                    
+                    if (activeLocations.length === 0) return null;
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {MOCK_LOCATIONS.slice(0, 4).map((loc) => (
-                        <Link key={loc.id} to={`/locations/${loc.slug}`}
-                            className="group relative rounded-2xl overflow-hidden aspect-[3/4] block">
-                            <img src={loc.image} alt={loc.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                            <div className="absolute bottom-0 left-0 right-0 p-5">
-                                <div className="flex items-center gap-1.5 mb-1">
-                                    <MapPin size={11} className="text-aqar-cyan" />
-                                    <span className="text-gray-300 text-xs">{loc.country}</span>
+                    return (
+                        <>
+                            <div className="flex items-end justify-between mb-12">
+                                <div>
+                                    <p className="text-aqar-cyan text-xs font-medium uppercase tracking-widest mb-3">{t("home.whereWeWork")}</p>
+                                    <h2 className="text-aqar-text text-3xl lg:text-4xl font-bold tracking-tight">{t("home.topLocations")}</h2>
                                 </div>
-                                <h3 className="text-white font-semibold text-lg">{loc.name}</h3>
-                                <p className="text-gray-400 text-xs mt-1 font-mono">{loc.properties} {t("home.propertiesCount")}</p>
+                                <Link to="/locations" className="hidden sm:flex items-center gap-2 text-sm text-aqar-muted hover:text-aqar-text group">
+                                    {t("home.allLocations")} <ArrowIcon size={14} className={cn("transition-transform", isRTL ? "group-hover:-translate-x-1" : "group-hover:translate-x-1")} />
+                                </Link>
                             </div>
-                        </Link>
-                    ))}
-                </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                {activeLocations.slice(0, 4).map((loc) => (
+                                    <Link key={loc.id} to={`/locations/${loc.slug}`}
+                                        className="group relative rounded-2xl overflow-hidden aspect-[3/4] block">
+                                        <img src={loc.image} alt={loc.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                        <div className="absolute bottom-0 left-0 right-0 p-5">
+                                            <div className="flex items-center gap-1.5 mb-1">
+                                                <MapPin size={11} className="text-aqar-cyan" />
+                                                <span className="text-gray-300 text-xs">{loc.country}</span>
+                                            </div>
+                                            <h3 className="text-white font-semibold text-lg">{loc.name}</h3>
+                                            <p className="text-gray-400 text-xs mt-1 font-mono">{loc.properties} {t("home.propertiesCount")}</p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </>
+                    );
+                })()}
             </section>
 
             {/* Agents */}
