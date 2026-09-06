@@ -108,7 +108,7 @@ export default function Header() {
                                 </span>
                             )}
                         </Link>
-                        {user ? (
+                        {user && (
                             <div className="relative">
                                 <button onClick={() => setUserMenuOpen(!userMenuOpen)}
                                     className="flex items-center gap-2 pe-3 ps-2 py-1.5 rounded-md border border-aqar-border text-sm text-aqar-text hover:border-aqar-cyan/40 transition-colors">
@@ -129,10 +129,6 @@ export default function Header() {
                                     </div>
                                 )}
                             </div>
-                        ) : (
-                            <Link to="/login" className="px-4 py-2 text-sm text-aqar-muted hover:text-aqar-text transition-colors">
-                                {t("nav.login")}
-                            </Link>
                         )}
                         {user && (user.role === "admin" || user.role === "supervisor") && (
                             <Link to="/list-property"
@@ -185,10 +181,8 @@ export default function Header() {
                         )}
                     </Link>
                     <div className="pt-4 flex gap-3">
-                        {user ? (
+                        {user && (
                             <button onClick={handleLogout} className="flex-1 py-2.5 border border-aqar-border text-sm text-aqar-danger rounded-md">{t("nav.logout")}</button>
-                        ) : (
-                            <Link to="/login" className="flex-1 py-2.5 border border-aqar-border text-sm text-center text-aqar-muted rounded-md">{t("nav.login")}</Link>
                         )}
                         {user && (user.role === "admin" || user.role === "supervisor") && (
                             <Link to="/list-property" className="flex-1 py-2.5 bg-aqar-cyan text-aqar-base text-sm font-semibold text-center rounded-md">
