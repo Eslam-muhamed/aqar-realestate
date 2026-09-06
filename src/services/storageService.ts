@@ -23,8 +23,7 @@ export const storageService = {
                 .from('properties')
                 .upload(filePath, file, {
                     contentType: file.type || 'image/webp',
-                    cacheControl: '3600',
-                    upsert: true
+                    cacheControl: '3600'
                 });
 
             if (error) {
