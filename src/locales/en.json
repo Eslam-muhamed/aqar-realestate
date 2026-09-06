@@ -55,9 +55,9 @@
       "dailyTitle": "Daily Updates",
       "dailyDesc": "Our database is constantly updated so you always see the latest available properties."
     },
-    "featured": "Carefully Selected",
-    "featuredTitle": "Featured Properties",
-    "featuredDesc": "Handpicked properties that deserve your attention.",
+    "latest": "Latest Properties",
+    "latestTitle": "Discover the Newest",
+    "latestDesc": "The most recent properties added that deserve your attention.",
     "viewAll": "View all properties",
     "whereWeWork": "Where we work",
     "topLocations": "Top Locations",
@@ -72,7 +72,7 @@
     "listDesc": "Reach thousands of qualified buyers and tenants. Our verified listing process ensures your property reaches serious, pre-screened clients.",
     "addPropertyBtn": "Add Property",
     "contactAgentBtn": "Contact an Agent",
-    "noFeatured": "No featured properties available right now",
+    "noLatest": "No properties available right now",
     "noAgents": "No agents available right now"
   },
   "search": {

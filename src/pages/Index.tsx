@@ -18,7 +18,7 @@ export default function Index() {
     const { data: properties = [], isLoading: isLoadingProperties } = useProperties();
     const { data: agents = [], isLoading: isLoadingAgents } = useAgents();
 
-    const featured = properties.filter((p) => p.featured).slice(0, 6);
+    const displayedProperties = properties.slice(0, 6);
     const topAgents = agents.slice(0, 3);
     const isRTL = i18n.language === 'ar';
     const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
@@ -81,9 +81,9 @@ export default function Index() {
             <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
                 <div className="flex items-end justify-between mb-12">
                     <div>
-                        <p className="text-aqar-cyan text-xs font-medium uppercase tracking-widest mb-3">{t("home.featured")}</p>
-                        <h2 className="text-aqar-text text-3xl lg:text-4xl font-bold tracking-tight">{t("home.featuredTitle")}</h2>
-                        <p className="text-aqar-muted text-sm mt-2">{t("home.featuredDesc")}</p>
+                        <p className="text-aqar-cyan text-xs font-medium uppercase tracking-widest mb-3">{t("home.latest")}</p>
+                        <h2 className="text-aqar-text text-3xl lg:text-4xl font-bold tracking-tight">{t("home.latestTitle")}</h2>
+                        <p className="text-aqar-muted text-sm mt-2">{t("home.latestDesc")}</p>
                     </div>
                     <Link to="/properties" className="hidden sm:flex items-center gap-2 text-sm text-aqar-muted hover:text-aqar-text transition-colors group">
                         {t("home.viewAll")}
@@ -96,11 +96,11 @@ export default function Index() {
                         Array.from({ length: 3 }).map((_, i) => (
                             <div key={i} className="aspect-[4/3] rounded-2xl bg-aqar-border animate-pulse" />
                         ))
-                    ) : featured.length > 0 ? (
-                        featured.map((p) => <PropertyCard key={p.id} property={p} />)
+                    ) : displayedProperties.length > 0 ? (
+                        displayedProperties.map((p) => <PropertyCard key={p.id} property={p} />)
                     ) : (
                         <div className="col-span-full py-12 text-center text-aqar-muted border border-dashed border-aqar-border rounded-2xl">
-                            {t("home.noFeatured")}
+                            {t("home.noLatest")}
                         </div>
                     )}
                 </div>
