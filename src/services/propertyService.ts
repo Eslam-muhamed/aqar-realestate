@@ -106,9 +106,9 @@ export const propertyService = {
     async create(input: CreatePropertyInput, userId?: string): Promise<{ success: boolean; data?: any; error?: string }> {
         try {
             const slug = input.title
-                .toLowerCase()
                 .trim()
-                .replace(/[\s\W-]+/g, "-") + `-${Date.now()}`;
+                .replace(/\s+/g, "-")
+                .replace(/[^\w\u0600-\u06FF-]/g, "") + `-${Date.now()}`;
 
             const propertyCode = `AQR-${Math.floor(10000 + Math.random() * 90000)}`;
 
@@ -148,7 +148,7 @@ export const propertyService = {
             return { success: true, data };
         } catch (err: unknown) {
             console.error("Error creating property in Supabase:", err);
-            return { success: false, error: err instanceof Error ? err.message : String(err) };
+            return { success: false, error: err instanceof Error ? err.message : (err as any).message || JSON.stringify(err) };
         }
     },
 
@@ -175,7 +175,7 @@ export const propertyService = {
             return { success: true, data };
         } catch (err: unknown) {
             console.error("Error updating property in Supabase:", err);
-            return { success: false, error: err instanceof Error ? err.message : String(err) };
+            return { success: false, error: err instanceof Error ? err.message : (err as any).message || JSON.stringify(err) };
         }
     },
 
@@ -193,7 +193,7 @@ export const propertyService = {
              return { success: true };
          } catch (err: unknown) {
              console.error("Error deleting property in Supabase:", err);
-             return { success: false, error: err instanceof Error ? err.message : String(err) };
+             return { success: false, error: err instanceof Error ? err.message : (err as any).message || JSON.stringify(err) };
          }
      },
 
@@ -214,7 +214,7 @@ export const propertyService = {
             return { success: true };
         } catch (err: unknown) {
             console.error("Error archiving property:", err);
-            return { success: false, error: err instanceof Error ? err.message : String(err) };
+            return { success: false, error: err instanceof Error ? err.message : (err as any).message || JSON.stringify(err) };
         }
     },
 
@@ -235,7 +235,7 @@ export const propertyService = {
             return { success: true };
         } catch (err: unknown) {
             console.error("Error restoring property:", err);
-            return { success: false, error: err instanceof Error ? err.message : String(err) };
+            return { success: false, error: err instanceof Error ? err.message : (err as any).message || JSON.stringify(err) };
         }
     },
 

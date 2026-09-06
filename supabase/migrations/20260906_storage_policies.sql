@@ -17,11 +17,9 @@ ON CONFLICT (id) DO UPDATE SET
     file_size_limit = 15728640,
     allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm'];
 
--- 2. تفعيل قراءة الصور للجميع (Public Read) لظهور صور العقارات للزوار
+-- 2. (Removed) Public buckets do not need a SELECT policy for viewing files via getPublicUrl.
+-- Dropping any previously created SELECT policy to resolve security warning:
 DROP POLICY IF EXISTS "Public can view property images" ON storage.objects;
-CREATE POLICY "Public can view property images"
-ON storage.objects FOR SELECT
-USING (bucket_id = 'properties');
 
 -- 3. تفعيل رفع الصور (Insert)
 DROP POLICY IF EXISTS "Allow uploads to property images" ON storage.objects;
