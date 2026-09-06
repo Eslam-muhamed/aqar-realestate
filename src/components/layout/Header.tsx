@@ -7,6 +7,7 @@ import { useCompare } from "@/hooks/useCompare";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
+import Logo from "@/components/ui/Logo";
 
 export default function Header() {
     const [scrolled, setScrolled] = useState(false);
@@ -52,10 +53,7 @@ export default function Header() {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2 shrink-0">
-                        <div className="w-7 h-7 bg-aqar-cyan rounded-sm flex items-center justify-center">
-                            <span className="text-aqar-base font-bold text-xs font-mono">ع</span>
-                        </div>
-                        <span className="text-aqar-text font-semibold text-lg tracking-tight">عقار</span>
+                        <Logo />
                     </Link>
 
                     {/* Desktop Nav */}

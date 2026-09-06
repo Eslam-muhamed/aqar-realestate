@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { MapPin, Phone, Mail, Twitter, Linkedin, Instagram } from "lucide-react";
+import { MapPin, Phone, Mail, Twitter, Linkedin, Instagram, Facebook } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
+import Logo from "@/components/ui/Logo";
 
 export default function Footer() {
     const { t } = useTranslation();
@@ -38,10 +39,7 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="lg:col-span-2">
                         <div className="flex items-center gap-2 mb-5">
-                            <div className="w-7 h-7 bg-aqar-cyan rounded-sm flex items-center justify-center">
-                                <span className="text-aqar-base font-bold text-xs font-mono">ع</span>
-                            </div>
-                            <span className="text-aqar-text font-semibold text-lg">عقار</span>
+                            <Logo />
                         </div>
                         <p className="text-aqar-muted text-sm leading-relaxed max-w-sm">
                             {t("footer.description")}
