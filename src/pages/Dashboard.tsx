@@ -499,7 +499,7 @@ export default function Dashboard() {
                                                 </div>
                                             </div>
                                             <p className="text-aqar-text text-3xl font-mono font-bold">
-                                                {isAdmin ? supervisors.length : filteredLeads.length}
+                                                {isAdmin ? supervisors.filter(s => s.role !== 'admin').length : filteredLeads.length}
                                             </p>
                                             <p className="text-xs text-aqar-muted mt-2">
                                                 {isAdmin ? "يعملون تحت إدارتك بدون تعارض" : "مقفولين لحسابك فقط"}
