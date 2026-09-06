@@ -5,7 +5,7 @@ export default function DynamicTitle() {
     const { t, i18n } = useTranslation();
 
     useEffect(() => {
-        const baseTitle = t('app.title', 'عقار — منصة العقارات المميزة');
+        const baseTitle = t('app.title', 'AMSH — منصة العقارات المميزة');
         document.title = baseTitle;
     }, [t, i18n.language]);
 

@@ -100,7 +100,7 @@ export default function Index() {
                         featured.map((p) => <PropertyCard key={p.id} property={p} />)
                     ) : (
                         <div className="col-span-full py-12 text-center text-aqar-muted border border-dashed border-aqar-border rounded-2xl">
-                            لا توجد عقارات مميزة حالياً
+                            {t("home.noFeatured")}
                         </div>
                     )}
                 </div>
@@ -112,7 +112,7 @@ export default function Index() {
                 </div>
             </section>
 
-            {/* Why Aqar */}
+            {/* Why AMSH */}
             <section className="border-y border-aqar-border bg-aqar-surface/50">
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12 lg:py-20">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-aqar-border">
@@ -182,7 +182,7 @@ export default function Index() {
                             topAgents.map((a) => <AgentCard key={a.id} agent={a} />)
                         ) : (
                             <div className="col-span-full py-12 text-center text-aqar-muted border border-dashed border-aqar-border rounded-2xl">
-                                لا يوجد وكلاء متاحين حالياً
+                                {t("home.noAgents")}
                             </div>
                         )}
                     </div>

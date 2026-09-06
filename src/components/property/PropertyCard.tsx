@@ -5,6 +5,7 @@ import type { Property } from "@/types";
 import { useFavorites } from "@/hooks/useFavorites";
 import { compareStorage } from "@/lib/storage";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     property: Property;
@@ -17,12 +18,13 @@ interface Props {
 
 export default function PropertyCard({ property, className, isDashboard, onDelete, onArchive, onRestore }: Props) {
     const { toggle, isFavorite } = useFavorites();
+    const { t } = useTranslation();
     const fav = isFavorite(property.id);
 
     const handleFavorite = (e: React.MouseEvent) => {
         e.preventDefault();
         const added = toggle(property.id);
-        toast(added ? "تم الحفظ في المفضلة" : "تمت الإزالة من المفضلة", {
+        toast(added ? t("propertyDetail.addedToFav") : t("propertyDetail.removedFromFav"), {
             description: property.title,
             duration: 2000,
         });
@@ -31,12 +33,12 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
     const handleCompare = (e: React.MouseEvent) => {
         e.preventDefault();
         const success = compareStorage.add(property.id);
-        if (success) toast.success("تمت الإضافة للمقارنة", { description: "اعرض صفحة المقارنة لمقارنة العقارات." });
-        else toast.error("لا يمكن الإضافة", { description: "الحد الأقصى 4 عقارات أو مضاف مسبقاً." });
+        if (success) toast.success(t("propertyDetail.addedToCompare"), { description: t("propertyCard.compareDesc") });
+        else toast.error(t("propertyCard.cannotAdd"), { description: t("propertyCard.maxLimit") });
     };
 
     const typeLabel = property.type.charAt(0).toUpperCase() + property.type.slice(1);
-    const bedsLabel = property.stats.bedrooms === 0 ? "استوديو" : `${property.stats.bedrooms}`;
+    const bedsLabel = property.stats.bedrooms === 0 ? t("propertyDetail.studio") : `${property.stats.bedrooms}`;
 
     return (
         <Link to={`/property/${property.slug}`} className={cn("property-card group block", className)}>
@@ -56,16 +58,16 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
                         <span className={cn("px-2.5 py-1 text-xs font-semibold rounded-md",
                             property.status === "for-sale" ? "bg-aqar-cyan text-aqar-btnText" : "bg-aqar-success text-white"
                         )}>
-                            {property.status === "for-sale" ? "للبيع" : "للإيجار"}
+                            {property.status === "for-sale" ? t("propertyDetail.forSale") : t("propertyDetail.forRent")}
                         </span>
                         {property.is_archived && (
                             <span className="px-2.5 py-1 text-xs font-medium bg-amber-500/20 text-amber-400 rounded-md border border-amber-500/40">
-                                🗄️ مؤرشف
+                                🗄️ {t("propertyCard.archived")}
                             </span>
                         )}
                         {property.featured && !property.is_archived && (
                             <span className="px-2.5 py-1 text-xs font-medium bg-white/10 backdrop-blur-sm text-aqar-text rounded-md border border-white/20">
-                                مميز
+                                {t("propertyCard.featured")}
                             </span>
                         )}
                     </div>
@@ -74,13 +76,13 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
                     <div className="absolute top-3 end-3 flex flex-col gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
                         {!isDashboard && (
                             <>
-                                <button onClick={handleFavorite} aria-label="حفظ في المفضلة"
+                                <button onClick={handleFavorite} aria-label={t("propertyCard.saveToFav")}
                                     className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
                                         fav ? "bg-aqar-danger text-white" : "bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-danger hover:text-white"
                                     )}>
                                     <Heart size={14} fill={fav ? "currentColor" : "none"} />
                                 </button>
-                                <button onClick={handleCompare} aria-label="مقارنة العقار"
+                                <button onClick={handleCompare} aria-label={t("propertyCard.compare")}
                                     className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-aqar-btnText flex items-center justify-center transition-colors">
                                     <ArrowLeftRight size={14} />
                                 </button>
@@ -88,7 +90,7 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
                         )}
                         {isDashboard && (
                             <>
-                                <Link to={`/edit-property/${property.id}`} aria-label="تعديل العقار"
+                                <Link to={`/edit-property/${property.id}`} aria-label={t("propertyCard.edit")}
                                     className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-aqar-btnText flex items-center justify-center transition-colors">
                                     <Pencil size={14} />
                                 </Link>
@@ -96,22 +98,22 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
                                 {property.is_archived ? (
                                     <button 
                                         onClick={(e) => { e.preventDefault(); onRestore?.(property.id); }} 
-                                        aria-label="استعادة العقار من الأرشيف"
-                                        title="استعادة العقار من الأرشيف"
+                                        aria-label={t("propertyCard.restore")}
+                                        title={t("propertyCard.restore")}
                                         className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-colors">
                                         <RotateCcw size={14} />
                                     </button>
                                 ) : (
                                     <button 
                                         onClick={(e) => { e.preventDefault(); onArchive?.(property.id); }} 
-                                        aria-label="أرشفة العقار"
-                                        title="أرشفة العقار"
+                                        aria-label={t("propertyCard.archive")}
+                                        title={t("propertyCard.archive")}
                                         className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-amber-400 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors">
                                         <Archive size={14} />
                                     </button>
                                 )}
 
-                                <button onClick={(e) => { e.preventDefault(); onDelete?.(property.id); }} aria-label="حذف العقار"
+                                <button onClick={(e) => { e.preventDefault(); onDelete?.(property.id); }} aria-label={t("propertyCard.delete")}
                                     className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-danger hover:text-white flex items-center justify-center transition-colors">
                                     <Trash2 size={14} />
                                 </button>
@@ -141,17 +143,17 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
 
                     <div className="font-mono text-aqar-cyan text-lg font-semibold mb-4">
                         {formatPrice(property.price, property.currency)}
-                        {property.status === "for-rent" && <span className="text-aqar-muted text-xs font-sans font-normal ms-1">سنوياً</span>}
+                        {property.status === "for-rent" && <span className="text-aqar-muted text-xs font-sans font-normal ms-1">{t("propertyDetail.yearly")}</span>}
                     </div>
 
                     <div className="flex items-center gap-4 pt-4 border-t border-aqar-border">
                         <div className="flex items-center gap-1.5 text-aqar-muted text-xs">
                             <BedDouble size={13} />
-                            <span>{bedsLabel} {bedsLabel !== "استوديو" ? "غرف" : ""}</span>
+                            <span>{bedsLabel} {bedsLabel !== t("propertyDetail.studio") ? t("propertyCard.rooms") : ""}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-aqar-muted text-xs">
                             <Bath size={13} />
-                            <span>{property.stats.bathrooms} دورات مياه</span>
+                            <span>{property.stats.bathrooms} {t("propertyCard.baths")}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-aqar-muted text-xs">
                             <Square size={13} />

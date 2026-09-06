@@ -27,8 +27,8 @@ export default function HeroSearch() {
         navigate(`/properties?${params.toString()}`);
     };
 
-    const typeMap: Record<string, string> = { Villa: "فيلا", Apartment: "شقة", Penthouse: "بنتهاوس", Townhouse: "تاون هاوس", Duplex: "دوبلكس", Commercial: "تجاري" };
-    const cityMap: Record<string, string> = { Riyadh: "الرياض", Jeddah: "جدة", Dubai: "دبي", "Abu Dhabi": "أبو ظبي", "Al Khobar": "الخبر", Cairo: "القاهرة", Muscat: "مسقط", "Kuwait City": "مدينة الكويت" };
+    const typeMap: Record<string, string> = { Villa: t("propType.Villa", "فيلا"), Apartment: t("propType.Apartment", "شقة"), Penthouse: t("propType.Penthouse", "بنتهاوس"), Townhouse: t("propType.Townhouse", "تاون هاوس"), Duplex: t("propType.Duplex", "دوبلكس"), Commercial: t("propType.Commercial", "تجاري") };
+    const cityMap: Record<string, string> = { Riyadh: t("city.Riyadh", "الرياض"), Jeddah: t("city.Jeddah", "جدة"), Dubai: t("city.Dubai", "دبي"), "Abu Dhabi": t("city.Abu Dhabi", "أبو ظبي"), "Al Khobar": t("city.Al Khobar", "الخبر"), Cairo: t("city.Cairo", "القاهرة"), Muscat: t("city.Muscat", "مسقط"), "Kuwait City": t("city.Kuwait City", "مدينة الكويت") };
 
     return (
         <div className="bg-aqar-surface/90 backdrop-blur-md border border-aqar-border rounded-2xl p-2 w-full max-w-4xl text-start">

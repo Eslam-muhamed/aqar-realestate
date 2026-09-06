@@ -406,14 +406,7 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            <Link
-                                to="/list-property"
-                                className="flex items-center gap-2 px-5 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText text-sm font-bold rounded-xl transition-all shadow-lg shadow-aqar-cyan/10"
-                            >
-                                <PlusCircle size={16} /> إضافة عقار جديد
-                            </Link>
-                        </div>
+
                     </div>
 
                     <div className="flex flex-col lg:flex-row gap-8">

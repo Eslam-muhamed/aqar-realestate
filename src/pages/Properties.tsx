@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, Grid3X3, List, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PropertyCard from "@/components/property/PropertyCard";
@@ -14,14 +15,15 @@ const DEFAULT_FILTERS: FilterState = {
     bedrooms: "", bathrooms: "", areaMin: "", amenities: [],
 };
 
-const SORT_OPTIONS = [
-    { value: "newest", label: "الأحدث أولاً" },
-    { value: "price-asc", label: "السعر: من الأقل للأعلى" },
-    { value: "price-desc", label: "السعر: من الأعلى للأقل" },
-    { value: "area-desc", label: "المساحة الأكبر" },
-];
-
 export default function Properties() {
+    const { t } = useTranslation();
+    const SORT_OPTIONS = [
+        { value: "newest", label: t("propertiesPage.sortNewest") },
+        { value: "price-asc", label: t("propertiesPage.sortPriceAsc") },
+        { value: "price-desc", label: t("propertiesPage.sortPriceDesc") },
+        { value: "area-desc", label: t("propertiesPage.sortAreaDesc") },
+    ];
+
     const [searchParams] = useSearchParams();
     const [filters, setFilters] = useState<FilterState>(() => ({
         ...DEFAULT_FILTERS,
@@ -78,15 +80,15 @@ export default function Properties() {
                 <div className="border-b border-aqar-border bg-aqar-surface/50">
                     <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-5 flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-aqar-text font-semibold text-lg">العقارات</h1>
-                            <p className="text-aqar-muted text-xs mt-0.5">
-                                {loading ? "جاري التحميل..." : `تم العثور على ${filtered.length} عقار`}
+                            <h1 className="text-aqar-text font-semibold text-lg">{t("propertiesPage.propertiesTitle")}</h1>
+                            <p className="text-aqar-muted text-sm mt-1">
+                                {loading ? t("propertiesPage.loading") : t("propertiesPage.foundProperties", { count: filtered.length })}
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
                             <button onClick={() => setMobileFilters(true)}
                                 className="lg:hidden flex items-center gap-2 px-4 py-2 border border-aqar-border rounded-xl text-sm text-aqar-muted hover:text-aqar-text">
-                                <SlidersHorizontal size={14} /> فلاتر
+                                <SlidersHorizontal size={14} /> {t("propertiesPage.filters")}
                             </button>
                             <select value={sort} onChange={(e) => setSort(e.target.value)}
                                 className="px-3 py-2 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:outline-none">
@@ -124,13 +126,13 @@ export default function Properties() {
                                     <div className="w-16 h-16 border border-aqar-border rounded-2xl flex items-center justify-center mb-6">
                                         <SlidersHorizontal size={24} className="text-aqar-muted" />
                                     </div>
-                                    <h3 className="text-aqar-text font-semibold text-lg mb-2">لم يتم العثور على عقارات</h3>
-                                    <p className="text-aqar-muted text-sm max-w-sm">
-                                        حاول تعديل فلاتر البحث لرؤية المزيد من النتائج.
+                                    <h3 className="text-aqar-text font-semibold text-lg mb-2">{t("propertiesPage.noPropertiesFound")}</h3>
+                                    <p className="text-aqar-muted text-sm max-w-sm mx-auto mb-6">
+                                        {t("propertiesPage.tryAdjustingFilters")}
                                     </p>
                                     <button onClick={() => setFilters(DEFAULT_FILTERS)}
                                         className="mt-6 px-5 py-2.5 border border-aqar-border text-sm text-aqar-text rounded-xl hover:border-aqar-cyan/40">
-                                        مسح الفلاتر
+                                        {t("propertiesPage.clearFilters")}
                                     </button>
                                 </div>
                             ) : (
@@ -149,7 +151,7 @@ export default function Properties() {
                     <div className="absolute inset-0 bg-black/60" onClick={() => setMobileFilters(false)} />
                     <div className="absolute bottom-0 inset-x-0 bg-aqar-base rounded-t-2xl max-h-[85vh] overflow-y-auto p-6">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-aqar-text font-semibold">فلاتر</h3>
+                            <h3 className="text-aqar-text font-semibold">{t("propertiesPage.filters")}</h3>
                             <button onClick={() => setMobileFilters(false)}>
                                 <X size={20} className="text-aqar-muted" />
                             </button>

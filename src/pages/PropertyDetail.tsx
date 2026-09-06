@@ -10,8 +10,12 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { compareStorage, inquiriesStorage } from "@/lib/storage";
 import { leadService } from "@/services/leadService";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 export default function PropertyDetail() {
+    const { t, i18n } = useTranslation();
+    const isRTL = i18n.language === 'ar';
     const { slug } = useParams();
     const navigate = useNavigate();
     const { data: property, isLoading: loadingProperty } = useProperty(slug || "");
@@ -37,8 +41,8 @@ export default function PropertyDetail() {
         return (
             <div className="min-h-screen bg-aqar-base flex flex-col items-center justify-center">
                 <Header />
-                <p className="text-aqar-text text-lg mt-24">العقار غير موجود.</p>
-                <button onClick={() => navigate("/properties")} className="mt-4 text-aqar-cyan text-sm">← العودة إلى العقارات</button>
+                <p className="text-aqar-text text-lg mt-24">{t("propertyDetail.notFound")}</p>
+                <button onClick={() => navigate("/properties")} className="mt-4 text-aqar-cyan text-sm">{t("propertyDetail.backToProperties")}</button>
             </div>
         );
     }
@@ -47,13 +51,13 @@ export default function PropertyDetail() {
 
     const handleFavorite = () => {
         const added = toggle(property.id);
-        toast(added ? "تم الحفظ في المفضلة" : "تمت الإزالة من المفضلة");
+        toast(added ? t("propertyDetail.addedToFav") : t("propertyDetail.removedFromFav"));
     };
 
     const handleCompare = () => {
         const success = compareStorage.add(property.id);
-        if (success) toast.success("تمت الإضافة للمقارنة");
-        else toast.error("لا يمكن الإضافة — تم الوصول للحد الأقصى أو مضاف مسبقاً.");
+        if (success) toast.success(t("propertyDetail.addedToCompare"));
+        else toast.error(t("propertyDetail.compareLimitReached"));
     };
 
     const handleInquiry = async (e: React.FormEvent) => {
@@ -68,7 +72,7 @@ export default function PropertyDetail() {
             source: "property_detail_page",
         });
         setSubmitted(true);
-        toast.success("تم إرسال استفسارك بنجاح! سيتم التواصل معك قريباً.");
+        toast.success(t("propertyDetail.inquirySent"));
     };
 
     const prevImg = () => setGalleryIndex((i) => (i - 1 + property.images.length) % property.images.length);
@@ -82,7 +86,7 @@ export default function PropertyDetail() {
                 {/* Gallery */}
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-12 pt-8">
                     <Link to="/properties" className="inline-flex items-center gap-2 text-sm text-aqar-muted hover:text-aqar-text mb-6 transition-colors">
-                        <ChevronRight size={14} /> العودة إلى العقارات
+                        <ChevronRight size={14} className={cn("transition-transform", isRTL ? "rotate-0" : "rotate-180")} /> {t("propertyDetail.backToProperties")}
                     </Link>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 rounded-2xl overflow-hidden mb-8" style={{ height: "480px" }}>
@@ -96,7 +100,7 @@ export default function PropertyDetail() {
                                     <img src={property.images[i] || property.images[0]} alt="" className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500" />
                                     {i === 4 && property.images.length > 4 && (
                                         <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                            <span className="text-aqar-text font-semibold text-sm">+{property.images.length - 4} صور أخرى</span>
+                                            <span className="text-aqar-text font-semibold text-sm">+{property.images.length - 4} {t("propertyDetail.imagesMore", { defaultValue: "صور أخرى" })}</span>
                                         </div>
                                     )}
                                 </div>
@@ -113,11 +117,11 @@ export default function PropertyDetail() {
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
                                         <span className={`px-2.5 py-1 text-xs font-semibold rounded-md ${property.status === "for-sale" ? "bg-aqar-cyan text-aqar-btnText" : "bg-aqar-success text-white"}`}>
-                                            {property.status === "for-sale" ? "للبيع" : "للإيجار"}
+                                            {property.status === "for-sale" ? t("propertyDetail.forSale") : t("propertyDetail.forRent")}
                                         </span>
                                         {property.verified && (
                                             <div className="flex items-center gap-1.5 text-aqar-cyan text-xs">
-                                                <BadgeCheck size={13} /> <span>عقار موثق</span>
+                                                <BadgeCheck size={13} /> <span>{t("propertyDetail.verified")}</span>
                                             </div>
                                         )}
                                         <span className="text-aqar-muted text-xs font-mono">{property.propertyId}</span>
@@ -145,20 +149,20 @@ export default function PropertyDetail() {
 
                             {/* Price */}
                             <div className="my-6 p-5 bg-aqar-surface border border-aqar-border rounded-2xl">
-                                <p className="text-aqar-muted text-xs mb-1">{property.status === "for-sale" ? "السعر المطلوب" : "الإيجار السنوي"}</p>
+                                <p className="text-aqar-muted text-xs mb-1">{property.status === "for-sale" ? t("propertyDetail.askingPrice") : t("propertyDetail.yearlyRent")}</p>
                                 <p className="font-mono text-aqar-cyan text-4xl font-bold">
                                     {formatPrice(property.price, property.currency)}
                                 </p>
-                                {property.status === "for-rent" && <p className="text-aqar-muted text-xs mt-1">سنوياً</p>}
+                                {property.status === "for-rent" && <p className="text-aqar-muted text-xs mt-1">{t("propertyDetail.yearly")}</p>}
                             </div>
 
                             {/* Stats */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
                                 {[
-                                    { icon: BedDouble, label: "غرف النوم", value: property.stats.bedrooms === 0 ? "استوديو" : property.stats.bedrooms },
-                                    { icon: Bath, label: "دورات المياه", value: property.stats.bathrooms },
-                                    { icon: Square, label: "المساحة الإجمالية", value: `${property.stats.area} م²` },
-                                    { icon: Car, label: "مواقف السيارات", value: `${property.stats.parking} مواقف` },
+                                    { icon: BedDouble, label: t("propertyDetail.bedrooms"), value: property.stats.bedrooms === 0 ? t("propertyDetail.studio") : property.stats.bedrooms },
+                                    { icon: Bath, label: t("propertyDetail.bathrooms"), value: property.stats.bathrooms },
+                                    { icon: Square, label: t("propertyDetail.totalArea"), value: `${property.stats.area} م²` },
+                                    { icon: Car, label: t("propertyDetail.parking"), value: `${property.stats.parking} ${t("propertyDetail.parkingSpaces")}` },
                                 ].map(({ icon: Icon, label, value }) => (
                                     <div key={label} className="bg-aqar-surface border border-aqar-border rounded-xl p-4">
                                         <Icon size={16} className="text-aqar-cyan mb-2" />
@@ -171,9 +175,9 @@ export default function PropertyDetail() {
                             {/* Additional Stats */}
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
                                 {[
-                                    { icon: Calendar, label: "سنة البناء", value: property.stats.yearBuilt },
-                                    { icon: Eye, label: "المشاهدات", value: property.views.toLocaleString() },
-                                    { label: "النوع", value: property.type.charAt(0).toUpperCase() + property.type.slice(1), icon: BadgeCheck },
+                                    { icon: Calendar, label: t("propertyDetail.yearBuilt"), value: property.stats.yearBuilt },
+                                    { icon: Eye, label: t("propertyDetail.views"), value: property.views.toLocaleString() },
+                                    { label: t("propertyDetail.type"), value: property.type.charAt(0).toUpperCase() + property.type.slice(1), icon: BadgeCheck },
                                 ].map(({ icon: Icon, label, value }) => (
                                     <div key={label} className="bg-aqar-surface border border-aqar-border rounded-xl p-4">
                                         <Icon size={14} className="text-aqar-muted mb-2" />
@@ -185,13 +189,13 @@ export default function PropertyDetail() {
 
                             {/* Description */}
                             <div className="mb-8">
-                                <h2 className="text-aqar-text font-semibold text-lg mb-4">الوصف</h2>
+                                <h2 className="text-aqar-text font-semibold text-lg mb-4">{t("propertyDetail.description")}</h2>
                                 <p className="text-aqar-muted text-sm leading-relaxed">{property.description}</p>
                             </div>
 
                             {/* Features */}
                             <div className="mb-8">
-                                <h2 className="text-aqar-text font-semibold text-lg mb-4">مميزات العقار</h2>
+                                <h2 className="text-aqar-text font-semibold text-lg mb-4">{t("propertyDetail.features")}</h2>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                     {[...property.features, ...property.amenities].map((f) => (
                                         <div key={f} className="flex items-center gap-2.5 px-3 py-2.5 bg-aqar-surface border border-aqar-border rounded-xl">
@@ -204,42 +208,42 @@ export default function PropertyDetail() {
 
                             {/* Inquiry Form */}
                             <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6">
-                                <h2 className="text-aqar-text font-semibold text-lg mb-5">طلب معلومات</h2>
+                                <h2 className="text-aqar-text font-semibold text-lg mb-5">{t("propertyDetail.requestInfo")}</h2>
                                 {submitted ? (
                                     <div className="text-center py-8">
                                         <div className="w-12 h-12 bg-aqar-success/10 border border-aqar-success/30 rounded-full flex items-center justify-center mx-auto mb-4">
                                             <BadgeCheck size={20} className="text-aqar-success" />
                                         </div>
-                                        <p className="text-aqar-text font-medium">تم إرسال الطلب</p>
-                                        <p className="text-aqar-muted text-sm mt-1">سيتواصل معك الوكيل قريباً.</p>
+                                        <p className="text-aqar-text font-medium">{t("propertyDetail.requestSent")}</p>
+                                        <p className="text-aqar-muted text-sm mt-1">{t("propertyDetail.agentWillContact")}</p>
                                     </div>
                                 ) : (
                                     <form onSubmit={handleInquiry} className="space-y-4">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="text-xs text-aqar-muted mb-1.5 block">الاسم الكامل</label>
-                                                <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="اسمك"
+                                                <label className="text-xs text-aqar-muted mb-1.5 block">{t("propertyDetail.fullName")}</label>
+                                                <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("propertyDetail.namePlaceholder")}
                                                 className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none" />
                                             </div>
                                             <div>
-                                                <label className="text-xs text-aqar-muted mb-1.5 block">رقم الهاتف</label>
+                                                <label className="text-xs text-aqar-muted mb-1.5 block">{t("propertyDetail.phone")}</label>
                                                 <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+966 50 000 0000"
                                                 className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none text-left" dir="ltr" />
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-xs text-aqar-muted mb-1.5 block">البريد الإلكتروني</label>
+                                            <label className="text-xs text-aqar-muted mb-1.5 block">{t("propertyDetail.email")}</label>
                                             <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com"
                                                 className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none text-left" dir="ltr" />
                                         </div>
                                         <div>
-                                            <label className="text-xs text-aqar-muted mb-1.5 block">الرسالة</label>
+                                            <label className="text-xs text-aqar-muted mb-1.5 block">{t("propertyDetail.message")}</label>
                                             <textarea required rows={3} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
-                                                placeholder={`أنا مهتم بـ ${property.title}...`}
+                                                placeholder={`${t("propertyDetail.messagePlaceholder")} ${property.title}...`}
                                                 className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none resize-none" />
                                         </div>
                                         <button type="submit" className="w-full py-3.5 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
-                                            إرسال الطلب
+                                            {t("propertyDetail.submitRequest")}
                                         </button>
                                     </form>
                                 )}
@@ -253,13 +257,13 @@ export default function PropertyDetail() {
                                 {/* Agent Card */}
                                 {agent && (
                                     <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6">
-                                        <p className="text-aqar-muted text-xs font-medium uppercase tracking-wider mb-4">بواسطة</p>
+                                        <p className="text-aqar-muted text-xs font-medium uppercase tracking-wider mb-4">{t("propertyDetail.listedBy")}</p>
                                         <div className="flex items-start gap-3 mb-5">
                                             <img src={agent.avatar} alt={agent.name} className="w-12 h-12 rounded-xl object-cover" />
                                             <div>
                                                 <h3 className="text-aqar-text font-semibold text-sm">{agent.name}</h3>
                                                 <p className="text-aqar-muted text-xs">{agent.title}</p>
-                                                <p className="text-aqar-muted text-xs">{agent?.company || 'Aqar'}</p>
+                                                <p className="text-aqar-muted text-xs">{agent?.company || 'AMSH'}</p>
                                             </div>
                                         </div>
                                         <div className="space-y-2 mb-5">
@@ -274,7 +278,7 @@ export default function PropertyDetail() {
                                         </div>
                                         <Link to={`/agents/${agent.id}`}
                                             className="block w-full py-2.5 border border-aqar-border text-aqar-text text-sm font-medium text-center rounded-xl hover:border-aqar-cyan/40 transition-colors">
-                                            عرض الصفحة الشخصية
+                                            {t("propertyDetail.viewProfile")}
                                         </Link>
                                     </div>
                                 )}
@@ -286,7 +290,7 @@ export default function PropertyDetail() {
                                         <Heart size={18} fill={fav ? "currentColor" : "none"} />
                                     </button>
                                     <button className="flex-1 py-3 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl">
-                                        تواصل مع الوكيل
+                                        {t("propertyDetail.contactAgent")}
                                     </button>
                                 </div>
                             </div>
@@ -296,7 +300,7 @@ export default function PropertyDetail() {
                     {/* Similar */}
                     {similar.length > 0 && (
                         <div className="mt-16 pb-8">
-                            <h2 className="text-aqar-text font-semibold text-xl mb-6">عقارات مشابهة</h2>
+                            <h2 className="text-aqar-text font-semibold text-xl mb-6">{t("propertyDetail.similarProperties")}</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {similar.map((p) => <PropertyCard key={p.id} property={p} />)}
                             </div>
