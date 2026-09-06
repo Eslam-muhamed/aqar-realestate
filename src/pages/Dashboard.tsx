@@ -1389,65 +1389,6 @@ export default function Dashboard() {
                                             </button>
                                         </div>
                                     </div>
-
-                                    {/* SESSION & CACHE MANAGEMENT CARD */}
-                                    <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div className="flex items-center gap-2">
-                                                <HardDrive className="text-aqar-cyan" size={20} />
-                                                <h3 className="text-aqar-text font-bold text-base">إدارة الجلسات والذاكرة المؤقتة (Cache)</h3>
-                                            </div>
-                                            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                                                الإصدار v{cacheManager.getVersion()}
-                                            </span>
-                                        </div>
-
-                                        <p className="text-xs text-aqar-muted mb-4 leading-relaxed">
-                                            يقوم النظام تلقائياً بتنظيف البيانات المؤقتة عند كل تحديث لمنع تداخل الحسابات. يمكنك من هنا فحص استهلاك الذاكرة أو تفريغ الكاش يدوياً لضمان أعلى سرعة استجابة.
-                                        </p>
-
-                                        {/* Storage Stats */}
-                                        <div className="grid grid-cols-2 gap-3 p-3.5 bg-aqar-base rounded-xl border border-aqar-border mb-5">
-                                            <div>
-                                                <span className="text-[11px] text-aqar-muted block">المساحة المحلية المستهلكة:</span>
-                                                <span className="text-sm font-mono font-bold text-aqar-text mt-0.5 block">
-                                                    {storageUsage.formattedSize}
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <span className="text-[11px] text-aqar-muted block">عناصر التخزين المخزنة:</span>
-                                                <span className="text-sm font-mono font-bold text-aqar-cyan mt-0.5 block">
-                                                    {storageUsage.itemCount} عناصر
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Action buttons */}
-                                        <div className="space-y-2">
-                                            <button
-                                                onClick={() => {
-                                                    toast.loading("جارٍ تفريغ الذاكرة المؤقتة وإعادة مزامنة البيانات...");
-                                                    setTimeout(() => {
-                                                        cacheManager.purgeCacheAndReload(true);
-                                                    }, 800);
-                                                }}
-                                                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-aqar-hover hover:bg-aqar-active text-aqar-text text-xs font-semibold rounded-xl border border-aqar-border transition-colors"
-                                            >
-                                                <RefreshCw size={14} className="text-aqar-cyan" /> تفريغ الذاكرة المؤقتة وإعادة المزامنة (Re-sync)
-                                            </button>
-
-                                            <button
-                                                onClick={() => {
-                                                    if (confirm("هل تريد تسجيل الخروج ومسح جميع البيانات المحلية المحفوظة على هذا الجهاز؟")) {
-                                                        cacheManager.purgeCacheAndReload(false);
-                                                    }
-                                                }}
-                                                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-xl border border-rose-500/30 transition-colors"
-                                            >
-                                                <LogOut size={14} /> إنهاء جميع الجلسات ومسح البيانات المحفوظة
-                                            </button>
-                                        </div>
-                                    </div>
                                 </div>
                             )}
                         </main>
