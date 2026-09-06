@@ -22,8 +22,9 @@ export const storageService = {
             const { error } = await supabase.storage
                 .from('properties')
                 .upload(filePath, file, {
+                    contentType: file.type || 'image/webp',
                     cacheControl: '3600',
-                    upsert: false
+                    upsert: true
                 });
 
             if (error) {
