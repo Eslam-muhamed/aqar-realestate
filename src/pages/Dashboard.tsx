@@ -43,7 +43,7 @@ import { leadService } from "@/services/leadService";
 import { teamService } from "@/services/teamService";
 import { propertyService } from "@/services/propertyService";
 import { analyticsService } from "@/services/analyticsService";
-import { cacheManager } from "@/lib/cacheManager";
+
 import { toast } from "sonner";
 import type { Lead, LeadStatus, Profile, Property } from "@/types";
 
@@ -74,7 +74,7 @@ export default function Dashboard() {
     const [leadFilter, setLeadFilter] = useState<"all" | "unassigned" | "assigned" | "archived">("all");
     const [propertyFilter, setPropertyFilter] = useState<"active" | "archived">("active");
     const [notesEditState, setNotesEditState] = useState<Record<string, string>>({});
-    const [storageUsage, setStorageUsage] = useState(() => cacheManager.getStorageUsage());
+
 
     const [page, setPage] = useState(1);
     const limit = 50;

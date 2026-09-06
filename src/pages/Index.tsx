@@ -77,7 +77,7 @@ export default function Index() {
                 </div>
             </section>
 
-            {/* Featured Properties */}
+            {/* Latest Properties */}
             <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
                 <div className="flex items-end justify-between mb-12">
                     <div>
