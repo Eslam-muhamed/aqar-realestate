@@ -16,3 +16,7 @@ export const MOCK_LOCATIONS: Location[] = [
 export const PROPERTY_TYPES = ["Villa", "Apartment", "Penthouse", "Townhouse", "Duplex", "Commercial"];
 export const CITIES = ["Riyadh", "Jeddah", "Dubai", "Abu Dhabi", "Al Khobar", "Cairo", "Muscat", "Kuwait City"];
 export const BEDROOM_OPTIONS = ["Studio", "1", "2", "3", "4", "5", "6+"];
+export const AMENITIES_LIST = [
+    "مسبح", "نادي رياضي", "حديقة", "مواقف سيارات", "غرفة خادمة", "غرفة سائق",
+    "سينما منزلية", "منزل ذكي", "ألواح طاقة شمسية", "شحن سيارات كهربائية", "نظام أمني", "مولد احتياطي",
+];

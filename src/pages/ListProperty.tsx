@@ -19,10 +19,7 @@ const STEPS = [
     { num: 7, label: "المراجعة والنشر" },
 ];
 
-const AMENITIES_LIST = [
-    "مسبح", "نادي رياضي", "حديقة", "مواقف سيارات", "غرفة خادمة", "غرفة سائق",
-    "سينما منزلية", "منزل ذكي", "ألواح طاقة شمسية", "شحن سيارات كهربائية", "نظام أمني", "مولد احتياطي",
-];
+import { AMENITIES_LIST } from "@/constants/mockData";
 
 const TYPE_LABELS: Record<string, string> = {
     Villa: "فيلا", Apartment: "شقة", Penthouse: "بنتهاوس", Townhouse: "تاون هاوس", Duplex: "دوبلكس", Commercial: "تجاري"

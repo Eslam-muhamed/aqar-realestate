@@ -11,7 +11,7 @@ import type { FilterState, ViewMode } from "@/types";
 
 const DEFAULT_FILTERS: FilterState = {
     status: "all", location: "", type: "", priceMin: "", priceMax: "",
-    bedrooms: "", bathrooms: "", areaMin: "", furnished: false, parking: false, pool: false, garden: false,
+    bedrooms: "", bathrooms: "", areaMin: "", amenities: [],
 };
 
 const SORT_OPTIONS = [
@@ -57,10 +57,11 @@ export default function Properties() {
             const minBeds = filters.bedrooms === "Studio" ? 0 : filters.bedrooms === "5+" ? 5 : Number(filters.bedrooms);
             results = results.filter((p) => p.stats.bedrooms >= minBeds);
         }
-        if (filters.pool) results = results.filter((p) => p.features.some((f) => f.toLowerCase().includes("pool")));
-        if (filters.parking) results = results.filter((p) => p.stats.parking > 0);
-        if (filters.garden) results = results.filter((p) => p.features.some((f) => f.toLowerCase().includes("garden")));
-        if (filters.furnished) results = results.filter((p) => p.features.some((f) => f.toLowerCase().includes("furnish")));
+        if (filters.amenities.length > 0) {
+            results = results.filter((p) => 
+                filters.amenities.every((a) => p.amenities.includes(a))
+            );
+        }
 
         if (sort === "price-asc") results.sort((a, b) => a.price - b.price);
         else if (sort === "price-desc") results.sort((a, b) => b.price - a.price);

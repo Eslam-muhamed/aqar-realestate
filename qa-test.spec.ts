@@ -7,8 +7,8 @@ test.describe('Real Estate App - QA E2E Tests', () => {
   });
 
   test('should load the homepage correctly', async ({ page }) => {
-    // Check if the title is set (might be default Vite App or specific)
-    await expect(page).toHaveTitle(/Vite|Aqar|Real Estate/i);
+    // Check if the title is set
+    await expect(page).toHaveTitle(/عقار|Aqar|Real Estate|Vite/i);
     
     // Check for main layout elements (header, footer, hero search)
     const header = page.locator('header');
@@ -20,7 +20,6 @@ test.describe('Real Estate App - QA E2E Tests', () => {
 
   test('should handle language switching', async ({ page }) => {
     // Look for language toggle button
-    // It's likely a button or dropdown in the header containing "العربية" or "English"
     const langButton = page.locator('header button').filter({ hasText: /العربية|AR|EN|English/ });
     if (await langButton.count() > 0) {
       await langButton.first().click();
@@ -32,21 +31,16 @@ test.describe('Real Estate App - QA E2E Tests', () => {
   });
 
   test('should navigate to properties page and list properties', async ({ page }) => {
-    // Try to find a link to the properties or search page
     const propertiesLink = page.locator('a[href*="/properties"]').first();
     if (await propertiesLink.count() > 0) {
       await propertiesLink.click();
       await expect(page).toHaveURL(/.*properties/);
       
-      // Wait for properties to load
-      // Real estate apps usually have cards or items for properties
       await page.waitForLoadState('networkidle');
       
-      // Check if property cards exist
       const propertyCards = page.locator('.property-card, [data-testid="property-card"], article, .card');
       const count = await propertyCards.count();
       if (count === 0) {
-        // If empty state, check if an empty message is shown
         const emptyState = page.locator(':text("No properties found"), :text("لا توجد عقارات")');
         if (await emptyState.count() > 0) {
           await expect(emptyState).toBeVisible();
@@ -68,7 +62,7 @@ test.describe('Real Estate App - QA E2E Tests', () => {
         await submitBtn.click();
         
         // Wait for validation messages
-        const errorMessages = page.locator('.text-red-500, [role="alert"], :text("Required")');
+        const errorMessages = page.getByText(/البريد الإلكتروني غير صالح|يجب أن تكون/i);
         await expect(errorMessages.first()).toBeVisible();
       }
     }
@@ -76,8 +70,59 @@ test.describe('Real Estate App - QA E2E Tests', () => {
 
   test('should display 404 for non-existent routes', async ({ page }) => {
     const response = await page.goto('http://localhost:8080/this-route-does-not-exist');
-    // Check if 404 page is rendered
     const notFoundText = page.locator(':text("404"), :text("Not Found"), :text("غير موجود")');
     await expect(notFoundText.first()).toBeVisible();
+  });
+
+  test('should login as Admin and verify Dashboard pagination', async ({ page }) => {
+    await page.goto('http://localhost:8080/login');
+    
+    // Click the Admin quick login button
+    const adminBtn = page.getByRole('button', { name: /دخول كـ مدير المكتب/i });
+    await expect(adminBtn).toBeVisible();
+    await adminBtn.click();
+
+    // Wait for the navigation to complete
+    await expect(page).toHaveURL(/.*dashboard/);
+    
+    // Click the leads tab
+    const leadsTab = page.getByRole('button', { name: /مركز العملاء|العملاء/i });
+    if (await leadsTab.count() > 0) {
+      await leadsTab.click();
+    }
+
+    // Verify Dashboard specific elements for Admin
+    await expect(page.getByText('مركز إدارة وتوزيع العملاء')).toBeVisible();
+
+    // Verify Pagination Controls
+    const prevBtn = page.getByRole('button', { name: /السابق/i }).first();
+    const nextBtn = page.getByRole('button', { name: /التالي/i }).first();
+    
+    await expect(prevBtn).toBeVisible();
+    await expect(nextBtn).toBeVisible();
+  });
+
+  test('should login as Supervisor and verify Dashboard restricted view', async ({ page }) => {
+    await page.goto('http://localhost:8080/login');
+    
+    // Click the Supervisor quick login button
+    const supervisorBtn = page.getByRole('button', { name: /دخول كـ مشرف/i }).first();
+    await expect(supervisorBtn).toBeVisible();
+    await supervisorBtn.click();
+
+    // Wait for the navigation to complete
+    await expect(page).toHaveURL(/.*dashboard/);
+    
+    // Click the leads tab
+    const leadsTab = page.getByRole('button', { name: /العملاء المكلف بهم/i });
+    if (await leadsTab.count() > 0) {
+      await leadsTab.click();
+    }
+
+    // Verify restricted title for Supervisor
+    await expect(page.getByText('العملاء المكلف بهم').first()).toBeVisible();
+
+    // Verify they do not see Admin specific title
+    await expect(page.getByText('مركز إدارة وتوزيع العملاء')).toBeHidden();
   });
 });

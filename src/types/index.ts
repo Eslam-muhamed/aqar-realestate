@@ -139,8 +139,5 @@ export interface FilterState {
     bedrooms: string;
     bathrooms: string;
     areaMin: string;
-    furnished: boolean;
-    parking: boolean;
-    pool: boolean;
-    garden: boolean;
+    amenities: string[];
 }

@@ -1,5 +1,6 @@
-import { X } from "lucide-react";
-import { CITIES, PROPERTY_TYPES } from "@/constants/mockData";
+import { useState } from "react";
+import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { CITIES, PROPERTY_TYPES, AMENITIES_LIST } from "@/constants/mockData";
 import { Input } from "@/components/ui/input";
 import type { FilterState } from "@/types";
 import { useTranslation } from "react-i18next";
@@ -21,11 +22,16 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
     const set = (key: keyof FilterState, value: FilterState[keyof FilterState]) =>
         onChange({ ...filters, [key]: value });
 
-    const hasActive = Object.values(filters).some((v) => v !== "" && v !== "all" && v !== false);
+    const [showAllAmenities, setShowAllAmenities] = useState(false);
+
+    const hasActive = Object.values(filters).some((v) => {
+        if (Array.isArray(v)) return v.length > 0;
+        return v !== "" && v !== "all" && v !== false;
+    });
 
     const clear = () => onChange({
         status: "all", location: "", type: "", priceMin: "", priceMax: "",
-        bedrooms: "", bathrooms: "", areaMin: "", furnished: false, parking: false, pool: false, garden: false,
+        bedrooms: "", bathrooms: "", areaMin: "", amenities: [],
     });
 
     const typeMap: Record<string, string> = { Villa: "فيلا", Apartment: "شقة", Penthouse: "بنتهاوس", Townhouse: "تاون هاوس", Duplex: "دوبلكس", Commercial: "تجاري" };
@@ -134,21 +140,33 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                 <div>
                     <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">المميزات</p>
                     <div className="space-y-2.5">
-                        {[
-                            { key: "furnished" as const, label: "مفروشة" },
-                            { key: "parking" as const, label: "موقف سيارات" },
-                            { key: "pool" as const, label: "مسبح" },
-                            { key: "garden" as const, label: "حديقة" },
-                        ].map(({ key, label }) => (
-                            <label key={key} className="flex items-center justify-between cursor-pointer group">
-                                <span className={`text-sm transition-colors ${filters[key] ? "text-aqar-text" : "text-aqar-muted group-hover:text-aqar-text"}`}>{label}</span>
-                                <div onClick={() => set(key, !filters[key])}
-                                    className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer ${filters[key] ? "bg-aqar-cyan" : "bg-[#2C2C2E]"}`}>
-                                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${filters[key] ? "-translate-x-4" : "-translate-x-0.5"}`} />
-                                </div>
-                            </label>
-                        ))}
+                        {(showAllAmenities ? AMENITIES_LIST : AMENITIES_LIST.slice(0, 5)).map((amenity) => {
+                            const isActive = filters.amenities.includes(amenity);
+                            return (
+                                <label key={amenity} className="flex items-center justify-between cursor-pointer group">
+                                    <span className={`text-sm transition-colors ${isActive ? "text-aqar-text" : "text-aqar-muted group-hover:text-aqar-text"}`}>{amenity}</span>
+                                    <div onClick={() => {
+                                        const newAmenities = isActive 
+                                            ? filters.amenities.filter(a => a !== amenity)
+                                            : [...filters.amenities, amenity];
+                                        set("amenities", newAmenities);
+                                    }}
+                                        className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer ${isActive ? "bg-aqar-cyan" : "bg-[#2C2C2E]"}`}>
+                                        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${isActive ? "-translate-x-4" : "-translate-x-0.5"}`} />
+                                    </div>
+                                </label>
+                            );
+                        })}
                     </div>
+                    {AMENITIES_LIST.length > 5 && (
+                        <button
+                            onClick={() => setShowAllAmenities(!showAllAmenities)}
+                            className="text-xs font-semibold text-aqar-cyan hover:text-aqar-cyan/80 flex items-center gap-1 mt-4 transition-colors"
+                        >
+                            {showAllAmenities ? "عرض أقل" : "عرض المزيد"}
+                            {showAllAmenities ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </button>
+                    )}
                 </div>
             </div>
         </aside>
