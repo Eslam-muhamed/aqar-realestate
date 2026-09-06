@@ -163,6 +163,11 @@ export const propertyService = {
             if (input.city) updateData.city = input.city;
             if (input.district) updateData.district = input.district;
             if (input.address) updateData.address = input.address;
+            
+            if (input.yearBuilt !== undefined) {
+                updateData.year_built = input.yearBuilt;
+                delete updateData.yearBuilt;
+            }
 
             const { data, error } = await supabase
                 .from("properties")
@@ -309,11 +314,16 @@ export const propertyService = {
      */
     async getBySlug(slug: string): Promise<Property | null> {
         try {
-            const { data, error } = await supabase
-                .from("properties")
-                .select("*")
-                .or(`slug.eq.${slug},id.eq.${slug}`)
-                .single();
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+            let query = supabase.from("properties").select("*");
+            
+            if (isUuid) {
+                query = query.or(`slug.eq.${slug},id.eq.${slug}`);
+            } else {
+                query = query.eq("slug", slug);
+            }
+            
+            const { data, error } = await query.single();
 
             if (error || !data) return null;
 
