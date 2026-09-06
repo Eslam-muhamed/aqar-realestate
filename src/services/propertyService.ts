@@ -370,6 +370,20 @@ export const propertyService = {
     },
 
     /**
+     * Increment property views
+     */
+    async incrementViews(id: string): Promise<{ success: boolean; error?: string }> {
+        try {
+            const { error } = await supabase.rpc('increment_property_views', { property_id: id });
+            if (error) throw error;
+            return { success: true };
+        } catch (error: any) {
+            console.error('Error incrementing views:', error.message);
+            return { success: false, error: error.message };
+        }
+    },
+
+    /**
      * Get similar properties by city
      */
     async getSimilar(city: string, limit: number = 3): Promise<Property[]> {

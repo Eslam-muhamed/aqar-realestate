@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ArrowLeftRight, Share2, BedDouble, Bath, Square, Car, Calendar, BadgeCheck, MapPin, Phone, Mail, ChevronLeft, ChevronRight, X, Eye } from "lucide-react";
 import Header from "@/components/layout/Header";
@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/utils";
 import { useFavorites } from "@/hooks/useFavorites";
 import { compareStorage, inquiriesStorage } from "@/lib/storage";
 import { leadService } from "@/services/leadService";
+import { propertyService } from "@/services/propertyService";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,16 @@ export default function PropertyDetail() {
     const [activeImg, setActiveImg] = useState(0);
     const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
     const [submitted, setSubmitted] = useState(false);
+
+    useEffect(() => {
+        if (property && property.id) {
+            const viewKey = `viewed_${property.id}`;
+            if (!sessionStorage.getItem(viewKey)) {
+                propertyService.incrementViews(property.id).catch(console.error);
+                sessionStorage.setItem(viewKey, "true");
+            }
+        }
+    }, [property?.id]);
 
     if (loadingProperty) {
         return (
