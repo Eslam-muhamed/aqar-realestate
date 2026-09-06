@@ -34,6 +34,7 @@ export default function ListProperty() {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [submitting, setSubmitting] = useState(false);
+    const [customAmenity, setCustomAmenity] = useState("");
     const [loadingEdit, setLoadingEdit] = useState(!!id);
     const [step, setStep] = useState(1);
     const [form, setForm] = useState({
@@ -405,6 +406,61 @@ export default function ListProperty() {
                                             {a}
                                         </button>
                                     ))}
+                                </div>
+                                
+                                <div className="mt-6 border-t border-aqar-border pt-6">
+                                    <p className="text-aqar-muted text-sm mb-3">هل توجد ميزة أخرى غير مذكورة؟ أضفها هنا:</p>
+                                    <div className="flex gap-2 max-w-sm">
+                                        <input 
+                                            type="text"
+                                            value={customAmenity}
+                                            onChange={(e) => setCustomAmenity(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter" && customAmenity.trim()) {
+                                                    e.preventDefault();
+                                                    const val = customAmenity.trim();
+                                                    if (!form.amenities.includes(val)) {
+                                                        setForm(f => ({ ...f, amenities: [...f.amenities, val] }));
+                                                    }
+                                                    setCustomAmenity("");
+                                                }
+                                            }}
+                                            placeholder="اكتب الميزة هنا..."
+                                            className="flex-1 bg-aqar-surface border border-aqar-border rounded-xl px-4 py-2 text-sm text-aqar-text focus:border-aqar-cyan outline-none transition-colors"
+                                        />
+                                        <button 
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                if (customAmenity.trim()) {
+                                                    const val = customAmenity.trim();
+                                                    if (!form.amenities.includes(val)) {
+                                                        setForm(f => ({ ...f, amenities: [...f.amenities, val] }));
+                                                    }
+                                                    setCustomAmenity("");
+                                                }
+                                            }}
+                                            className="bg-aqar-cyan text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-aqar-cyan/90 transition-colors"
+                                        >
+                                            إضافة
+                                        </button>
+                                    </div>
+                                    
+                                    {/* Show custom added amenities that aren't in the default list */}
+                                    {form.amenities.filter(a => !AMENITIES_LIST.includes(a)).length > 0 && (
+                                        <div className="mt-4 flex flex-wrap gap-2">
+                                            {form.amenities.filter(a => !AMENITIES_LIST.includes(a)).map(a => (
+                                                <div key={a} className="flex items-center gap-2 bg-aqar-cyan/10 border border-aqar-cyan text-aqar-cyan px-3 py-1.5 rounded-lg text-xs font-bold">
+                                                    <span>{a}</span>
+                                                    <button onClick={(e) => {
+                                                        e.preventDefault();
+                                                        toggleAmenity(a);
+                                                    }} className="hover:text-aqar-text transition-colors">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

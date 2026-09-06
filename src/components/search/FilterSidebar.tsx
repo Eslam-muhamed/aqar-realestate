@@ -4,6 +4,7 @@ import { CITIES, PROPERTY_TYPES, AMENITIES_LIST } from "@/constants/mockData";
 import { Input } from "@/components/ui/input";
 import type { FilterState } from "@/types";
 import { useTranslation } from "react-i18next";
+import { useProperties } from "@/hooks/useRealData";
 
 interface Props {
     filters: FilterState;
@@ -23,6 +24,14 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
         onChange({ ...filters, [key]: value });
 
     const [showAllAmenities, setShowAllAmenities] = useState(false);
+    
+    // Get unique amenities from active properties
+    const { data: properties = [] } = useProperties();
+    const dynamicAmenities = Array.from(new Set(
+        properties.flatMap(p => p.amenities || [])
+    )).filter(a => !AMENITIES_LIST.includes(a));
+    
+    const ALL_AMENITIES = [...AMENITIES_LIST, ...dynamicAmenities];
 
     const hasActive = Object.values(filters).some((v) => {
         if (Array.isArray(v)) return v.length > 0;
@@ -140,7 +149,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                 <div>
                     <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">المميزات</p>
                     <div className="space-y-2.5">
-                        {(showAllAmenities ? AMENITIES_LIST : AMENITIES_LIST.slice(0, 5)).map((amenity) => {
+                        {(showAllAmenities ? ALL_AMENITIES : ALL_AMENITIES.slice(0, 5)).map((amenity) => {
                             const isActive = filters.amenities.includes(amenity);
                             return (
                                 <label key={amenity} className="flex items-center justify-between cursor-pointer group">
@@ -158,7 +167,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                             );
                         })}
                     </div>
-                    {AMENITIES_LIST.length > 5 && (
+                    {ALL_AMENITIES.length > 5 && (
                         <button
                             onClick={() => setShowAllAmenities(!showAllAmenities)}
                             className="text-xs font-semibold text-aqar-cyan hover:text-aqar-cyan/80 flex items-center gap-1 mt-4 transition-colors"
