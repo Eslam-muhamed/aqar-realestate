@@ -35,7 +35,7 @@ export default function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    useEffect(() => { setMobileOpen(false); }, [pathname]);
+    useEffect(() => { setMobileOpen(false); }, [pathname, search]);
 
     const handleLogout = () => { logout(); setUserMenuOpen(false); navigate("/"); };
 
