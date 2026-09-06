@@ -31,9 +31,7 @@ export const leadService = {
                         source: payload.source || "website",
                         status: "new",
                     },
-                ])
-                .select()
-                .single();
+                ]);
 
             if (error) {
                 console.warn("Supabase lead submission fallback:", error.message);
@@ -52,7 +50,7 @@ export const leadService = {
                 return { success: true };
             }
 
-            return { success: true, data };
+            return { success: true };
         } catch (err: unknown) {
             console.error("Lead submission error:", err);
             return { success: false, error: err instanceof Error ? err.message : "Failed to submit lead" };
