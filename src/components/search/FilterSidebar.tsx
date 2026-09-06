@@ -49,11 +49,11 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
     return (
         <aside className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 text-start shadow-sm dark:shadow-none">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="text-aqar-text font-semibold text-sm">الفلاتر</h3>
+                <h3 className="text-aqar-text font-semibold text-sm">{t("propertiesPage.filters", "الفلاتر")}</h3>
                 <div className="flex items-center gap-2">
                     {hasActive && (
                         <button onClick={clear} className="text-xs text-aqar-cyan hover:text-aqar-cyan/80 transition-colors">
-                            مسح الكل
+                            {t("search.clearAll")}
                         </button>
                     )}
                     {onClose && (
@@ -67,7 +67,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
             <div className="space-y-6">
                 {/* Status */}
                 <div>
-                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">نوع العرض</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">{t("search.listingType")}</p>
                     <div className="flex gap-2">
                         {(["all", "for-sale", "for-rent"] as const).map((s) => (
                             <button key={s} onClick={() => set("status", s)}
@@ -75,7 +75,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                                         ? "border-aqar-cyan bg-aqar-cyan/10 text-aqar-cyan"
                                         : "border-aqar-border text-aqar-muted hover:text-aqar-text"
                                     }`}>
-                                {s === "all" ? "الكل" : s === "for-sale" ? "للبيع" : "للإيجار"}
+                                {s === "all" ? t("search.all") : s === "for-sale" ? t("search.forSale") : t("search.forRent")}
                             </button>
                         ))}
                     </div>
@@ -83,17 +83,17 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Location */}
                 <div>
-                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">الموقع</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">{t("search.location")}</p>
                     <select value={filters.location} onChange={(e) => set("location", e.target.value)}
                         className="w-full px-3 py-2.5 bg-aqar-base border border-aqar-border rounded-lg text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none">
-                        <option value="">أي مدينة</option>
+                        <option value="">{t("search.anyCity")}</option>
                         {CITIES.map((c) => <option key={c} value={c}>{cityMap[c] || c}</option>)}
                     </select>
                 </div>
 
                 {/* Type */}
                 <div>
-                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">نوع العقار</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">{t("search.propertyType")}</p>
                     <div className="grid grid-cols-2 gap-2">
                         {PROPERTY_TYPES.map((t) => (
                             <button key={t} onClick={() => set("type", filters.type === t.toLowerCase() ? "" : t.toLowerCase())}
@@ -131,7 +131,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Bedrooms */}
                 <div>
-                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">الحد الأدنى لغرف النوم</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">{t("search.minBedrooms")}</p>
                     <div className="flex gap-1.5 flex-wrap">
                         {["Studio", "1", "2", "3", "4", "5+"].map((b) => (
                             <button key={b} onClick={() => set("bedrooms", filters.bedrooms === b ? "" : b)}
@@ -139,7 +139,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                                         ? "border-aqar-cyan bg-aqar-cyan/10 text-aqar-cyan"
                                         : "border-aqar-border text-aqar-muted hover:text-aqar-text"
                                     }`} dir="ltr">
-                                {b === "Studio" ? "استوديو" : b}
+                                {b === "Studio" ? t("search.studio") : b}
                             </button>
                         ))}
                     </div>
@@ -147,7 +147,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
 
                 {/* Amenities */}
                 <div>
-                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">المميزات</p>
+                    <p className="text-xs text-aqar-muted font-medium uppercase tracking-wider mb-3 text-start">{t("search.amenities")}</p>
                     <div className="space-y-2.5">
                         {(showAllAmenities ? ALL_AMENITIES : ALL_AMENITIES.slice(0, 5)).map((amenity) => {
                             const isActive = filters.amenities.includes(amenity);
@@ -172,7 +172,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                             onClick={() => setShowAllAmenities(!showAllAmenities)}
                             className="text-xs font-semibold text-aqar-cyan hover:text-aqar-cyan/80 flex items-center gap-1 mt-4 transition-colors"
                         >
-                            {showAllAmenities ? "عرض أقل" : "عرض المزيد"}
+                            {showAllAmenities ? t("search.showLess") : t("search.showMore")}
                             {showAllAmenities ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                         </button>
                     )}

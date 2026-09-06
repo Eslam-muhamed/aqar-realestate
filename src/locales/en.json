@@ -87,7 +87,17 @@
     "bedrooms": "Bedrooms",
     "studio": "Studio",
     "rooms": "Rooms",
-    "submit": "Search Properties"
+    "submit": "Search Properties",
+    "clearAll": "Clear All",
+    "listingType": "Listing Type",
+    "forSale": "For Sale",
+    "forRent": "For Rent",
+    "all": "All",
+    "location": "Location",
+    "minBedrooms": "Min Bedrooms",
+    "amenities": "Amenities",
+    "showMore": "Show More",
+    "showLess": "Show Less"
   },
   "city": {
     "Riyadh": "Riyadh",
@@ -262,5 +272,34 @@
     "bio": "Biography",
     "activeProps": "Active Properties",
     "noActiveProps": "No active properties currently."
+  },
+  "aboutPage": {
+    "title": "About AMSH",
+    "heroTitle": "The luxury real estate platform for the MENA region.",
+    "heroDesc": "AMSH was built for one purpose: to make finding and trading luxury real estate simple, trustworthy, and professional. We verify every listing and every advisor so you never have to doubt what you see.",
+    "browseProperties": "Browse Properties",
+    "meetAdvisors": "Meet Our Advisors",
+    "activeProperties": "Active Properties",
+    "verifiedAdvisors": "Verified Advisors",
+    "markets": "Markets",
+    "realEstateSales": "Real Estate Sales",
+    "valuesTitle": "Our Values",
+    "verificationFirst": "Verification First",
+    "verificationDesc": "Every property and advisor is manually verified before appearing on the platform.",
+    "clientCenter": "Client at the Center",
+    "clientCenterDesc": "We measure success by matching clients with the right property, not by sales volume.",
+    "regionalExpertise": "Regional Expertise",
+    "regionalExpertiseDesc": "Deep local knowledge in every market we operate in, not just a generic global approach.",
+    "professionalStandards": "Professional Standards",
+    "professionalStandardsDesc": "We hold our advisors to the highest professional and ethical standards in the industry.",
+    "journeyTitle": "Our Journey",
+    "foundedRiyadh": "Founded in Riyadh",
+    "foundedDesc": "AMSH was launched with a focus on the luxury residential market in Riyadh.",
+    "expandedUAE": "Expanded to Jeddah & UAE",
+    "expandedDesc": "Coverage increased to include Jeddah, Dubai, and Abu Dhabi.",
+    "active1000": "Over 1000 Active Properties",
+    "active1000Desc": "We reached the milestone of 1000 verified properties on the platform.",
+    "regionalLeader": "Regional Leader",
+    "regionalLeaderDesc": "Became the most trusted platform for luxury real estate across Saudi Arabia."
   }
 }
