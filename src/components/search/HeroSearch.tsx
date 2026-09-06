@@ -49,7 +49,7 @@ export default function HeroSearch() {
                     <MapPin size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted" />
                     <select value={location} onChange={(e) => setLocation(e.target.value)}
                         className="w-full ps-9 pe-3 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none appearance-none cursor-pointer">
-                        <option value="">أي مدينة</option>
+                        <option value="">{t("search.anyCity", "أي مدينة")}</option>
                         {CITIES.map((c) => <option key={c} value={c}>{cityMap[c] || c}</option>)}
                     </select>
                 </div>
@@ -58,7 +58,7 @@ export default function HeroSearch() {
                     <Home size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted" />
                     <select value={type} onChange={(e) => setType(e.target.value)}
                         className="w-full ps-9 pe-3 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none appearance-none cursor-pointer">
-                        <option value="">نوع العقار</option>
+                        <option value="">{t("search.propertyType", "نوع العقار")}</option>
                         {PROPERTY_TYPES.map((t) => <option key={t} value={t}>{typeMap[t] || t}</option>)}
                     </select>
                 </div>
@@ -110,9 +110,9 @@ export default function HeroSearch() {
                     <BedDouble size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-aqar-muted" />
                     <select value={beds} onChange={(e) => setBeds(e.target.value)}
                         className="w-full ps-9 pe-3 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none appearance-none cursor-pointer">
-                        <option value="">غرف النوم</option>
-                        <option value="0">استوديو</option>
-                        {[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={String(n)}>+ {n} غرف</option>)}
+                        <option value="">{t("search.bedrooms", "غرف النوم")}</option>
+                        <option value="0">{t("search.studio", "استوديو")}</option>
+                        {[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={String(n)}>+ {n} {t("search.rooms", "غرف")}</option>)}
                     </select>
                 </div>
             </div>
@@ -121,7 +121,7 @@ export default function HeroSearch() {
                 <button onClick={handleSearch}
                     className="w-full flex items-center justify-center gap-2 py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                     <Search size={16} />
-                    ابحث عن عقارات
+                    {t("search.submit", "ابحث عن عقارات")}
                 </button>
             </div>
         </div>

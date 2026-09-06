@@ -53,9 +53,9 @@ export const leadService = {
             }
 
             return { success: true, data };
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Lead submission error:", err);
-            return { success: false, error: err.message || "Failed to submit lead" };
+            return { success: false, error: err instanceof Error ? err.message : "Failed to submit lead" };
         }
     },
 
@@ -64,9 +64,12 @@ export const leadService = {
      * - Admins will receive all leads
      * - Supervisors will receive only their assigned leads (enforced by RLS in Supabase)
      */
-    async getLeads(): Promise<{ success: boolean; data: Lead[]; error?: string }> {
+    async getLeads(page: number = 1, limit: number = 50): Promise<{ success: boolean; data: Lead[]; count?: number; error?: string }> {
         try {
-            const { data, error } = await supabase
+            const from = (page - 1) * limit;
+            const to = from + limit - 1;
+
+            const { data, error, count } = await supabase
                 .from("leads")
                 .select(`
                     *,
@@ -76,7 +79,8 @@ export const leadService = {
                         email,
                         phone
                     )
-                `)
+                `, { count: "exact" })
+                .range(from, to)
                 .order("created_at", { ascending: false });
 
             if (error) {
@@ -95,13 +99,13 @@ export const leadService = {
                     assigned_to: inq.assignedTo || null,
                     created_at: inq.date || new Date().toISOString(),
                 }));
-                return { success: true, data: converted };
+                return { success: true, data: converted, count: converted.length };
             }
 
-            return { success: true, data: data as Lead[] };
-        } catch (err: any) {
+            return { success: true, data: data as Lead[], count: count || 0 };
+        } catch (err: unknown) {
             console.error("Error fetching leads:", err);
-            return { success: false, data: [], error: err.message };
+            return { success: false, data: [], error: err instanceof Error ? err.message : String(err) };
         }
     },
 
@@ -128,9 +132,9 @@ export const leadService = {
 
             if (error) throw error;
             return { success: true };
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error assigning lead:", err);
-            return { success: false, error: err.message };
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
         }
     },
 
@@ -153,9 +157,9 @@ export const leadService = {
 
             if (error) throw error;
             return { success: true };
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error updating lead:", err);
-            return { success: false, error: err.message };
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
         }
     },
 
@@ -167,9 +171,9 @@ export const leadService = {
             const { error } = await supabase.from("leads").delete().eq("id", leadId);
             if (error) throw error;
             return { success: true };
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error deleting lead:", err);
-            return { success: false, error: err.message };
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
         }
     },
 };

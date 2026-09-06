@@ -40,13 +40,13 @@ export const storageService = {
                 url: data.publicUrl,
                 public_id: filePath,
             };
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Supabase storage upload error:", error);
             return {
                 success: false,
                 url: "",
                 public_id: "",
-                error: error.message || "فشل رفع الصورة إلى التخزين",
+                error: error instanceof Error ? error.message : "فشل رفع الصورة إلى التخزين",
             };
         }
     },
@@ -79,9 +79,9 @@ export const storageService = {
             }
 
             return { success: true };
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Supabase delete error:", error);
-            return { success: false, error: error.message };
+            return { success: false, error: error instanceof Error ? error.message : String(error) };
         }
     },
 
@@ -94,13 +94,13 @@ export const storageService = {
                 await this.deleteImage(oldPathOrUrl);
             }
             return await this.uploadImage(newFile, folder);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Supabase replace error:", error);
             return {
                 success: false,
                 url: "",
                 public_id: "",
-                error: error.message || "فشل استبدال الصورة",
+                error: error instanceof Error ? error.message : "فشل استبدال الصورة",
             };
         }
     },

@@ -30,7 +30,7 @@ export default function AgentCard({ agent }: Props) {
             <div className="space-y-2 mb-5 text-start">
                 <div className="flex items-center gap-2 text-xs text-aqar-muted">
                     <Building2 size={12} className="text-aqar-cyan" />
-                    <span>{agent.company}</span>
+                    <span>{agent?.company || 'Aqar'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-aqar-muted">
                     <MapPin size={12} className="text-aqar-cyan" />

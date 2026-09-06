@@ -23,6 +23,7 @@ import ProtectedRoute from "./components/layout/ProtectedRoute";
 
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 import ScrollToTop from "./components/layout/ScrollToTop";
+import DynamicTitle from "./components/layout/DynamicTitle";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
                     <Toaster />
                     <Sonner position="bottom-right" theme="dark" />
                     <BrowserRouter>
+                        <DynamicTitle />
                         <ScrollToTop />
                         <Routes>
                             <Route path="/" element={<Index />} />

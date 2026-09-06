@@ -28,16 +28,20 @@ export const propertyService = {
     /**
      * Get all properties (public, only Supabase dynamic properties)
      */
-    async getAll(): Promise<Property[]> {
+    async getAll(page: number = 1, limit: number = 50): Promise<{ data: Property[]; count: number }> {
         try {
-            const { data, error } = await supabase
+            const from = (page - 1) * limit;
+            const to = from + limit - 1;
+
+            const { data, error, count } = await supabase
                 .from("properties")
-                .select("*")
+                .select("*", { count: "exact" })
                 .eq("is_published", true)
+                .range(from, to)
                 .order("created_at", { ascending: false });
 
             if (error || !data || data.length === 0) {
-                return [];
+                return { data: [], count: 0 };
             }
 
             // Map Supabase DB columns to frontend Property interface
@@ -78,10 +82,10 @@ export const propertyService = {
                 propertyId: item.property_id || `AQR-${Math.floor(1000 + Math.random() * 9000)}`,
             }));
 
-            return mappedDbProperties;
+            return { data: mappedDbProperties, count: count || 0 };
         } catch (err) {
             console.error("Failed to load properties from Supabase:", err);
-            return [];
+            return { data: [], count: 0 };
         }
     },
 
@@ -131,9 +135,9 @@ export const propertyService = {
 
             if (error) throw error;
             return { success: true, data };
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error creating property in Supabase:", err);
-            return { success: false, error: err.message };
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
         }
     },
 
@@ -158,9 +162,9 @@ export const propertyService = {
 
             if (error) throw error;
             return { success: true, data };
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error updating property in Supabase:", err);
-            return { success: false, error: err.message };
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
         }
     },
 
@@ -176,9 +180,9 @@ export const propertyService = {
 
             if (error) throw error;
             return { success: true };
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error deleting property in Supabase:", err);
-            return { success: false, error: err.message };
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
         }
     },
 

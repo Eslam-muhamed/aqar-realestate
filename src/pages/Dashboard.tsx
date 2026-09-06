@@ -58,22 +58,29 @@ export default function Dashboard() {
     const [leadFilter, setLeadFilter] = useState<"all" | "unassigned" | "assigned">("all");
     const [notesEditState, setNotesEditState] = useState<Record<string, string>>({});
 
+    const [page, setPage] = useState(1);
+    const limit = 50;
+
+    const [assigningLeadId, setAssigningLeadId] = useState<string | null>(null);
+    const [updatingStatusLeadId, setUpdatingStatusLeadId] = useState<string | null>(null);
+    const [savingNoteLeadId, setSavingNoteLeadId] = useState<string | null>(null);
+
     useEffect(() => {
         let isMounted = true;
 
-        async function loadData() {
+        async function fetchDashboardData() {
             setLoadingData(true);
             try {
-                const [leadsRes, supsRes, props] = await Promise.all([
-                    leadService.getLeads(),
-                    isAdmin ? teamService.getSupervisors() : Promise.resolve({ success: true, data: [] }),
-                    propertyService.getAll(),
+                const [leadsRes, supsRes, propsRes] = await Promise.all([
+                    leadService.getLeads(page, limit),
+                    isAdmin ? teamService.getSupervisors(page, limit) : Promise.resolve({ success: true, data: [] }),
+                    propertyService.getAll(page, limit),
                 ]);
 
                 if (isMounted) {
                     if (leadsRes.success) setLeads(leadsRes.data);
                     if (supsRes.success) setSupervisors(supsRes.data);
-                    setProperties(props);
+                    setProperties(propsRes.data || []);
                 }
             } catch (err) {
                 console.error("Error loading dashboard data:", err);
@@ -83,18 +90,19 @@ export default function Dashboard() {
         }
 
         if (user) {
-            loadData();
+            fetchDashboardData();
         }
 
         return () => {
             isMounted = false;
         };
-    }, [user, isAdmin]);
+    }, [isAdmin, user.id, page]);
 
     if (!user) return <Navigate to="/login" replace />;
 
     // Helper: Assign lead to supervisor (Admin Only)
     const handleAssignLead = async (leadId: string, supervisorId: string) => {
+        setAssigningLeadId(leadId);
         const sup = supervisors.find((s) => s.id === supervisorId);
         const res = await leadService.assignLead(leadId, supervisorId || null, user.id);
         if (res.success) {
@@ -117,10 +125,12 @@ export default function Dashboard() {
         } else {
             toast.error("حدث خطأ أثناء تعيين العميل: " + res.error);
         }
+        setAssigningLeadId(null);
     };
 
     // Helper: Update lead status & notes
     const handleUpdateLeadStatus = async (leadId: string, newStatus: LeadStatus) => {
+        setUpdatingStatusLeadId(leadId);
         const res = await leadService.updateLead(leadId, { status: newStatus });
         if (res.success) {
             setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, status: newStatus } : l)));
@@ -128,11 +138,13 @@ export default function Dashboard() {
         } else {
             toast.error("فشل التحديث: " + res.error);
         }
+        setUpdatingStatusLeadId(null);
     };
 
     const handleSaveLeadNote = async (leadId: string) => {
         const notes = notesEditState[leadId];
         if (notes === undefined) return;
+        setSavingNoteLeadId(leadId);
         const res = await leadService.updateLead(leadId, { internal_notes: notes });
         if (res.success) {
             setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, internal_notes: notes } : l)));
@@ -140,6 +152,7 @@ export default function Dashboard() {
         } else {
             toast.error("فشل حفظ الملاحظات");
         }
+        setSavingNoteLeadId(null);
     };
 
     const handleDeleteProperty = async (id: string) => {
@@ -468,6 +481,25 @@ export default function Dashboard() {
                                         )}
                                     </div>
 
+                                    {/* Pagination Controls */}
+                                    <div className="flex items-center justify-between mt-4">
+                                        <button
+                                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                            disabled={page === 1}
+                                            className="px-4 py-2 bg-aqar-base border border-aqar-border rounded-xl text-xs disabled:opacity-50"
+                                        >
+                                            السابق
+                                        </button>
+                                        <span className="text-xs text-aqar-muted">الصفحة {page}</span>
+                                        <button
+                                            onClick={() => setPage((p) => p + 1)}
+                                            disabled={leads.length < limit}
+                                            className="px-4 py-2 bg-aqar-base border border-aqar-border rounded-xl text-xs disabled:opacity-50"
+                                        >
+                                            التالي
+                                        </button>
+                                    </div>
+
                                     {filteredLeads.length > 0 ? (
                                         <div className="space-y-4">
                                             {filteredLeads.map((lead) => {
@@ -546,8 +578,9 @@ export default function Dashboard() {
                                                                 {isAdmin ? (
                                                                     <select
                                                                         value={lead.assigned_to || ""}
+                                                                        disabled={assigningLeadId === lead.id}
                                                                         onChange={(e) => handleAssignLead(lead.id, e.target.value)}
-                                                                        className="w-full px-3.5 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none"
+                                                                        className="w-full px-3.5 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none disabled:opacity-50"
                                                                     >
                                                                         <option value="">-- غير معين (متاح للجميع أو معلق) --</option>
                                                                         {supervisors.map((sup) => (
@@ -570,8 +603,9 @@ export default function Dashboard() {
                                                                 </label>
                                                                 <select
                                                                     value={lead.status}
+                                                                    disabled={updatingStatusLeadId === lead.id}
                                                                     onChange={(e) => handleUpdateLeadStatus(lead.id, e.target.value as LeadStatus)}
-                                                                    className="w-full px-3.5 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none"
+                                                                    className="w-full px-3.5 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text focus:border-aqar-cyan/50 focus:outline-none disabled:opacity-50"
                                                                 >
                                                                     <option value="new">طلب جديد</option>
                                                                     <option value="contacted">تم التواصل هاتفياً</option>
@@ -590,9 +624,10 @@ export default function Dashboard() {
                                                                     notesEditState[lead.id] !== lead.internal_notes && (
                                                                         <button
                                                                             onClick={() => handleSaveLeadNote(lead.id)}
-                                                                            className="flex items-center gap-1 text-xs text-aqar-cyan hover:underline"
+                                                                            disabled={savingNoteLeadId === lead.id}
+                                                                            className="flex items-center gap-1 text-xs text-aqar-cyan hover:underline disabled:opacity-50"
                                                                         >
-                                                                            <Save size={12} /> حفظ الملاحظة
+                                                                            <Save size={12} /> {savingNoteLeadId === lead.id ? "جاري الحفظ..." : "حفظ الملاحظة"}
                                                                         </button>
                                                                     )}
                                                             </div>
@@ -694,6 +729,25 @@ export default function Dashboard() {
                                             );
                                         })}
                                     </div>
+
+                                    {/* Pagination Controls */}
+                                    <div className="flex items-center justify-between mt-4">
+                                        <button
+                                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                            disabled={page === 1}
+                                            className="px-4 py-2 bg-aqar-base border border-aqar-border rounded-xl text-xs disabled:opacity-50"
+                                        >
+                                            السابق
+                                        </button>
+                                        <span className="text-xs text-aqar-muted">الصفحة {page}</span>
+                                        <button
+                                            onClick={() => setPage((p) => p + 1)}
+                                            disabled={supervisors.length < limit}
+                                            className="px-4 py-2 bg-aqar-base border border-aqar-border rounded-xl text-xs disabled:opacity-50"
+                                        >
+                                            التالي
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 
@@ -724,6 +778,25 @@ export default function Dashboard() {
                                                 onDelete={handleDeleteProperty}
                                             />
                                         ))}
+                                    </div>
+
+                                    {/* Pagination Controls */}
+                                    <div className="flex items-center justify-between mt-4">
+                                        <button
+                                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                            disabled={page === 1}
+                                            className="px-4 py-2 bg-aqar-base border border-aqar-border rounded-xl text-xs disabled:opacity-50"
+                                        >
+                                            السابق
+                                        </button>
+                                        <span className="text-xs text-aqar-muted">الصفحة {page}</span>
+                                        <button
+                                            onClick={() => setPage((p) => p + 1)}
+                                            disabled={properties.length < limit}
+                                            className="px-4 py-2 bg-aqar-base border border-aqar-border rounded-xl text-xs disabled:opacity-50"
+                                        >
+                                            التالي
+                                        </button>
                                     </div>
                                 </div>
                             )}

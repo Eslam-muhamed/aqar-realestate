@@ -107,7 +107,7 @@ export default function Login() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div>
                             <label className="text-xs text-aqar-muted mb-1.5 block">البريد الإلكتروني</label>
                             <input

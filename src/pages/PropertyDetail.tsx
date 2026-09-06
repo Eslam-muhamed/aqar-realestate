@@ -259,7 +259,7 @@ export default function PropertyDetail() {
                                             <div>
                                                 <h3 className="text-aqar-text font-semibold text-sm">{agent.name}</h3>
                                                 <p className="text-aqar-muted text-xs">{agent.title}</p>
-                                                <p className="text-aqar-muted text-xs">{agent.company}</p>
+                                                <p className="text-aqar-muted text-xs">{agent?.company || 'Aqar'}</p>
                                             </div>
                                         </div>
                                         <div className="space-y-2 mb-5">
@@ -281,7 +281,7 @@ export default function PropertyDetail() {
 
                                 {/* Mobile Sticky CTA */}
                                 <div className="lg:hidden fixed bottom-0 inset-x-0 p-4 bg-aqar-base/95 backdrop-blur-md border-t border-aqar-border flex gap-3 z-40">
-                                    <button onClick={handleFavorite}
+                                    <button onClick={handleFavorite} aria-label="أضف للمفضلة"
                                         className={`w-12 h-12 rounded-xl border flex items-center justify-center ${fav ? "border-[#FF453A] bg-[#FF453A]/10 text-[#FF453A]" : "border-aqar-border text-aqar-muted"}`}>
                                         <Heart size={18} fill={fav ? "currentColor" : "none"} />
                                     </button>

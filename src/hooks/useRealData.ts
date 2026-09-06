@@ -6,7 +6,10 @@ import type { Property, Agent } from "@/types";
 export const useProperties = () => {
     return useQuery<Property[]>({
         queryKey: ["properties"],
-        queryFn: () => propertyService.getAll(),
+        queryFn: async () => {
+            const res = await propertyService.getAll();
+            return res.data;
+        },
         staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     });
 };
