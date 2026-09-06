@@ -24,6 +24,10 @@ import ProtectedRoute from "./components/layout/ProtectedRoute";
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import DynamicTitle from "./components/layout/DynamicTitle";
+import { cacheManager } from "./lib/cacheManager";
+
+// Run startup version check & invalidate stale caches if updated
+cacheManager.checkVersionAndClearStaleCache();
 
 const queryClient = new QueryClient();
 

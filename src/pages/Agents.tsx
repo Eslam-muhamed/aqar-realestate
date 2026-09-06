@@ -42,7 +42,7 @@ export default function Agents() {
                             <Search size={15} className="absolute start-4 top-1/2 -translate-y-1/2 text-aqar-muted" />
                             <input value={search} onChange={(e) => setSearch(e.target.value)}
                                 placeholder="البحث بالاسم أو الشركة..."
-                                className="w-full ps-11 pe-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/60 focus:border-aqar-cyan/50 focus:outline-none" />
+                                className="w-full ps-11 pe-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none" />
                         </div>
                         <select value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)}
                             className="px-4 py-3 bg-aqar-surface border border-aqar-border rounded-xl text-sm text-aqar-text focus:outline-none min-w-[160px]">

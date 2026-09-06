@@ -6,13 +6,13 @@ interface Props { agent: Agent; }
 
 export default function AgentCard({ agent }: Props) {
     return (
-        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-aqar-muted hover:shadow-md dark:hover:border-[#3C3C3E] dark:hover:shadow-none shadow-sm dark:shadow-none group">
+        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-aqar-muted hover:shadow-md shadow-sm group">
             <div className="flex items-start gap-4 mb-5">
                 <div className="relative shrink-0">
                     <img src={agent.avatar} alt={agent.name} loading="lazy" className="w-14 h-14 rounded-xl object-cover" />
                     {agent.verified && (
                         <div className="absolute -bottom-1 -end-1 w-5 h-5 bg-aqar-cyan rounded-full flex items-center justify-center">
-                            <BadgeCheck size={11} className="text-[#121212]" />
+                            <BadgeCheck size={11} className="text-aqar-btnText" />
                         </div>
                     )}
                 </div>
@@ -47,7 +47,7 @@ export default function AgentCard({ agent }: Props) {
                     <p className="text-aqar-text font-mono font-semibold text-sm">{agent.listings}</p>
                     <p className="text-aqar-muted text-xs">عقارات نشطة</p>
                 </div>
-                <div className="h-8 w-px bg-[#2C2C2E]" />
+                <div className="h-8 w-px bg-aqar-border" />
                 <div className="text-end">
                     <p className="text-aqar-text font-mono font-semibold text-sm">{agent.reviews}</p>
                     <p className="text-aqar-muted text-xs">مراجعات</p>
@@ -60,7 +60,7 @@ export default function AgentCard({ agent }: Props) {
                     اتصال
                 </a>
                 <Link to={`/agents/${agent.id}`}
-                    className="flex-1 py-2.5 bg-aqar-cyan text-[#121212] text-xs font-semibold text-center rounded-xl hover:bg-aqar-cyan/90 transition-colors">
+                    className="flex-1 py-2.5 bg-aqar-cyan text-aqar-btnText text-xs font-semibold text-center rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                     عرض الملف
                 </Link>
             </div>

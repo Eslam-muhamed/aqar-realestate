@@ -51,7 +51,7 @@ export default function AgentDetail() {
                                         <img src={agent.avatar} alt={agent.name} className="w-20 h-20 rounded-2xl object-cover mx-auto" />
                                         {agent.verified && (
                                             <div className="absolute -bottom-1 -end-1 w-6 h-6 bg-aqar-cyan rounded-full flex items-center justify-center">
-                                                <BadgeCheck size={13} className="text-[#121212]" />
+                                                <BadgeCheck size={13} className="text-aqar-btnText" />
                                             </div>
                                         )}
                                     </div>
@@ -99,7 +99,7 @@ export default function AgentDetail() {
                                 </div>
 
                                 <a href={`tel:${agent.phone}`}
-                                    className="block w-full py-3 bg-aqar-cyan text-[#121212] font-semibold text-sm text-center rounded-xl hover:bg-aqar-cyan/90 transition-colors">
+                                    className="block w-full py-3 bg-aqar-cyan text-aqar-btnText font-semibold text-sm text-center rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                                     تواصل مع المستشار
                                 </a>
                             </div>

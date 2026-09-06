@@ -35,6 +35,9 @@ export default {
                     muted: "hsl(var(--aqar-muted))",
                     success: "hsl(var(--aqar-success))",
                     danger: "hsl(var(--aqar-danger))",
+                    hover: "hsl(var(--aqar-hover))",
+                    active: "hsl(var(--aqar-active))",
+                    btnText: "hsl(var(--aqar-btn-text))",
                 },
                 primary: {
                     DEFAULT: "hsl(var(--primary))",

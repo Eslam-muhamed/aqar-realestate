@@ -93,6 +93,8 @@ CREATE TABLE IF NOT EXISTS public.properties (
     verified BOOLEAN NOT NULL DEFAULT true,
     views INTEGER NOT NULL DEFAULT 0,
     is_published BOOLEAN NOT NULL DEFAULT true,
+    is_archived BOOLEAN NOT NULL DEFAULT false,
+    archived_at TIMESTAMPTZ,
     created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL DEFAULT auth.uid(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -124,6 +126,8 @@ CREATE TABLE IF NOT EXISTS public.leads (
     assigned_at TIMESTAMPTZ,
     assigned_by UUID REFERENCES public.profiles (id) ON DELETE SET NULL,
     internal_notes TEXT NOT NULL DEFAULT '',
+    is_archived BOOLEAN NOT NULL DEFAULT false,
+    archived_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -165,6 +169,31 @@ CREATE INDEX IF NOT EXISTS idx_leads_property_id ON public.leads (property_id);
 CREATE INDEX IF NOT EXISTS idx_leads_created_at ON public.leads (created_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_lead_activities_lead_id ON public.lead_activities (lead_id);
+
+-- Partial & compound indexes for 2-year scalability on active items
+CREATE INDEX IF NOT EXISTS idx_properties_active_filter 
+ON public.properties (city, type, status, price) 
+WHERE is_archived = false AND is_published = true;
+
+CREATE INDEX IF NOT EXISTS idx_properties_active_created 
+ON public.properties (created_at DESC) 
+WHERE is_archived = false;
+
+CREATE INDEX IF NOT EXISTS idx_leads_active_assigned 
+ON public.leads (assigned_to, status, created_at DESC) 
+WHERE is_archived = false;
+
+CREATE INDEX IF NOT EXISTS idx_leads_active_unassigned 
+ON public.leads (created_at DESC) 
+WHERE assigned_to IS NULL AND is_archived = false;
+
+CREATE INDEX IF NOT EXISTS idx_properties_archived 
+ON public.properties (archived_at DESC) 
+WHERE is_archived = true;
+
+CREATE INDEX IF NOT EXISTS idx_leads_archived 
+ON public.leads (archived_at DESC) 
+WHERE is_archived = true;
 
 -- ------------------------------------------------------------------------------
 -- 7. TRIGGER: Auto-create Profile on Auth Signup

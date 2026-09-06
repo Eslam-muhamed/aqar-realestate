@@ -178,14 +178,14 @@ export default function ListProperty() {
                                         step === s.num
                                             ? "bg-aqar-cyan/10 text-aqar-cyan border border-aqar-cyan/30 font-bold"
                                             : step > s.num
-                                            ? "text-[#32D74B] bg-[#32D74B]/5"
+                                            ? "text-aqar-success bg-aqar-success/5"
                                             : "text-aqar-muted"
                                     }`}
                                 >
                                     {step > s.num ? <CheckCircle size={14} /> : <span className="font-mono">{s.num}</span>}
                                     {s.label}
                                 </button>
-                                {i < STEPS.length - 1 && <ChevronRight size={12} className="text-[#2C2C2E] rotate-180 shrink-0" />}
+                                {i < STEPS.length - 1 && <ChevronRight size={12} className="text-aqar-border rotate-180 shrink-0" />}
                             </div>
                         ))}
                     </div>
@@ -429,7 +429,7 @@ export default function ListProperty() {
                             <div>
                                 <h2 className="text-aqar-text font-bold text-xl mb-2">مراجعة ونشر العقار</h2>
                                 <p className="text-aqar-muted text-sm mb-6">تأكد من صحة البيانات قبل حفظها ونشرها في الموقع.</p>
-                                <div className="bg-aqar-surface border border-aqar-border rounded-2xl divide-y divide-[#2C2C2E] overflow-hidden mb-6">
+                                <div className="bg-aqar-surface border border-aqar-border rounded-2xl divide-y divide-aqar-border overflow-hidden mb-6">
                                     {[
                                         { label: "نوع العقار", value: `${TYPE_LABELS[form.type.charAt(0).toUpperCase() + form.type.slice(1)] || form.type} · ${form.status === "for-sale" ? "للبيع" : "للإيجار"}` },
                                         { label: "الموقع", value: `${form.district || "—"}، ${CITY_LABELS[form.city] || form.city}` },
@@ -475,7 +475,7 @@ export default function ListProperty() {
                                 <button
                                     type="button"
                                     onClick={() => setStep(step - 1)}
-                                    className="px-6 py-3 border border-aqar-border text-aqar-text text-sm rounded-xl hover:border-[#3C3C3E] transition-colors"
+                                    className="px-6 py-3 border border-aqar-border text-aqar-text text-sm rounded-xl hover:border-aqar-muted transition-colors"
                                 >
                                     السابق
                                 </button>
@@ -485,7 +485,7 @@ export default function ListProperty() {
                                 <button
                                     type="button"
                                     onClick={() => setStep(step + 1)}
-                                    className="px-8 py-3 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] font-bold text-sm rounded-xl transition-all shadow-lg shadow-[#00E5FF]/10"
+                                    className="px-8 py-3 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText font-bold text-sm rounded-xl transition-all shadow-lg shadow-aqar-cyan/10"
                                 >
                                     التالي
                                 </button>
@@ -494,7 +494,7 @@ export default function ListProperty() {
                                     type="button"
                                     onClick={handleSubmit}
                                     disabled={submitting}
-                                    className="px-8 py-3 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] font-bold text-sm rounded-xl transition-all shadow-lg shadow-[#00E5FF]/10 disabled:opacity-60 flex items-center gap-2"
+                                    className="px-8 py-3 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText font-bold text-sm rounded-xl transition-all shadow-lg shadow-aqar-cyan/10 disabled:opacity-60 flex items-center gap-2"
                                 >
                                     {submitting ? (
                                         <>

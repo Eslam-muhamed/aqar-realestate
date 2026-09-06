@@ -64,12 +64,16 @@ export const leadService = {
      * - Admins will receive all leads
      * - Supervisors will receive only their assigned leads (enforced by RLS in Supabase)
      */
-    async getLeads(page: number = 1, limit: number = 50): Promise<{ success: boolean; data: Lead[]; count?: number; error?: string }> {
+    async getLeads(
+        page: number = 1,
+        limit: number = 50,
+        includeArchived: boolean = false
+    ): Promise<{ success: boolean; data: Lead[]; count?: number; error?: string }> {
         try {
             const from = (page - 1) * limit;
             const to = from + limit - 1;
 
-            const { data, error, count } = await supabase
+            let query = supabase
                 .from("leads")
                 .select(`
                     *,
@@ -79,7 +83,13 @@ export const leadService = {
                         email,
                         phone
                     )
-                `, { count: "exact" })
+                `, { count: "exact" });
+
+            if (!includeArchived) {
+                query = query.or("is_archived.is.null,is_archived.eq.false");
+            }
+
+            const { data, error, count } = await query
                 .range(from, to)
                 .order("created_at", { ascending: false });
 
@@ -174,6 +184,79 @@ export const leadService = {
         } catch (err: unknown) {
             console.error("Error deleting lead:", err);
             return { success: false, error: err instanceof Error ? err.message : String(err) };
+        }
+    },
+
+    /**
+     * Archive a lead (move closed or old lead out of active pipeline)
+     */
+    async archiveLead(leadId: string): Promise<{ success: boolean; error?: string }> {
+        try {
+            const { error } = await supabase
+                .from("leads")
+                .update({ 
+                    is_archived: true, 
+                    archived_at: new Date().toISOString() 
+                })
+                .eq("id", leadId);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (err: unknown) {
+            console.error("Error archiving lead:", err);
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
+        }
+    },
+
+    /**
+     * Restore an archived lead back to active pipeline
+     */
+    async restoreLead(leadId: string): Promise<{ success: boolean; error?: string }> {
+        try {
+            const { error } = await supabase
+                .from("leads")
+                .update({ 
+                    is_archived: false, 
+                    archived_at: null 
+                })
+                .eq("id", leadId);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (err: unknown) {
+            console.error("Error restoring lead:", err);
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
+        }
+    },
+
+    /**
+     * Fetch archived leads
+     */
+    async getArchivedLeads(page: number = 1, limit: number = 50): Promise<{ success: boolean; data: Lead[]; count?: number; error?: string }> {
+        try {
+            const from = (page - 1) * limit;
+            const to = from + limit - 1;
+
+            const { data, error, count } = await supabase
+                .from("leads")
+                .select(`
+                    *,
+                    assigned_supervisor:profiles!leads_assigned_to_fkey (
+                        id,
+                        full_name,
+                        email,
+                        phone
+                    )
+                `, { count: "exact" })
+                .eq("is_archived", true)
+                .range(from, to)
+                .order("archived_at", { ascending: false });
+
+            if (error) throw error;
+            return { success: true, data: data as Lead[], count: count || 0 };
+        } catch (err: unknown) {
+            console.error("Error fetching archived leads:", err);
+            return { success: false, data: [], error: err instanceof Error ? err.message : String(err) };
         }
     },
 };

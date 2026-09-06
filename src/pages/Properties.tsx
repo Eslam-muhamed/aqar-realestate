@@ -95,7 +95,7 @@ export default function Properties() {
                             <div className="hidden sm:flex border border-aqar-border rounded-xl overflow-hidden">
                                 {(["grid", "list"] as ViewMode[]).map((v) => (
                                     <button key={v} onClick={() => setView(v)}
-                                        className={`p-2.5 transition-colors ${view === v ? "bg-[#2C2C2E] text-aqar-text" : "text-aqar-muted hover:text-aqar-text"}`}>
+                                        className={`p-2.5 transition-colors ${view === v ? "bg-aqar-hover text-aqar-text" : "text-aqar-muted hover:text-aqar-text"}`}>
                                         {v === "grid" ? <Grid3X3 size={15} /> : <List size={15} />}
                                     </button>
                                 ))}

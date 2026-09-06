@@ -1,4 +1,4 @@
-import { Heart, BedDouble, Bath, Square, MapPin, BadgeCheck, ArrowLeftRight, Pencil, Trash2 } from "lucide-react";
+import { Heart, BedDouble, Bath, Square, MapPin, BadgeCheck, ArrowLeftRight, Pencil, Trash2, Archive, RotateCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn, formatPrice } from "@/lib/utils";
 import type { Property } from "@/types";
@@ -11,9 +11,11 @@ interface Props {
     className?: string;
     isDashboard?: boolean;
     onDelete?: (id: string) => void;
+    onArchive?: (id: string) => void;
+    onRestore?: (id: string) => void;
 }
 
-export default function PropertyCard({ property, className, isDashboard, onDelete }: Props) {
+export default function PropertyCard({ property, className, isDashboard, onDelete, onArchive, onRestore }: Props) {
     const { toggle, isFavorite } = useFavorites();
     const fav = isFavorite(property.id);
 
@@ -38,7 +40,7 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
 
     return (
         <Link to={`/property/${property.slug}`} className={cn("property-card group block", className)}>
-            <div className="bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-aqar-muted hover:shadow-lg dark:hover:border-[#3C3C3E] dark:hover:shadow-black/40 shadow-sm dark:shadow-none">
+            <div className="bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-aqar-muted hover:shadow-lg shadow-sm">
                 {/* Image */}
                 <div className="relative aspect-[4/3] overflow-hidden">
                     <img
@@ -52,11 +54,16 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
                     {/* Badges */}
                     <div className="absolute top-3 start-3 flex items-center gap-2">
                         <span className={cn("px-2.5 py-1 text-xs font-semibold rounded-md",
-                            property.status === "for-sale" ? "bg-aqar-cyan text-[#121212]" : "bg-[#32D74B] text-[#121212]"
+                            property.status === "for-sale" ? "bg-aqar-cyan text-aqar-btnText" : "bg-aqar-success text-white"
                         )}>
                             {property.status === "for-sale" ? "للبيع" : "للإيجار"}
                         </span>
-                        {property.featured && (
+                        {property.is_archived && (
+                            <span className="px-2.5 py-1 text-xs font-medium bg-amber-500/20 text-amber-400 rounded-md border border-amber-500/40">
+                                🗄️ مؤرشف
+                            </span>
+                        )}
+                        {property.featured && !property.is_archived && (
                             <span className="px-2.5 py-1 text-xs font-medium bg-white/10 backdrop-blur-sm text-aqar-text rounded-md border border-white/20">
                                 مميز
                             </span>
@@ -69,12 +76,12 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
                             <>
                                 <button onClick={handleFavorite} aria-label="حفظ في المفضلة"
                                     className={cn("w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
-                                        fav ? "bg-[#FF453A] text-aqar-text" : "bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-[#FF453A]"
+                                        fav ? "bg-aqar-danger text-white" : "bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-danger hover:text-white"
                                     )}>
                                     <Heart size={14} fill={fav ? "currentColor" : "none"} />
                                 </button>
                                 <button onClick={handleCompare} aria-label="مقارنة العقار"
-                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-[#121212] flex items-center justify-center transition-colors">
+                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-aqar-btnText flex items-center justify-center transition-colors">
                                     <ArrowLeftRight size={14} />
                                 </button>
                             </>
@@ -82,11 +89,30 @@ export default function PropertyCard({ property, className, isDashboard, onDelet
                         {isDashboard && (
                             <>
                                 <Link to={`/edit-property/${property.id}`} aria-label="تعديل العقار"
-                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-[#121212] flex items-center justify-center transition-colors">
+                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-cyan hover:text-aqar-btnText flex items-center justify-center transition-colors">
                                     <Pencil size={14} />
                                 </Link>
+
+                                {property.is_archived ? (
+                                    <button 
+                                        onClick={(e) => { e.preventDefault(); onRestore?.(property.id); }} 
+                                        aria-label="استعادة العقار من الأرشيف"
+                                        title="استعادة العقار من الأرشيف"
+                                        className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-colors">
+                                        <RotateCcw size={14} />
+                                    </button>
+                                ) : (
+                                    <button 
+                                        onClick={(e) => { e.preventDefault(); onArchive?.(property.id); }} 
+                                        aria-label="أرشفة العقار"
+                                        title="أرشفة العقار"
+                                        className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-amber-400 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors">
+                                        <Archive size={14} />
+                                    </button>
+                                )}
+
                                 <button onClick={(e) => { e.preventDefault(); onDelete?.(property.id); }} aria-label="حذف العقار"
-                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-[#FF453A] hover:text-white flex items-center justify-center transition-colors">
+                                    className="w-8 h-8 rounded-lg bg-aqar-base/80 backdrop-blur-sm text-aqar-text hover:bg-aqar-danger hover:text-white flex items-center justify-center transition-colors">
                                     <Trash2 size={14} />
                                 </button>
                             </>

@@ -30,7 +30,7 @@ export default function Locations() {
                             
                             return (
                             <Link key={loc.id} to={`/locations/${loc.slug}`}
-                                className="group bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden hover:border-[#3C3C3E] hover:-translate-y-1 transition-all duration-300">
+                                className="group bg-aqar-surface border border-aqar-border rounded-2xl overflow-hidden hover:border-aqar-muted hover:-translate-y-1 transition-all duration-300">
                                 <div className="relative aspect-video overflow-hidden">
                                     <img src={loc.image} alt={loc.name} loading="lazy"
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

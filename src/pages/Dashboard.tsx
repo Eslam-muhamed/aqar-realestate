@@ -21,6 +21,14 @@ import {
     ExternalLink,
     AlertCircle,
     Save,
+    Archive,
+    RotateCcw,
+    Download,
+    BarChart3,
+    HardDrive,
+    RefreshCw,
+    PieChart,
+    Sparkles,
 } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -30,11 +38,13 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { leadService } from "@/services/leadService";
 import { teamService } from "@/services/teamService";
 import { propertyService } from "@/services/propertyService";
+import { analyticsService } from "@/services/analyticsService";
+import { cacheManager } from "@/lib/cacheManager";
 import { toast } from "sonner";
 import type { Lead, LeadStatus, Profile, Property } from "@/types";
 
-type AdminTab = "overview" | "leads" | "supervisors" | "properties" | "settings";
-type SupervisorTab = "overview" | "my_leads" | "properties" | "settings";
+type AdminTab = "overview" | "leads" | "analytics" | "supervisors" | "properties" | "settings";
+type SupervisorTab = "overview" | "my_leads" | "analytics" | "properties" | "settings";
 
 const STATUS_LABELS: Record<LeadStatus, { label: string; color: string }> = {
     new: { label: "طلب جديد", color: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30" },
@@ -50,13 +60,17 @@ export default function Dashboard() {
 
     const [tab, setTab] = useState<string>("overview");
     const [leads, setLeads] = useState<Lead[]>([]);
+    const [archivedLeads, setArchivedLeads] = useState<Lead[]>([]);
     const [supervisors, setSupervisors] = useState<Profile[]>([]);
     const [properties, setProperties] = useState<Property[]>([]);
+    const [archivedProperties, setArchivedProperties] = useState<Property[]>([]);
     const [loadingData, setLoadingData] = useState(true);
 
     // Filter states
-    const [leadFilter, setLeadFilter] = useState<"all" | "unassigned" | "assigned">("all");
+    const [leadFilter, setLeadFilter] = useState<"all" | "unassigned" | "assigned" | "archived">("all");
+    const [propertyFilter, setPropertyFilter] = useState<"active" | "archived">("active");
     const [notesEditState, setNotesEditState] = useState<Record<string, string>>({});
+    const [storageUsage, setStorageUsage] = useState(() => cacheManager.getStorageUsage());
 
     const [page, setPage] = useState(1);
     const limit = 50;
@@ -71,16 +85,20 @@ export default function Dashboard() {
         async function fetchDashboardData() {
             setLoadingData(true);
             try {
-                const [leadsRes, supsRes, propsRes] = await Promise.all([
+                const [leadsRes, supsRes, propsRes, archLeadsRes, archPropsRes] = await Promise.all([
                     leadService.getLeads(page, limit),
                     isAdmin ? teamService.getSupervisors(page, limit) : Promise.resolve({ success: true, data: [] }),
                     propertyService.getAll(page, limit),
+                    leadService.getArchivedLeads(1, 100),
+                    propertyService.getArchived(1, 100),
                 ]);
 
                 if (isMounted) {
                     if (leadsRes.success) setLeads(leadsRes.data);
                     if (supsRes.success) setSupervisors(supsRes.data);
                     setProperties(propsRes.data || []);
+                    if (archLeadsRes.success) setArchivedLeads(archLeadsRes.data);
+                    setArchivedProperties(archPropsRes.data || []);
                 }
             } catch (err) {
                 console.error("Error loading dashboard data:", err);
@@ -163,6 +181,7 @@ export default function Dashboard() {
             if (res.success) {
                 toast.success("تم حذف العقار بنجاح");
                 setProperties(prev => prev.filter(p => p.id !== id));
+                setArchivedProperties(prev => prev.filter(p => p.id !== id));
             } else {
                 toast.error("فشل حذف العقار: " + res.error);
             }
@@ -171,10 +190,63 @@ export default function Dashboard() {
         }
     };
 
-    // Filter leads
-    const filteredLeads = leads.filter((lead) => {
+    const handleArchiveLead = async (leadId: string) => {
+        const target = leads.find((l) => l.id === leadId);
+        if (!target) return;
+        const res = await leadService.archiveLead(leadId);
+        if (res.success) {
+            setLeads((prev) => prev.filter((l) => l.id !== leadId));
+            setArchivedLeads((prev) => [{ ...target, is_archived: true }, ...prev]);
+            toast.success("تم نقل العميل إلى الأرشيف بنجاح");
+        } else {
+            toast.error("فشل أرشفة العميل: " + res.error);
+        }
+    };
+
+    const handleRestoreLead = async (leadId: string) => {
+        const target = archivedLeads.find((l) => l.id === leadId);
+        if (!target) return;
+        const res = await leadService.restoreLead(leadId);
+        if (res.success) {
+            setArchivedLeads((prev) => prev.filter((l) => l.id !== leadId));
+            setLeads((prev) => [{ ...target, is_archived: false }, ...prev]);
+            toast.success("تمت استعادة العميل إلى قائمة المتابعة النشطة");
+        } else {
+            toast.error("فشل استعادة العميل: " + res.error);
+        }
+    };
+
+    const handleArchiveProperty = async (id: string) => {
+        const target = properties.find((p) => p.id === id);
+        if (!target) return;
+        const res = await propertyService.archiveProperty(id);
+        if (res.success) {
+            setProperties((prev) => prev.filter((p) => p.id !== id));
+            setArchivedProperties((prev) => [{ ...target, is_archived: true }, ...prev]);
+            toast.success("تم نقل العقار إلى الأرشيف وإخفاؤه من العرض النشط");
+        } else {
+            toast.error("فشل أرشفة العقار: " + res.error);
+        }
+    };
+
+    const handleRestoreProperty = async (id: string) => {
+        const target = archivedProperties.find((p) => p.id === id);
+        if (!target) return;
+        const res = await propertyService.restoreProperty(id);
+        if (res.success) {
+            setArchivedProperties((prev) => prev.filter((p) => p.id !== id));
+            setProperties((prev) => [{ ...target, is_archived: false }, ...prev]);
+            toast.success("تمت استعادة العقار ونشره مجدداً في الموقع");
+        } else {
+            toast.error("فشل استعادة العقار: " + res.error);
+        }
+    };
+
+    // Filter leads (supporting Active vs Archived)
+    const leadsSource = leadFilter === "archived" ? archivedLeads : leads;
+    const filteredLeads = leadsSource.filter((lead) => {
         if (isSupervisor) {
-            // Supervisor only sees leads assigned to them (database also restricts this via RLS)
+            // Supervisor only sees leads assigned to them
             return lead.assigned_to === user.id || !lead.assigned_to;
         }
         if (leadFilter === "unassigned") return !lead.assigned_to;
@@ -185,10 +257,20 @@ export default function Dashboard() {
     const unassignedCount = leads.filter((l) => !l.assigned_to).length;
     const closedWonCount = leads.filter((l) => l.status === "closed_won").length;
 
+    // Analytics Metrics
+    const analyticsMetrics = analyticsService.computeMetrics(
+        leads,
+        properties,
+        supervisors,
+        archivedLeads.length,
+        archivedProperties.length
+    );
+
     // Navigation Tabs definition based on role
     const adminNavTabs = [
         { id: "overview", label: "نظرة عامة", icon: LayoutDashboard },
         { id: "leads", label: "مركز العملاء", icon: MessageSquare, badge: unassignedCount > 0 ? unassignedCount : undefined },
+        { id: "analytics", label: "التقارير والإحصائيات", icon: TrendingUp },
         { id: "supervisors", label: "فريق المشرفين", icon: Users },
         { id: "properties", label: "العقارات", icon: Home },
         { id: "settings", label: "الإعدادات", icon: Settings },
@@ -197,6 +279,7 @@ export default function Dashboard() {
     const supervisorNavTabs = [
         { id: "overview", label: "نظرة عامة", icon: LayoutDashboard },
         { id: "my_leads", label: "العملاء المكلف بهم", icon: MessageSquare, badge: filteredLeads.length },
+        { id: "analytics", label: "التقارير والإحصائيات", icon: TrendingUp },
         { id: "properties", label: "العقارات", icon: Home },
         { id: "settings", label: "الإعدادات", icon: Settings },
     ];
@@ -238,7 +321,7 @@ export default function Dashboard() {
                         <div className="flex items-center gap-3">
                             <Link
                                 to="/list-property"
-                                className="flex items-center gap-2 px-5 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] text-sm font-bold rounded-xl transition-all shadow-lg shadow-[#00E5FF]/10"
+                                className="flex items-center gap-2 px-5 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText text-sm font-bold rounded-xl transition-all shadow-lg shadow-aqar-cyan/10"
                             >
                                 <PlusCircle size={16} /> إضافة عقار جديد
                             </Link>
@@ -256,7 +339,7 @@ export default function Dashboard() {
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                                             tab === id
                                                 ? "bg-aqar-cyan/15 text-aqar-cyan border border-aqar-cyan/30 shadow-sm"
-                                                : "text-aqar-muted hover:text-aqar-text hover:bg-[#2C2C2E]/60 border border-transparent"
+                                                : "text-aqar-muted hover:text-aqar-text hover:bg-aqar-hover border border-transparent"
                                         }`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -264,7 +347,7 @@ export default function Dashboard() {
                                             <span>{label}</span>
                                         </div>
                                         {badge !== undefined && (
-                                            <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-aqar-cyan text-[#121212]">
+                                            <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-aqar-cyan text-aqar-btnText">
                                                 {badge}
                                             </span>
                                         )}
@@ -274,7 +357,7 @@ export default function Dashboard() {
                                 <div className="pt-4 mt-4 border-t border-aqar-border">
                                     <button
                                         onClick={() => logout()}
-                                        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-[#FF453A] hover:bg-[#FF453A]/10 transition-colors"
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-aqar-danger hover:bg-aqar-danger/10 transition-colors"
                                     >
                                         <LogOut size={16} /> تسجيل الخروج
                                     </button>
@@ -361,7 +444,7 @@ export default function Dashboard() {
                                                     setTab("leads");
                                                     setLeadFilter("unassigned");
                                                 }}
-                                                className="px-5 py-2 bg-amber-400 text-[#121212] font-bold text-sm rounded-xl hover:bg-amber-300 transition-colors shrink-0"
+                                                className="px-5 py-2 bg-amber-500 text-white font-bold text-sm rounded-xl hover:bg-amber-400 transition-colors shrink-0"
                                             >
                                                 توزيع الطلبات الآن
                                             </button>
@@ -408,7 +491,7 @@ export default function Dashboard() {
 
                                                         <div className="flex items-center gap-3">
                                                             {lead.assigned_supervisor ? (
-                                                                <span className="text-xs text-aqar-muted bg-[#2C2C2E] px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                                                                <span className="text-xs text-aqar-muted bg-aqar-hover px-3 py-1.5 rounded-lg flex items-center gap-1.5">
                                                                     <UserCheck size={14} className="text-aqar-cyan" />
                                                                     {lead.assigned_supervisor.full_name}
                                                                 </span>
@@ -456,7 +539,7 @@ export default function Dashboard() {
                                                 <button
                                                     onClick={() => setLeadFilter("all")}
                                                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                                                        leadFilter === "all" ? "bg-aqar-cyan text-[#121212]" : "text-aqar-muted"
+                                                        leadFilter === "all" ? "bg-aqar-cyan text-aqar-btnText" : "text-aqar-muted"
                                                     }`}
                                                 >
                                                     الكل ({leads.length})
@@ -464,7 +547,7 @@ export default function Dashboard() {
                                                 <button
                                                     onClick={() => setLeadFilter("unassigned")}
                                                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                                                        leadFilter === "unassigned" ? "bg-amber-400 text-[#121212]" : "text-aqar-muted"
+                                                        leadFilter === "unassigned" ? "bg-amber-500 text-white" : "text-aqar-muted"
                                                     }`}
                                                 >
                                                     غير معين ({unassignedCount})
@@ -472,10 +555,18 @@ export default function Dashboard() {
                                                 <button
                                                     onClick={() => setLeadFilter("assigned")}
                                                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                                                        leadFilter === "assigned" ? "bg-aqar-cyan text-[#121212]" : "text-aqar-muted"
+                                                        leadFilter === "assigned" ? "bg-aqar-cyan text-aqar-btnText" : "text-aqar-muted"
                                                     }`}
                                                 >
                                                     معين ({leads.length - unassignedCount})
+                                                </button>
+                                                <button
+                                                    onClick={() => setLeadFilter("archived")}
+                                                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 ${
+                                                        leadFilter === "archived" ? "bg-amber-500 text-white" : "text-aqar-muted hover:text-aqar-text"
+                                                    }`}
+                                                >
+                                                    <Archive size={12} /> المؤرشفة ({archivedLeads.length})
                                                 </button>
                                             </div>
                                         )}
@@ -512,7 +603,9 @@ export default function Dashboard() {
                                                     <div
                                                         key={lead.id}
                                                         className={`bg-[#1C1C1E] border rounded-2xl p-6 transition-all ${
-                                                            !lead.assigned_to
+                                                            lead.is_archived
+                                                                ? "border-amber-500/20 bg-amber-500/5 opacity-80"
+                                                                : !lead.assigned_to
                                                                 ? "border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-transparent"
                                                                 : "border-aqar-border"
                                                         }`}
@@ -529,8 +622,13 @@ export default function Dashboard() {
                                                                     >
                                                                         {STATUS_LABELS[lead.status]?.label || lead.status}
                                                                     </span>
+                                                                    {lead.is_archived && (
+                                                                        <span className="text-xs bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                                                                            <Archive size={11} /> مؤرشف
+                                                                        </span>
+                                                                    )}
                                                                     {lead.property_title && (
-                                                                        <span className="text-xs bg-[#2C2C2E] text-aqar-muted px-2.5 py-0.5 rounded-full">
+                                                                        <span className="text-xs bg-aqar-hover text-aqar-muted px-2.5 py-0.5 rounded-full">
                                                                             {lead.property_title}
                                                                         </span>
                                                                     )}
@@ -541,11 +639,11 @@ export default function Dashboard() {
                                                                 </p>
                                                             </div>
 
-                                                            {/* Quick Contact buttons */}
+                                                            {/* Quick Contact & Archiving buttons */}
                                                             <div className="flex items-center gap-2 flex-wrap">
                                                                 <a
                                                                     href={`tel:${lead.client_phone}`}
-                                                                    className="flex items-center gap-1.5 px-3 py-2 bg-[#2C2C2E] hover:bg-[#3C3C3E] text-aqar-text text-xs font-medium rounded-xl transition-colors"
+                                                                    className="flex items-center gap-1.5 px-3 py-2 bg-aqar-hover hover:bg-aqar-active text-aqar-text text-xs font-medium rounded-xl transition-colors"
                                                                 >
                                                                     <Phone size={14} className="text-aqar-cyan" /> {lead.client_phone}
                                                                 </a>
@@ -557,8 +655,26 @@ export default function Dashboard() {
                                                                 >
                                                                     واتساب
                                                                 </a>
+
+                                                                {lead.is_archived ? (
+                                                                    <button
+                                                                        onClick={() => handleRestoreLead(lead.id)}
+                                                                        className="flex items-center gap-1.5 px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold rounded-xl transition-colors"
+                                                                        title="استعادة العميل إلى قائمة المتابعة النشطة"
+                                                                    >
+                                                                        <RotateCcw size={13} /> استعادة
+                                                                    </button>
+                                                                ) : (
+                                                                    <button
+                                                                        onClick={() => handleArchiveLead(lead.id)}
+                                                                        className="flex items-center gap-1.5 px-3 py-2 bg-aqar-hover hover:bg-amber-500/15 text-aqar-muted hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-500/30 border border-transparent text-xs font-medium rounded-xl transition-colors"
+                                                                        title="أرشفة هذا العميل"
+                                                                    >
+                                                                        <Archive size={13} /> أرشفة
+                                                                    </button>
+                                                                )}
                                                             </div>
-                                                        </div>
+                                                </div>
 
                                                         {/* Client Message */}
                                                         {lead.message && (
@@ -652,6 +768,234 @@ export default function Dashboard() {
                                             <p className="text-xs text-aqar-muted">
                                                 {isAdmin ? "لم يتم استلام طلبات في هذا القسم حالياً" : "لم يتم تعيين عملاء لك حتى الآن"}
                                             </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* ANALYTICS & REPORTS TAB */}
+                            {tab === "analytics" && (
+                                <div className="space-y-8">
+                                    {/* Header & Export Actions */}
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-aqar-surface border border-aqar-border rounded-2xl p-6">
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <TrendingUp className="text-aqar-cyan" size={24} />
+                                                <h2 className="text-aqar-text text-xl font-bold">التقارير ومؤشرات الأداء</h2>
+                                            </div>
+                                            <p className="text-aqar-muted text-xs mt-1">
+                                                تحليلات فورية لسرعة تحويل الـ Leads، ومصادر العملاء، وتوزيع المعروض العقاري
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center gap-2.5 flex-wrap">
+                                            <button
+                                                onClick={() => {
+                                                    analyticsService.exportLeadsToCSV(leadsSource, "aqar_leads_export.csv");
+                                                    toast.success("تم تنزيل تقرير العملاء بصيغة CSV بنجاح!");
+                                                }}
+                                                className="flex items-center gap-2 px-4 py-2.5 bg-aqar-hover hover:bg-aqar-active text-aqar-text border border-aqar-border text-xs font-bold rounded-xl transition-all shadow-sm"
+                                            >
+                                                <Download size={14} className="text-aqar-cyan" /> تصدير قائمة العملاء (CSV)
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    analyticsService.exportExecutiveSummaryToCSV(analyticsMetrics, "aqar_kpi_summary.csv");
+                                                    toast.success("تم تنزيل ملخص المؤشرات التنفيذية (KPI) بنجاح!");
+                                                }}
+                                                className="flex items-center gap-2 px-4 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText text-xs font-bold rounded-xl transition-all shadow-lg shadow-aqar-cyan/15"
+                                            >
+                                                <Download size={14} /> تصدير ملخص الأداء (KPI)
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Top 4 KPI Metrics */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                                        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-5 relative overflow-hidden">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-aqar-muted text-xs font-medium">معدل تحويل الصفقات</span>
+                                                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                                                    <Sparkles size={18} />
+                                                </div>
+                                            </div>
+                                            <p className="text-aqar-text text-3xl font-mono font-bold">{analyticsMetrics.conversionRate}%</p>
+                                            <p className="text-xs text-aqar-muted mt-2">
+                                                {analyticsMetrics.closedWonCount} صفقة ناجحة من {analyticsMetrics.closedWonCount + analyticsMetrics.closedLostCount} منتهية
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-5">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-aqar-muted text-xs font-medium">إجمالي العملاء والطلبات</span>
+                                                <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+                                                    <MessageSquare size={18} />
+                                                </div>
+                                            </div>
+                                            <p className="text-aqar-text text-3xl font-mono font-bold">{analyticsMetrics.totalLeads}</p>
+                                            <p className="text-xs text-aqar-muted mt-2">
+                                                {analyticsMetrics.activeLeads} عميل نشط | {analyticsMetrics.archivedLeads} بالأرشيف
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-5">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-aqar-muted text-xs font-medium">متوسط سعر البيع</span>
+                                                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+                                                    <BarChart3 size={18} />
+                                                </div>
+                                            </div>
+                                            <p className="text-aqar-text text-2xl font-mono font-bold">
+                                                {analyticsMetrics.avgSalePrice.toLocaleString()} <span className="text-xs text-aqar-muted font-sans">ر.س</span>
+                                            </p>
+                                            <p className="text-xs text-aqar-muted mt-2">
+                                                من إجمالي {analyticsMetrics.forSaleCount} عقار للبيع
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-5">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-aqar-muted text-xs font-medium">مخزون العقارات والأرشيف</span>
+                                                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+                                                    <Archive size={18} />
+                                                </div>
+                                            </div>
+                                            <p className="text-aqar-text text-3xl font-mono font-bold">{analyticsMetrics.totalProperties}</p>
+                                            <p className="text-xs text-aqar-muted mt-2">
+                                                {analyticsMetrics.activeProperties} نشط بالموقع | {analyticsMetrics.archivedProperties} بالأرشيف
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Breakdown Sections: Sources & Property Types */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        {/* Lead Sources Breakdown */}
+                                        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-aqar-text font-bold text-base flex items-center gap-2">
+                                                    <PieChart size={18} className="text-aqar-cyan" /> مصادر استقطاب العملاء
+                                                </h3>
+                                                <span className="text-xs text-aqar-muted">{leads.length} طلب نشط</span>
+                                            </div>
+
+                                            <div className="space-y-3 pt-2">
+                                                {Object.entries(analyticsMetrics.leadsBySource).length > 0 ? (
+                                                    Object.entries(analyticsMetrics.leadsBySource).map(([source, count]) => {
+                                                        const pct = Math.round((count / (leads.length || 1)) * 100);
+                                                        return (
+                                                            <div key={source} className="space-y-1.5">
+                                                                <div className="flex items-center justify-between text-xs">
+                                                                    <span className="text-aqar-text font-medium">{source}</span>
+                                                                    <span className="text-aqar-muted font-mono">{count} ({pct}%)</span>
+                                                                </div>
+                                                                <div className="w-full h-2 bg-aqar-base rounded-full overflow-hidden">
+                                                                    <div
+                                                                        className="h-full bg-aqar-cyan rounded-full transition-all duration-500"
+                                                                        style={{ width: `${Math.max(5, pct)}%` }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <p className="text-xs text-aqar-muted text-center py-6">لا توجد بيانات كافية لمصادر العملاء</p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Property Types Breakdown */}
+                                        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-aqar-text font-bold text-base flex items-center gap-2">
+                                                    <Home size={18} className="text-blue-400" /> تصنيف المعروض العقاري
+                                                </h3>
+                                                <span className="text-xs text-aqar-muted">{properties.length} عقار</span>
+                                            </div>
+
+                                            <div className="space-y-3 pt-2">
+                                                {Object.entries(analyticsMetrics.propertiesByType).length > 0 ? (
+                                                    Object.entries(analyticsMetrics.propertiesByType).map(([type, count]) => {
+                                                        const pct = Math.round((count / (properties.length || 1)) * 100);
+                                                        const typeNames: Record<string, string> = {
+                                                            villa: "فيلا",
+                                                            apartment: "شقة",
+                                                            penthouse: "بنتهاوس",
+                                                            townhouse: "تاون هاوس",
+                                                            duplex: "دوبلكس",
+                                                            commercial: "تجاري",
+                                                        };
+                                                        return (
+                                                            <div key={type} className="space-y-1.5">
+                                                                <div className="flex items-center justify-between text-xs">
+                                                                    <span className="text-aqar-text font-medium">{typeNames[type] || type}</span>
+                                                                    <span className="text-aqar-muted font-mono">{count} ({pct}%)</span>
+                                                                </div>
+                                                                <div className="w-full h-2 bg-aqar-base rounded-full overflow-hidden">
+                                                                    <div
+                                                                        className="h-full bg-blue-400 rounded-full transition-all duration-500"
+                                                                        style={{ width: `${Math.max(5, pct)}%` }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <p className="text-xs text-aqar-muted text-center py-6">لا توجد عقارات مضافة بعد</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Supervisors Performance Leaderboard (Admin view) */}
+                                    {isAdmin && (
+                                        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-6 space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-aqar-text font-bold text-base flex items-center gap-2">
+                                                        <Users size={18} className="text-amber-400" /> ترتيب كفاءة المشرفين ومعدل إغلاق الصفقات
+                                                    </h3>
+                                                    <p className="text-xs text-aqar-muted mt-0.5">
+                                                        ترتيب المشرفين حسب عدد الصفقات الناجحة ونسبة التحويل
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {analyticsMetrics.supervisorPerformance.length > 0 ? (
+                                                <div className="overflow-x-auto">
+                                                    <table className="w-full text-start text-xs">
+                                                        <thead>
+                                                            <tr className="border-b border-aqar-border text-aqar-muted">
+                                                                <th className="pb-3 text-start font-medium">المشرف</th>
+                                                                <th className="pb-3 text-center font-medium">العملاء المكلف بهم</th>
+                                                                <th className="pb-3 text-center font-medium">الصفقات المكتملة</th>
+                                                                <th className="pb-3 text-center font-medium">الصفقات الملغاة</th>
+                                                                <th className="pb-3 text-end font-medium">نسبة النجاح</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="divide-y divide-aqar-border/50">
+                                                            {analyticsMetrics.supervisorPerformance.map((sup, idx) => (
+                                                                <tr key={sup.id} className="hover:bg-aqar-base/50 transition-colors">
+                                                                    <td className="py-3 font-semibold text-aqar-text flex items-center gap-2">
+                                                                        <span className="w-5 h-5 rounded-full bg-aqar-base border border-aqar-border flex items-center justify-center font-mono text-[10px] text-aqar-cyan">
+                                                                            {idx + 1}
+                                                                        </span>
+                                                                        {sup.name}
+                                                                    </td>
+                                                                    <td className="py-3 text-center font-mono text-aqar-text">{sup.totalAssigned}</td>
+                                                                    <td className="py-3 text-center font-mono font-bold text-emerald-400">{sup.closedWon}</td>
+                                                                    <td className="py-3 text-center font-mono text-rose-400">{sup.closedLost}</td>
+                                                                    <td className="py-3 text-end font-mono font-bold text-aqar-cyan">
+                                                                        {sup.conversionRate}%
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            ) : (
+                                                <p className="text-xs text-aqar-muted text-center py-6">لا يوجد مشرفين مسجلين بعد</p>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -754,31 +1098,65 @@ export default function Dashboard() {
                             {/* PROPERTIES TAB */}
                             {tab === "properties" && (
                                 <div className="space-y-6">
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div>
                                             <h2 className="text-aqar-text text-xl font-bold">إدارة العقارات</h2>
                                             <p className="text-aqar-muted text-xs mt-1">
-                                                {isAdmin ? "قائمة بجميع العقارات المنشورة في الموقع" : "العقارات المتاحة والمعروضة"}
+                                                {isAdmin ? "قائمة بجميع العقارات المنشورة أو المؤرشفة في النظام" : "العقارات المتاحة والمعروضة"}
                                             </p>
                                         </div>
-                                        <Link
-                                            to="/list-property"
-                                            className="px-4 py-2 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5"
-                                        >
-                                            <PlusCircle size={14} /> إضافة عقار جديد
-                                        </Link>
+
+                                        <div className="flex items-center gap-3 flex-wrap">
+                                            <div className="flex items-center gap-1.5 bg-aqar-surface border border-aqar-border p-1 rounded-xl">
+                                                <button
+                                                    onClick={() => setPropertyFilter("active")}
+                                                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                                                        propertyFilter === "active" ? "bg-aqar-cyan text-aqar-btnText" : "text-aqar-muted hover:text-aqar-text"
+                                                    }`}
+                                                >
+                                                    العقارات المعروضة ({properties.length})
+                                                </button>
+                                                <button
+                                                    onClick={() => setPropertyFilter("archived")}
+                                                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 ${
+                                                        propertyFilter === "archived" ? "bg-amber-500 text-white" : "text-aqar-muted hover:text-aqar-text"
+                                                    }`}
+                                                >
+                                                    <Archive size={12} /> الأرشيف ({archivedProperties.length})
+                                                </button>
+                                            </div>
+
+                                            <Link
+                                                to="/list-property"
+                                                className="px-4 py-2 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-md"
+                                            >
+                                                <PlusCircle size={14} /> إضافة عقار جديد
+                                            </Link>
+                                        </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                                        {properties.map((p) => (
-                                            <PropertyCard 
-                                                key={p.id} 
-                                                property={p} 
-                                                isDashboard={true} 
-                                                onDelete={handleDeleteProperty}
-                                            />
-                                        ))}
-                                    </div>
+                                    {/* Grid of active / archived properties */}
+                                    {((propertyFilter === "active" ? properties : archivedProperties).length > 0) ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                                            {(propertyFilter === "active" ? properties : archivedProperties).map((p) => (
+                                                <PropertyCard 
+                                                    key={p.id} 
+                                                    property={p} 
+                                                    isDashboard={true} 
+                                                    onDelete={handleDeleteProperty}
+                                                    onArchive={handleArchiveProperty}
+                                                    onRestore={handleRestoreProperty}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="bg-aqar-surface border border-aqar-border rounded-2xl p-12 text-center">
+                                            <Home size={36} className="text-aqar-muted mx-auto mb-3" />
+                                            <p className="text-aqar-text font-bold text-sm">
+                                                {propertyFilter === "active" ? "لا توجد عقارات منشورة حالياً" : "سجل الأرشيف فارغ"}
+                                            </p>
+                                        </div>
+                                    )}
 
                                     {/* Pagination Controls */}
                                     <div className="flex items-center justify-between mt-4">
@@ -792,7 +1170,7 @@ export default function Dashboard() {
                                         <span className="text-xs text-aqar-muted">الصفحة {page}</span>
                                         <button
                                             onClick={() => setPage((p) => p + 1)}
-                                            disabled={properties.length < limit}
+                                            disabled={(propertyFilter === "active" ? properties : archivedProperties).length < limit}
                                             className="px-4 py-2 bg-aqar-base border border-aqar-border rounded-xl text-xs disabled:opacity-50"
                                         >
                                             التالي
@@ -803,38 +1181,99 @@ export default function Dashboard() {
 
                             {/* SETTINGS TAB */}
                             {tab === "settings" && (
-                                <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6 max-w-xl">
-                                    <h2 className="text-aqar-text font-bold text-lg mb-4">إعدادات الحساب</h2>
-                                    <div className="space-y-4 text-xs">
-                                        <div>
-                                            <label className="text-aqar-muted block mb-1">الاسم الكامل:</label>
-                                            <input
-                                                defaultValue={user.name}
-                                                className="w-full px-4 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-aqar-text text-sm focus:border-aqar-cyan/50 focus:outline-none"
-                                            />
+                                <div className="space-y-6 max-w-xl">
+                                    <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6">
+                                        <h2 className="text-aqar-text font-bold text-lg mb-4">إعدادات الحساب</h2>
+                                        <div className="space-y-4 text-xs">
+                                            <div>
+                                                <label className="text-aqar-muted block mb-1">الاسم الكامل:</label>
+                                                <input
+                                                    defaultValue={user.name}
+                                                    className="w-full px-4 py-2.5 bg-aqar-base border border-aqar-border rounded-xl text-aqar-text text-sm focus:border-aqar-cyan/50 focus:outline-none"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-aqar-muted block mb-1">البريد الإلكتروني:</label>
+                                                <input
+                                                    defaultValue={user.email}
+                                                    disabled
+                                                    className="w-full px-4 py-2.5 bg-aqar-base/60 border border-aqar-border rounded-xl text-aqar-muted text-sm cursor-not-allowed"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-aqar-muted block mb-1">الدور الحالي:</label>
+                                                <input
+                                                    defaultValue={isAdmin ? "أدمن (مدير المكتب)" : "مشرف عقارات (Supervisor)"}
+                                                    disabled
+                                                    className="w-full px-4 py-2.5 bg-aqar-base/60 border border-aqar-border rounded-xl text-cyan-400 font-semibold text-sm cursor-not-allowed"
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={() => toast.success("تم حفظ البيانات بنجاح")}
+                                                className="px-6 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText font-bold rounded-xl transition-colors mt-2"
+                                            >
+                                                حفظ التعديلات
+                                            </button>
                                         </div>
-                                        <div>
-                                            <label className="text-aqar-muted block mb-1">البريد الإلكتروني:</label>
-                                            <input
-                                                defaultValue={user.email}
-                                                disabled
-                                                className="w-full px-4 py-2.5 bg-aqar-base/60 border border-aqar-border rounded-xl text-aqar-muted text-sm cursor-not-allowed"
-                                            />
+                                    </div>
+
+                                    {/* SESSION & CACHE MANAGEMENT CARD */}
+                                    <div className="bg-aqar-surface border border-aqar-border shadow-sm dark:shadow-none rounded-2xl p-6">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2">
+                                                <HardDrive className="text-aqar-cyan" size={20} />
+                                                <h3 className="text-aqar-text font-bold text-base">إدارة الجلسات والذاكرة المؤقتة (Cache)</h3>
+                                            </div>
+                                            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                                الإصدار v{cacheManager.getVersion()}
+                                            </span>
                                         </div>
-                                        <div>
-                                            <label className="text-aqar-muted block mb-1">الدور الحالي:</label>
-                                            <input
-                                                defaultValue={isAdmin ? "أدمن (مدير المكتب)" : "مشرف عقارات (Supervisor)"}
-                                                disabled
-                                                className="w-full px-4 py-2.5 bg-aqar-base/60 border border-aqar-border rounded-xl text-cyan-400 font-semibold text-sm cursor-not-allowed"
-                                            />
+
+                                        <p className="text-xs text-aqar-muted mb-4 leading-relaxed">
+                                            يقوم النظام تلقائياً بتنظيف البيانات المؤقتة عند كل تحديث لمنع تداخل الحسابات. يمكنك من هنا فحص استهلاك الذاكرة أو تفريغ الكاش يدوياً لضمان أعلى سرعة استجابة.
+                                        </p>
+
+                                        {/* Storage Stats */}
+                                        <div className="grid grid-cols-2 gap-3 p-3.5 bg-aqar-base rounded-xl border border-aqar-border mb-5">
+                                            <div>
+                                                <span className="text-[11px] text-aqar-muted block">المساحة المحلية المستهلكة:</span>
+                                                <span className="text-sm font-mono font-bold text-aqar-text mt-0.5 block">
+                                                    {storageUsage.formattedSize}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className="text-[11px] text-aqar-muted block">عناصر التخزين المخزنة:</span>
+                                                <span className="text-sm font-mono font-bold text-aqar-cyan mt-0.5 block">
+                                                    {storageUsage.itemCount} عناصر
+                                                </span>
+                                            </div>
                                         </div>
-                                        <button
-                                            onClick={() => toast.success("تم حفظ البيانات بنجاح")}
-                                            className="px-6 py-2.5 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] font-bold rounded-xl transition-colors mt-2"
-                                        >
-                                            حفظ التعديلات
-                                        </button>
+
+                                        {/* Action buttons */}
+                                        <div className="space-y-2">
+                                            <button
+                                                onClick={() => {
+                                                    toast.loading("جارٍ تفريغ الذاكرة المؤقتة وإعادة مزامنة البيانات...");
+                                                    setTimeout(() => {
+                                                        cacheManager.purgeCacheAndReload(true);
+                                                    }, 800);
+                                                }}
+                                                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-aqar-hover hover:bg-aqar-active text-aqar-text text-xs font-semibold rounded-xl border border-aqar-border transition-colors"
+                                            >
+                                                <RefreshCw size={14} className="text-aqar-cyan" /> تفريغ الذاكرة المؤقتة وإعادة المزامنة (Re-sync)
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    if (confirm("هل تريد تسجيل الخروج ومسح جميع البيانات المحلية المحفوظة على هذا الجهاز؟")) {
+                                                        cacheManager.purgeCacheAndReload(false);
+                                                    }
+                                                }}
+                                                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-xl border border-rose-500/30 transition-colors"
+                                            >
+                                                <LogOut size={14} /> إنهاء جميع الجلسات ومسح البيانات المحفوظة
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             )}

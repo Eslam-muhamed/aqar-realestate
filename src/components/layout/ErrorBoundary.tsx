@@ -29,8 +29,8 @@ class ErrorBoundary extends Component<Props, State> {
             return (
                 <div className="min-h-screen bg-aqar-base flex items-center justify-center p-6 text-start">
                     <div className="max-w-md w-full bg-aqar-surface border border-aqar-border rounded-2xl p-8 text-center">
-                        <div className="w-16 h-16 bg-[#FF453A]/10 border border-[#FF453A]/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                            <AlertTriangle size={24} className="text-[#FF453A]" />
+                        <div className="w-16 h-16 bg-aqar-danger/10 border border-aqar-danger/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <AlertTriangle size={24} className="text-aqar-danger" />
                         </div>
                         <h2 className="text-aqar-text font-bold text-xl mb-3">عذراً، حدث خطأ غير متوقع</h2>
                         <p className="text-aqar-muted text-sm mb-8 leading-relaxed">

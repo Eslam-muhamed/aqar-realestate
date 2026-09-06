@@ -112,7 +112,7 @@ export default function PropertyDetail() {
                             <div className="flex items-start justify-between gap-4 mb-3">
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
-                                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-md ${property.status === "for-sale" ? "bg-aqar-cyan text-[#121212]" : "bg-[#32D74B] text-[#121212]"}`}>
+                                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-md ${property.status === "for-sale" ? "bg-aqar-cyan text-aqar-btnText" : "bg-aqar-success text-white"}`}>
                                             {property.status === "for-sale" ? "للبيع" : "للإيجار"}
                                         </span>
                                         {property.verified && (
@@ -130,7 +130,7 @@ export default function PropertyDetail() {
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
                                     <button onClick={handleFavorite}
-                                        className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-colors ${fav ? "border-[#FF453A] bg-[#FF453A]/10 text-[#FF453A]" : "border-aqar-border text-aqar-muted hover:text-aqar-text"}`}>
+                                        className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-colors ${fav ? "border-aqar-danger bg-aqar-danger/10 text-aqar-danger" : "border-aqar-border text-aqar-muted hover:text-aqar-text"}`}>
                                         <Heart size={16} fill={fav ? "currentColor" : "none"} />
                                     </button>
                                     <button onClick={handleCompare}
@@ -207,8 +207,8 @@ export default function PropertyDetail() {
                                 <h2 className="text-aqar-text font-semibold text-lg mb-5">طلب معلومات</h2>
                                 {submitted ? (
                                     <div className="text-center py-8">
-                                        <div className="w-12 h-12 bg-[#32D74B]/10 border border-[#32D74B]/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <BadgeCheck size={20} className="text-[#32D74B]" />
+                                        <div className="w-12 h-12 bg-aqar-success/10 border border-aqar-success/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <BadgeCheck size={20} className="text-aqar-success" />
                                         </div>
                                         <p className="text-aqar-text font-medium">تم إرسال الطلب</p>
                                         <p className="text-aqar-muted text-sm mt-1">سيتواصل معك الوكيل قريباً.</p>
@@ -219,26 +219,26 @@ export default function PropertyDetail() {
                                             <div>
                                                 <label className="text-xs text-aqar-muted mb-1.5 block">الاسم الكامل</label>
                                                 <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="اسمك"
-                                                    className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none" />
+                                                className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none" />
                                             </div>
                                             <div>
                                                 <label className="text-xs text-aqar-muted mb-1.5 block">رقم الهاتف</label>
                                                 <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+966 50 000 0000"
-                                                    className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none text-left" dir="ltr" />
+                                                className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none text-left" dir="ltr" />
                                             </div>
                                         </div>
                                         <div>
                                             <label className="text-xs text-aqar-muted mb-1.5 block">البريد الإلكتروني</label>
                                             <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@example.com"
-                                                className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none text-left" dir="ltr" />
+                                                className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none text-left" dir="ltr" />
                                         </div>
                                         <div>
                                             <label className="text-xs text-aqar-muted mb-1.5 block">الرسالة</label>
                                             <textarea required rows={3} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
                                                 placeholder={`أنا مهتم بـ ${property.title}...`}
-                                                className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-[#98989D]/50 focus:border-aqar-cyan/50 focus:outline-none resize-none" />
+                                                className="w-full px-4 py-3 bg-aqar-base border border-aqar-border rounded-xl text-sm text-aqar-text placeholder-aqar-muted/50 focus:border-aqar-cyan/50 focus:outline-none resize-none" />
                                         </div>
-                                        <button type="submit" className="w-full py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
+                                        <button type="submit" className="w-full py-3.5 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                                             إرسال الطلب
                                         </button>
                                     </form>
@@ -282,10 +282,10 @@ export default function PropertyDetail() {
                                 {/* Mobile Sticky CTA */}
                                 <div className="lg:hidden fixed bottom-0 inset-x-0 p-4 bg-aqar-base/95 backdrop-blur-md border-t border-aqar-border flex gap-3 z-40">
                                     <button onClick={handleFavorite} aria-label="أضف للمفضلة"
-                                        className={`w-12 h-12 rounded-xl border flex items-center justify-center ${fav ? "border-[#FF453A] bg-[#FF453A]/10 text-[#FF453A]" : "border-aqar-border text-aqar-muted"}`}>
+                                        className={`w-12 h-12 rounded-xl border flex items-center justify-center ${fav ? "border-aqar-danger bg-aqar-danger/10 text-aqar-danger" : "border-aqar-border text-aqar-muted"}`}>
                                         <Heart size={18} fill={fav ? "currentColor" : "none"} />
                                     </button>
-                                    <button className="flex-1 py-3 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl">
+                                    <button className="flex-1 py-3 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl">
                                         تواصل مع الوكيل
                                     </button>
                                 </div>

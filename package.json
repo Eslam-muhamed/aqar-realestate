@@ -8,7 +8,11 @@
         "build": "vite build",
         "build:dev": "vite build --mode development",
         "lint": "eslint .",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "typecheck": "tsc --noEmit",
+        "security:check": "npm audit",
+        "test:e2e": "playwright test e2e-scalability.spec.ts",
+        "verify": "tsc --noEmit && npm run build && playwright test e2e-scalability.spec.ts"
     },
     "dependencies": {
         "@google/generative-ai": "^0.24.1",

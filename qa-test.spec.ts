@@ -2,8 +2,9 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Real Estate App - QA E2E Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the local server
+    // Navigate to the local server and ensure clean isolated state
     await page.goto('http://localhost:8080/');
+    await page.evaluate(() => localStorage.clear());
   });
 
   test('should load the homepage correctly', async ({ page }) => {
@@ -85,14 +86,15 @@ test.describe('Real Estate App - QA E2E Tests', () => {
     // Wait for the navigation to complete
     await expect(page).toHaveURL(/.*dashboard/);
     
-    // Click the leads tab
-    const leadsTab = page.getByRole('button', { name: /مركز العملاء|العملاء/i });
-    if (await leadsTab.count() > 0) {
-      await leadsTab.click();
-    }
+    // Click the leads tab in aside
+    const leadsTab = page.locator('aside button').filter({ hasText: 'مركز العملاء' });
+    await leadsTab.click();
 
     // Verify Dashboard specific elements for Admin
     await expect(page.getByText('مركز إدارة وتوزيع العملاء')).toBeVisible();
+
+    // Verify Archive Filter button exists
+    await expect(page.getByRole('button', { name: /المؤرشفة/i })).toBeVisible();
 
     // Verify Pagination Controls
     const prevBtn = page.getByRole('button', { name: /السابق/i }).first();
@@ -113,16 +115,37 @@ test.describe('Real Estate App - QA E2E Tests', () => {
     // Wait for the navigation to complete
     await expect(page).toHaveURL(/.*dashboard/);
     
-    // Click the leads tab
-    const leadsTab = page.getByRole('button', { name: /العملاء المكلف بهم/i });
-    if (await leadsTab.count() > 0) {
-      await leadsTab.click();
-    }
+    // Click the leads tab in aside
+    const leadsTab = page.locator('aside button').filter({ hasText: 'العملاء المكلف بهم' });
+    await leadsTab.click();
 
     // Verify restricted title for Supervisor
     await expect(page.getByText('العملاء المكلف بهم').first()).toBeVisible();
 
     // Verify they do not see Admin specific title
     await expect(page.getByText('مركز إدارة وتوزيع العملاء')).toBeHidden();
+  });
+
+  test('should verify Analytics Tab and Session Manager in Dashboard', async ({ page }) => {
+    await page.goto('http://localhost:8080/login');
+    const adminBtn = page.getByRole('button', { name: /دخول كـ مدير المكتب/i });
+    await adminBtn.click();
+    await expect(page).toHaveURL(/.*dashboard/);
+
+    // 1. Check Analytics Tab
+    const analyticsTab = page.locator('aside button').filter({ hasText: 'التقارير والإحصائيات' });
+    await expect(analyticsTab).toBeVisible();
+    await analyticsTab.click();
+
+    await expect(page.getByText('التقارير ومؤشرات الأداء')).toBeVisible();
+    await expect(page.getByText('معدل تحويل الصفقات')).toBeVisible();
+    await expect(page.getByRole('button', { name: /تصدير قائمة العملاء/i })).toBeVisible();
+
+    // 2. Check Settings & Cache Manager
+    const settingsTab = page.locator('aside button').filter({ hasText: 'الإعدادات' });
+    await settingsTab.click();
+
+    await expect(page.getByText('إدارة الجلسات والذاكرة المؤقتة (Cache)')).toBeVisible();
+    await expect(page.getByText(/الإصدار v2\.1\.0/i)).toBeVisible();
   });
 });

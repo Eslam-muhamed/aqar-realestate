@@ -37,7 +37,7 @@ export default function LocationDetail() {
                 {/* Hero */}
                 <div className="relative h-80 overflow-hidden">
                     <img src={location.image} alt={location.name} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
                     <div className="absolute bottom-0 start-0 end-0 max-w-[1440px] mx-auto px-6 lg:px-12 pb-10">
                         <div className="flex items-center gap-2 mb-3">
                             <Link to="/locations" className="text-aqar-muted text-sm hover:text-aqar-text transition-colors">المناطق</Link>

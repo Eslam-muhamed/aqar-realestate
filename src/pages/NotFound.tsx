@@ -15,7 +15,7 @@ const NotFound = () => {
                 <p className="text-aqar-cyan font-mono text-sm font-medium uppercase tracking-widest mb-4" dir="ltr">404 غير موجود</p>
                 <h1 className="text-aqar-text text-5xl font-bold mb-4">الصفحة غير موجودة</h1>
                 <p className="text-aqar-muted text-base mb-8">الصفحة التي تبحث عنها غير موجودة أو تم نقلها.</p>
-                <Link to="/" className="px-6 py-3 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
+                <Link to="/" className="px-6 py-3 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                     العودة للرئيسية
                 </Link>
             </div>

@@ -62,7 +62,7 @@ export default function Compare() {
                                 <p className="text-aqar-muted text-sm mt-2">مقارنة حتى 4 عقارات جنباً إلى جنب</p>
                             </div>
                             {properties.length > 0 && (
-                                <button onClick={clearAll} className="text-sm text-aqar-muted hover:text-[#FF453A] transition-colors">
+                                <button onClick={clearAll} className="text-sm text-aqar-muted hover:text-aqar-danger transition-colors">
                                     مسح الكل
                                 </button>
                             )}
@@ -80,7 +80,7 @@ export default function Compare() {
                             <p className="text-aqar-muted text-sm max-w-sm mb-8">
                                 استخدم زر المقارنة على بطاقات العقار لإضافتها هنا.
                             </p>
-                            <Link to="/properties" className="px-6 py-3 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl">
+                            <Link to="/properties" className="px-6 py-3 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl">
                                 تصفح العقارات
                             </Link>
                         </div>
@@ -97,7 +97,7 @@ export default function Compare() {
                                                     <div className="relative">
                                                         <img src={p.images[0]} alt={p.title} className="w-full h-32 object-cover" />
                                                         <button onClick={() => remove(p.id)}
-                                                            className="absolute top-2 end-2 w-7 h-7 bg-aqar-base/80 rounded-lg flex items-center justify-center text-aqar-text hover:bg-[#FF453A] transition-colors">
+                                                            className="absolute top-2 end-2 w-7 h-7 bg-aqar-base/80 rounded-lg flex items-center justify-center text-aqar-text hover:bg-aqar-danger hover:text-white transition-colors">
                                                             <X size={13} />
                                                         </button>
                                                     </div>

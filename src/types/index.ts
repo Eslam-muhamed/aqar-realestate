@@ -30,6 +30,8 @@ export interface Property {
     createdAt: string;
     views: number;
     propertyId: string;
+    is_archived?: boolean;
+    archived_at?: string | null;
 }
 
 export interface Agent {
@@ -111,6 +113,8 @@ export interface Lead {
     assigned_at?: string | null;
     assigned_by?: string | null;
     internal_notes?: string;
+    is_archived?: boolean;
+    archived_at?: string | null;
     created_at: string;
     updated_at?: string;
 }

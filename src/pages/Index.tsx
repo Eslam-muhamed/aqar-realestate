@@ -207,7 +207,7 @@ export default function Index() {
                             {user && (user.role === "admin" || user.role === "supervisor") ? (
                                 <>
                                     <Link to="/list-property"
-                                        className="px-8 py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors shadow-[0_0_20px_rgba(0,139,153,0.3)] dark:shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+                                        className="px-8 py-3.5 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors shadow-[0_0_20px] shadow-aqar-cyan/20">
                                         {t("home.addPropertyBtn")}
                                     </Link>
                                     <Link to="/agents"
@@ -217,7 +217,7 @@ export default function Index() {
                                 </>
                             ) : (
                                 <Link to="/agents"
-                                    className="px-8 py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors shadow-[0_0_20px_rgba(0,139,153,0.3)] dark:shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+                                    className="px-8 py-3.5 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors shadow-[0_0_20px] shadow-aqar-cyan/20">
                                     {t("home.contactAgentBtn")}
                                 </Link>
                             )}
@@ -226,7 +226,7 @@ export default function Index() {
 
                     <div className="relative hidden lg:flex items-center justify-center w-72 h-72 z-10">
                         <div className="absolute inset-0 bg-gradient-to-tr from-aqar-cyan/20 to-transparent rounded-full blur-2xl animate-pulse" />
-                        <Building size={120} className="text-aqar-cyan drop-shadow-[0_0_15px_rgba(0,139,153,0.5)] dark:drop-shadow-[0_0_15px_rgba(0,229,255,0.5)]" />
+                        <Building size={120} className="text-aqar-cyan drop-shadow-[0_0_15px] drop-shadow-aqar-cyan/40" />
                     </div>
                 </div>
             </section>

@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import { MOCK_PROPERTIES } from "@/constants/mockData";
 import type { Property } from "@/types";
 
 export interface CreatePropertyInput {
@@ -28,15 +27,25 @@ export const propertyService = {
     /**
      * Get all properties (public, only Supabase dynamic properties)
      */
-    async getAll(page: number = 1, limit: number = 50): Promise<{ data: Property[]; count: number }> {
+    async getAll(
+        page: number = 1,
+        limit: number = 50,
+        includeArchived: boolean = false
+    ): Promise<{ data: Property[]; count: number }> {
         try {
             const from = (page - 1) * limit;
             const to = from + limit - 1;
 
-            const { data, error, count } = await supabase
+            let query = supabase
                 .from("properties")
                 .select("*", { count: "exact" })
-                .eq("is_published", true)
+                .eq("is_published", true);
+
+            if (!includeArchived) {
+                query = query.or("is_archived.is.null,is_archived.eq.false");
+            }
+
+            const { data, error, count } = await query
                 .range(from, to)
                 .order("created_at", { ascending: false });
 
@@ -80,6 +89,8 @@ export const propertyService = {
                 createdAt: item.created_at || new Date().toISOString(),
                 views: item.views || 0,
                 propertyId: item.property_id || `AQR-${Math.floor(1000 + Math.random() * 9000)}`,
+                is_archived: !!item.is_archived,
+                archived_at: item.archived_at || null,
             }));
 
             return { data: mappedDbProperties, count: count || 0 };
@@ -171,18 +182,125 @@ export const propertyService = {
     /**
      * Delete a property
      */
-    async deleteProperty(id: string) {
+     async deleteProperty(id: string) {
+         try {
+             const { error } = await supabase
+                 .from("properties")
+                 .delete()
+                 .eq("id", id);
+
+             if (error) throw error;
+             return { success: true };
+         } catch (err: unknown) {
+             console.error("Error deleting property in Supabase:", err);
+             return { success: false, error: err instanceof Error ? err.message : String(err) };
+         }
+     },
+
+    /**
+     * Archive a property (move from active listings to archive)
+     */
+    async archiveProperty(id: string): Promise<{ success: boolean; error?: string }> {
         try {
             const { error } = await supabase
                 .from("properties")
-                .delete()
+                .update({ 
+                    is_archived: true, 
+                    archived_at: new Date().toISOString() 
+                })
                 .eq("id", id);
 
             if (error) throw error;
             return { success: true };
         } catch (err: unknown) {
-            console.error("Error deleting property in Supabase:", err);
+            console.error("Error archiving property:", err);
             return { success: false, error: err instanceof Error ? err.message : String(err) };
+        }
+    },
+
+    /**
+     * Restore an archived property back to active listings
+     */
+    async restoreProperty(id: string): Promise<{ success: boolean; error?: string }> {
+        try {
+            const { error } = await supabase
+                .from("properties")
+                .update({ 
+                    is_archived: false, 
+                    archived_at: null 
+                })
+                .eq("id", id);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (err: unknown) {
+            console.error("Error restoring property:", err);
+            return { success: false, error: err instanceof Error ? err.message : String(err) };
+        }
+    },
+
+    /**
+     * Fetch only archived properties
+     */
+    async getArchived(page: number = 1, limit: number = 50): Promise<{ data: Property[]; count: number }> {
+        try {
+            const from = (page - 1) * limit;
+            const to = from + limit - 1;
+
+            const { data, error, count } = await supabase
+                .from("properties")
+                .select("*", { count: "exact" })
+                .eq("is_archived", true)
+                .range(from, to)
+                .order("archived_at", { ascending: false });
+
+            if (error || !data || data.length === 0) {
+                return { data: [], count: 0 };
+            }
+
+            const mapped: Property[] = data.map((item: any) => ({
+                id: item.id,
+                slug: item.slug || item.id,
+                title: item.title,
+                description: item.description || "",
+                type: item.type,
+                status: item.status,
+                price: Number(item.price),
+                currency: item.currency || "SAR",
+                location: {
+                    city: item.city || "",
+                    district: item.district || "",
+                    address: item.address || "",
+                    coordinates: {
+                        lat: Number(item.lat || 24.7136),
+                        lng: Number(item.lng || 46.6753),
+                    },
+                },
+                stats: {
+                    bedrooms: item.bedrooms || 0,
+                    bathrooms: item.bathrooms || 0,
+                    area: Number(item.area || 0),
+                    parking: item.parking || 0,
+                    yearBuilt: item.year_built || new Date().getFullYear(),
+                    floors: item.floors || 1,
+                },
+                images: item.images && item.images.length > 0 ? item.images : ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"],
+                features: item.features || [],
+                amenities: item.amenities || [],
+                agent: item.created_by || "1",
+                featured: !!item.featured,
+                verified: !!item.verified,
+                createdAt: item.created_at || new Date().toISOString(),
+                views: item.views || 0,
+                propertyId: item.property_id || `AQR-${Math.floor(1000 + Math.random() * 9000)}`,
+                is_archived: true,
+                archived_at: item.archived_at || null,
+            }));
+
+            return { data: mapped, count: count || 0 };
+        } catch (err) {
+            console.error("Error loading archived properties:", err);
+            return { data: [], count: 0 };
         }
     },
 

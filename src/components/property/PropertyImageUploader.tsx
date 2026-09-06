@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
-import { Upload, X, RefreshCw, Loader2, Image as ImageIcon, Star } from "lucide-react";
+import { Upload, X, RefreshCw, Loader2, Image as ImageIcon, Star, Zap } from "lucide-react";
 import { storageService } from "@/services/storageService";
+import { compressImage, formatFileSize } from "@/utils/imageCompressor";
 import { toast } from "sonner";
 
 interface PropertyImageUploaderProps {
@@ -17,12 +18,17 @@ export default function PropertyImageUploader({
     const [uploading, setUploading] = useState(false);
     const [replacingIndex, setReplacingIndex] = useState<number | null>(null);
     const [dragActive, setDragActive] = useState(false);
+    const [compressionStats, setCompressionStats] = useState<{
+        savedBytes: number;
+        originalBytes: number;
+        savedPercentage: number;
+    } | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const replaceInputRef = useRef<HTMLInputElement>(null);
     const targetReplaceIndexRef = useRef<number | null>(null);
 
-    // Handle new images upload
+    // Handle new images upload with auto compression
     const handleFiles = async (files: FileList | File[]) => {
         const fileArray = Array.from(files).filter((f) => f.type.startsWith("image/") || f.type.startsWith("video/"));
         if (fileArray.length === 0) {
@@ -30,7 +36,7 @@ export default function PropertyImageUploader({
             return;
         }
 
-        const MAX_SIZE_MB = 10;
+        const MAX_SIZE_MB = 15;
         const validFiles = fileArray.filter(f => f.size <= MAX_SIZE_MB * 1024 * 1024);
         
         if (validFiles.length < fileArray.length) {
@@ -47,12 +53,31 @@ export default function PropertyImageUploader({
         setUploading(true);
         const newUploadedUrls: string[] = [];
         let failedCount = 0;
+        let totalOriginal = 0;
+        let totalCompressed = 0;
 
         for (let i = 0; i < validFiles.length; i++) {
-            const file = validFiles[i];
-            const toastId = toast.loading(`جارٍ رفع الملف (${i + 1}/${validFiles.length}) إلى Supabase...`);
-            const res = await storageService.uploadImage(file);
-            toast.dismiss(toastId);
+            const rawFile = validFiles[i];
+            
+            // Step 1: Compress image on the fly to WebP
+            let fileToUpload = rawFile;
+            if (rawFile.type.startsWith("image/")) {
+                const compToast = toast.loading(`جارٍ ضغط وتحسين الصورة (${i + 1}/${validFiles.length})...`);
+                const compResult = await compressImage(rawFile, { maxWidth: 1920, maxHeight: 1080, quality: 0.82 });
+                toast.dismiss(compToast);
+
+                fileToUpload = compResult.file;
+                totalOriginal += compResult.originalSize;
+                totalCompressed += compResult.compressedSize;
+            } else {
+                totalOriginal += rawFile.size;
+                totalCompressed += rawFile.size;
+            }
+
+            // Step 2: Upload optimized file to Supabase
+            const uploadToast = toast.loading(`جارٍ رفع الملف (${i + 1}/${validFiles.length}) إلى السيرفر...`);
+            const res = await storageService.uploadImage(fileToUpload);
+            toast.dismiss(uploadToast);
 
             if (res.success && res.url) {
                 newUploadedUrls.push(res.url);
@@ -65,7 +90,20 @@ export default function PropertyImageUploader({
 
         if (newUploadedUrls.length > 0) {
             onChange([...images, ...newUploadedUrls]);
-            toast.success(`تم رفع ${newUploadedUrls.length} ملف بنجاح إلى Supabase!`);
+            
+            // Calculate savings
+            const savedBytes = Math.max(0, totalOriginal - totalCompressed);
+            const savedPercentage = totalOriginal > 0 ? Math.round((savedBytes / totalOriginal) * 100) : 0;
+
+            if (savedPercentage > 10) {
+                setCompressionStats({ savedBytes, originalBytes: totalOriginal, savedPercentage });
+                toast.success(
+                    `تم رفع ${newUploadedUrls.length} صور بنجاح! تم توفير ${savedPercentage}% من المساحة (${formatFileSize(savedBytes)} توفير)`,
+                    { duration: 5000 }
+                );
+            } else {
+                toast.success(`تم رفع ${newUploadedUrls.length} ملف بنجاح إلى Supabase!`);
+            }
         }
 
         if (failedCount > 0) {
@@ -82,13 +120,13 @@ export default function PropertyImageUploader({
         }
     };
 
-    // Execute Smart Replacement: delete old from Supabase and store new
+    // Execute Smart Replacement with Compression
     const handleReplaceFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         const index = targetReplaceIndexRef.current;
         if (!file || index === null || index === undefined) return;
 
-        const MAX_SIZE_MB = 10;
+        const MAX_SIZE_MB = 15;
         if (file.size > MAX_SIZE_MB * 1024 * 1024) {
             toast.error(`حجم الملف يتجاوز الحد الأقصى (${MAX_SIZE_MB} ميجابايت).`);
             return;
@@ -97,8 +135,17 @@ export default function PropertyImageUploader({
         const oldUrl = images[index];
         setReplacingIndex(index);
 
+        // Compress if image
+        let fileToUpload = file;
+        if (file.type.startsWith("image/")) {
+            const compToast = toast.loading("جارٍ ضغط وتحسين الصورة الجديدة...");
+            const compResult = await compressImage(file, { maxWidth: 1920, maxHeight: 1080, quality: 0.82 });
+            toast.dismiss(compToast);
+            fileToUpload = compResult.file;
+        }
+
         const toastId = toast.loading("جارٍ استبدال الملف في Supabase...");
-        const res = await storageService.replaceImage(oldUrl, file);
+        const res = await storageService.replaceImage(oldUrl, fileToUpload);
         toast.dismiss(toastId);
 
         setReplacingIndex(null);
@@ -108,7 +155,7 @@ export default function PropertyImageUploader({
             const updated = [...images];
             updated[index] = res.url;
             onChange(updated);
-            toast.success("تم استبدال الصورة بنجاح وحذف القديمة من Supabase!");
+            toast.success("تم استبدال الصورة بنجاح وحفظ الحجم المحسن!");
         } else {
             toast.error("فشل استبدال الصورة: " + (res.error || "خطأ غير معروف"));
         }
@@ -156,6 +203,21 @@ export default function PropertyImageUploader({
                 className="hidden"
                 onChange={(e) => e.target.files && handleFiles(e.target.files)}
             />
+
+            {/* Auto-Compression & Storage Optimization Notice */}
+            <div className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-aqar-cyan/5 border border-aqar-cyan/20 text-xs text-aqar-muted">
+                <div className="flex items-center gap-2">
+                    <Zap size={14} className="text-aqar-cyan shrink-0" />
+                    <span>
+                        <strong className="text-aqar-cyan font-medium">الضغط الذكي الفوري نشط:</strong> يتم ضغط الصور تلقائياً بصيغة WebP لتوفير 70-90% من استهلاك التخزين وتسريع تحميل الموقع.
+                    </span>
+                </div>
+                {compressionStats && (
+                    <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[11px]">
+                        وفرت {formatFileSize(compressionStats.savedBytes)} ({compressionStats.savedPercentage}%)
+                    </span>
+                )}
+            </div>
 
             {/* Drag & Drop Upload Zone */}
             <div
@@ -231,7 +293,7 @@ export default function PropertyImageUploader({
 
                                     {/* Primary Badge */}
                                     {index === 0 && (
-                                        <div className="absolute top-2 right-2 bg-aqar-cyan text-[#121212] px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1 shadow-md">
+                                        <div className="absolute top-2 right-2 bg-aqar-cyan text-aqar-btnText px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1 shadow-md">
                                             <Star size={10} fill="currentColor" /> الرئيسية
                                         </div>
                                     )}
@@ -258,7 +320,7 @@ export default function PropertyImageUploader({
                                                             handleSetCover(index);
                                                         }}
                                                         title="تعيين كصورة رئيسية"
-                                                        className="p-1.5 bg-[#2C2C2E]/90 hover:bg-aqar-cyan text-aqar-text hover:text-[#121212] rounded-lg text-xs transition-colors"
+                                                        className="p-1.5 bg-aqar-hover/90 hover:bg-aqar-cyan text-aqar-text hover:text-aqar-btnText rounded-lg text-xs transition-colors"
                                                     >
                                                         <Star size={12} />
                                                     </button>
@@ -271,7 +333,7 @@ export default function PropertyImageUploader({
                                                         handleDelete(index);
                                                     }}
                                                     title="حذف نهائي من Supabase"
-                                                    className="p-1.5 bg-[#FF453A]/80 hover:bg-[#FF453A] text-aqar-text rounded-lg transition-colors"
+                                                    className="p-1.5 bg-aqar-danger/80 hover:bg-aqar-danger text-white rounded-lg transition-colors"
                                                 >
                                                     <X size={12} />
                                                 </button>
@@ -284,7 +346,7 @@ export default function PropertyImageUploader({
                                                     e.stopPropagation();
                                                     initiateReplace(index);
                                                 }}
-                                                className="w-full py-1.5 px-2 bg-aqar-cyan hover:bg-aqar-cyan/90 text-[#121212] font-bold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md"
+                                                className="w-full py-1.5 px-2 bg-aqar-cyan hover:bg-aqar-cyan/90 text-aqar-btnText font-bold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md"
                                             >
                                                 <RefreshCw size={12} /> استبدال الصورة
                                             </button>

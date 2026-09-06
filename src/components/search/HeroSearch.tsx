@@ -36,7 +36,7 @@ export default function HeroSearch() {
             <div className="flex gap-1 mb-3 px-1 pt-1">
                 {(["for-sale", "for-rent"] as const).map((s) => (
                     <button key={s} onClick={() => setStatus(s)}
-                        className={`px-5 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${status === s ? "bg-aqar-cyan text-[#121212]" : "text-aqar-muted hover:text-aqar-text"
+                        className={`px-5 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${status === s ? "bg-aqar-cyan text-aqar-btnText" : "text-aqar-muted hover:text-aqar-text"
                             }`}>
                         {s === "for-sale" ? t("search.buy", "شراء") : t("search.rent", "استئجار")}
                     </button>
@@ -119,7 +119,7 @@ export default function HeroSearch() {
 
             <div className="mt-2 px-1 pb-1">
                 <button onClick={handleSearch}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
+                    className="w-full flex items-center justify-center gap-2 py-3.5 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                     <Search size={16} />
                     {t("search.submit", "ابحث عن عقارات")}
                 </button>

@@ -48,7 +48,7 @@ export default function Favorites() {
                                 احفظ العقارات التي تهتم بها لتجدها هنا بسهولة.
                             </p>
                             <Link to="/properties"
-                                className="px-6 py-3 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
+                                className="px-6 py-3 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                                 استكشف العقارات
                             </Link>
                         </div>

@@ -151,7 +151,7 @@ export default function FilterSidebar({ filters, onChange, onClose }: Props) {
                                             : [...filters.amenities, amenity];
                                         set("amenities", newAmenities);
                                     }}
-                                        className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer ${isActive ? "bg-aqar-cyan" : "bg-[#2C2C2E]"}`}>
+                                        className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer ${isActive ? "bg-aqar-cyan" : "bg-aqar-hover"}`}>
                                         <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${isActive ? "-translate-x-4" : "-translate-x-0.5"}`} />
                                     </div>
                                 </label>

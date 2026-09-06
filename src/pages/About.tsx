@@ -35,10 +35,10 @@ export default function About() {
                                     تم بناء عقار لغرض واحد: جعل عملية العثور على العقارات الراقية وتداولها بسيطة وجديرة بالثقة واحترافية. نحن نتحقق من كل قائمة وكل مستشار حتى لا تضطر أبدًا إلى الشك فيما تراه.
                                 </p>
                                 <div className="flex gap-4">
-                                    <Link to="/properties" className="px-6 py-3 bg-aqar-cyan text-[#121212] font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
+                                    <Link to="/properties" className="px-6 py-3 bg-aqar-cyan text-aqar-btnText font-semibold text-sm rounded-xl hover:bg-aqar-cyan/90 transition-colors">
                                         تصفح العقارات
                                     </Link>
-                                    <Link to="/agents" className="px-6 py-3 border border-aqar-border text-aqar-text text-sm rounded-xl hover:border-[#3C3C3E] transition-colors">
+                                    <Link to="/agents" className="px-6 py-3 border border-aqar-border text-aqar-text text-sm rounded-xl hover:border-aqar-muted transition-colors">
                                         تعرف على مستشارينا
                                     </Link>
                                 </div>
